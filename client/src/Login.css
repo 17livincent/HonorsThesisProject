@@ -1,11 +1,28 @@
 .Login {
+    margin: auto;
+    width: 50%;
+    border: 2px solid blue;
     text-align: center;
-    font-size: 20px;
 }
 
-input {
-    text-align: left;
-    font-size: 20px;
+.loginNav {
+    border: 2px solid blue;
+    text-align: right;
+}
+
+.dividerHorizontal {
+    width: 10px;
+    height: auto;
+    display: inline-block;
+}
+
+Button + Button {
+    height: 5px;
+    width: auto;
+}
+
+Form {
+    padding: 5px;
 }
 
 .header {

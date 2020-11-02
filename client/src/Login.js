@@ -4,8 +4,10 @@
  */
 
 import React from 'react';
+import {Form, Button, Navbar, Nav, Container} from 'react-bootstrap';
 import GoogleLogin from 'react-google-login';
-//import './Login.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Login.css';
 
 class Login extends React.Component {
 
@@ -14,37 +16,56 @@ class Login extends React.Component {
         this.state = {
             email: '',
             password: ''
-        }
+        };
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        alert("Poop");
     }
 
     render() {
-        return (
-            <div className='Login'>
-                <header className='header'>
-                <h1>Log In</h1>
-                </header>
-                <GoogleLogin
-                    buttonText="Log in with Google"
-                />
-                <form name='emailPassword' onsubmit='validateEP' method='post'>
-                    <label>Log in with an email</label><br />
-                    <input 
-                        type='email' 
-                        name='email' 
-                        placeholder='Email address' 
-                        required='required'
-                        onChange={(newValue) => this.setState({email: newValue})}
-                    /><br />
-                    <input 
-                        type='password' 
-                        name='pw' 
-                        placeholder='Password' 
-                        required='required'
-                        onChange={(newValue) => this.setState({password: newValue})}
-                    /><br />
+        return (   
+            <div className='LoginPage'>
+                <Container>
+                    <Navbar className='loginNav' sticky='top' bg='light' variant='light'>
+                    <Navbar.Brand href=''>Home</Navbar.Brand>
+                    <Nav className='ml-auto'>
+                        <Button href='' disabled>Log In</Button>
+                        <div class='dividerHorizontal' />
+                        <Button href=''>Sign Up</Button>
+                    </Nav>
+                </Navbar>
+                </Container>
 
-                    <input type='submit' value='Log In' />
-                </form>
+                <div className='Login'>
+                    <h1>Welcome Back</h1>
+
+                    <GoogleLogin
+                        buttonText="Log in with Google"
+                    />
+                    <h3>Log in with an email</h3>
+                    <Form onSumbit={this.handleSubmit}>
+                        <Form.Group controlId='getEmail'>
+                            <Form.Control 
+                                type='email' 
+                                placeholder='Email address' 
+                                required='required'
+                                autoFocus
+                                value={this.state.email}
+                                onChange={(event) => this.setState({email: event.target.value})}/>
+                        </Form.Group>
+                        <Form.Group controlId='getPassword'>
+                            <Form.Control 
+                                type='password' 
+                                placeholder='Password' 
+                                required='required' 
+                                value={this.state.password}
+                                onChange={(event) => this.setState({password: event.target.value})}/>
+                        </Form.Group>
+                        <Button variant='primary' type='submit'>Log In</Button>
+                    </Form>
+                </div>
             </div>
             
         );
