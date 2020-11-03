@@ -1,5 +1,5 @@
 /**
- * login.js
+ * Login.js
  * React file to handle login
  */
 
@@ -10,7 +10,7 @@ import GoogleLogin from 'react-google-login';
 import AuthNavbar from './AuthNavbar.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Login.css';
+import './LoginSignUp.css';
 import './outline.css'
 
 class Login extends React.Component {
@@ -21,11 +21,14 @@ class Login extends React.Component {
             email: '',
             password: ''
         };
+
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        alert("Poop");
+
+        alert(`Email: ${this.state.email}\nPassword: ${this.state.password}`);
     }
 
     render() {
@@ -40,17 +43,17 @@ class Login extends React.Component {
                         buttonText="Log in with Google"
                     />
                     <h3>Log in with an email</h3>
-                    <Form onSumbit={this.handleSubmit}>
-                        <Form.Group controlId='getEmail'>
+
+                    <Form onSubmit={this.handleSubmit}>
+                        <Form.Group controlid='getEmail'>
                             <Form.Control 
                                 type='email' 
                                 placeholder='Email address' 
                                 required='required'
-                                autoFocus
                                 value={this.state.email}
                                 onChange={(event) => this.setState({email: event.target.value})}/>
                         </Form.Group>
-                        <Form.Group controlId='getPassword'>
+                        <Form.Group controlid='getPassword'>
                             <Form.Control 
                                 type='password' 
                                 placeholder='Password' 
