@@ -1,22 +1,7 @@
-.Login {
+.Login, .SignUp {
     margin: auto;
     width: 50%;
     text-align: center;
-}
-
-.loginNav {
-    text-align: right;
-}
-
-.dividerHorizontal {
-    width: 10px;
-    height: auto;
-    display: inline-block;
-}
-
-Button + Button {
-    height: 5px;
-    width: auto;
 }
 
 Form {
@@ -30,4 +15,9 @@ Form {
     align-items: center;
     justify-content: center;
     font-size: calc(10px + 1vmin);
+}
+
+Button + Button {
+    height: 5px;
+    width: auto;
 }
