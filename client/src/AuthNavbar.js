@@ -8,6 +8,8 @@
 import React from 'react';
 import {Button, Navbar, Nav, Container} from 'react-bootstrap';
 
+import './AuthNavbar.css';
+
 class AuthNavbar extends React.Component {
 
     render() {
