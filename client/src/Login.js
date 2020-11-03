@@ -4,10 +4,14 @@
  */
 
 import React from 'react';
-import {Form, Button, Navbar, Nav, Container} from 'react-bootstrap';
+import {Form, Button} from 'react-bootstrap';
 import GoogleLogin from 'react-google-login';
+
+import AuthNavbar from './AuthNavbar.js';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Login.css';
+import './outline.css'
 
 class Login extends React.Component {
 
@@ -27,16 +31,7 @@ class Login extends React.Component {
     render() {
         return (   
             <div className='LoginPage'>
-                <Container>
-                    <Navbar className='loginNav' sticky='top' bg='light' variant='light'>
-                    <Navbar.Brand href=''>Home</Navbar.Brand>
-                    <Nav className='ml-auto'>
-                        <Button href='' disabled>Log In</Button>
-                        <div class='dividerHorizontal' />
-                        <Button href=''>Sign Up</Button>
-                    </Nav>
-                </Navbar>
-                </Container>
+                <AuthNavbar type={'LOGIN'}/>
 
                 <div className='Login'>
                     <h1>Welcome Back</h1>
