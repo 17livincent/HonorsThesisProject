@@ -15,7 +15,7 @@ class Footer extends React.Component {
                 <Navbar className='FooterNav' sticky='bottom' bg='light' variant='light'>
                     <Navbar.Text>
                         Developed by Vincent Li<br />
-                        Contact: vincentl@asu.edu
+                        Contact: <a href='mailto:vincentl@asu.edu'>vincentl@asu.edu</a>
                     </Navbar.Text>
                 </Navbar>
             </div>
