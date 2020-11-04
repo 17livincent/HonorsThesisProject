@@ -26,6 +26,11 @@ class Login extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    componentDidMount() {
+        // set page title
+        document.title = 'Login | App';
+    }
+
     handleSubmit(event) {
         event.preventDefault();
 
@@ -34,6 +39,7 @@ class Login extends React.Component {
 
     render() {
         return (   
+
             <div className='LoginPage'>
                 <AuthNavbar type={'LOGIN'}/>
 

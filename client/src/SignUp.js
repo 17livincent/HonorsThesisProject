@@ -30,6 +30,11 @@ class SignUp extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    componentDidMount() {
+        // set page title
+        document.title = 'Sign Up | App';
+    }
+
     verifyPassword() {
         let msg = '';
         if(this.state.password1 !== this.state.password2) {
