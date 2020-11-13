@@ -12,7 +12,7 @@ import Footer from './Footer.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LoginSignUp.css';
-import './outline.css'
+import './outline.css';
 
 class Login extends React.Component {
 
