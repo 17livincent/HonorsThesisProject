@@ -4,10 +4,10 @@
  */
 
 import React from 'react';
-import {Form, Card, Col, Row, Button} from 'react-bootstrap';
+import {Form, Card, Col, Button} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-//import './outline.css';
+import './outline.css';
 
 class AugStepForm extends React.Component {
 
@@ -24,7 +24,6 @@ class AugStepForm extends React.Component {
         };
 
         this.setRemoveStep = this.setRemoveStep.bind(this);
-        this.setDisabledValues = this.setDisabledValues.bind(this);
 
     }
 
@@ -33,20 +32,51 @@ class AugStepForm extends React.Component {
         alert('Step deleted');  // for testing
     }
 
-    setDisabledValues() {
-        if(this.state.stepCategory === 'NOTSELECTED') {
-            this.setState({stepName: 'NOTSELECTED'});
-            this.setState({input: ''});
-
-        }
-        if(this.state.stepName === 'NOTSELECTED') {
-            this.setState({input: ''});
-        }
-    }
-
     render() {
+
+        // select input for step category
+        let selectStepCategory = <Form.Control 
+                                    as='select' 
+                                    required='required' 
+                                    onChange={(e) => {this.setState({stepCategory: e.target.value});}} 
+                                    value={this.state.stepCategory}> 
+                                        <option value=''>Select a category</option>
+                                        <option value='Extra'>Extra</option>
+
+                                    </Form.Control>;
+
+        // select input for specific step
+        let selectStepName = <Form.Control
+                                as='select'
+                                required='required'
+                                onChange={(e) => {this.setState({stepName: e.target.value});}}
+                                value={this.state.stepName}>
+                                    <option value=''>Select a step</option>
+                                    <option value='Extra'>Extra</option>
+                                    
+                                </Form.Control>;
+
+        // small input field
+        let inputField = <Form.Control 
+                            type='text' 
+                            placeholder='Input'
+                            disabled={this.state.stepCategory === '' | this.state.stepName === ''}>
+
+                            </Form.Control>
+
+        // label for step description
+        let stepDescription = <Form.Label>Description: {this.state.stepCategory}</Form.Label>;
+
+        // label for step citation
+        let stepCitation = <Form.Label>Citation: {this.state.stepName}</Form.Label>;
+
+        // button to remove
+        let deleteButton = <Button variant='outline-secondary' onClick={this.setRemoveStep}>
+                                Delete
+                            </Button>
+
         return (
-            <div className='StepForm'>
+            <div>
                 <Form.Group>
                     <Card.Header as='h5'>
                         <Form.Label>Step {this.state.stepNumber}</Form.Label>
@@ -54,48 +84,23 @@ class AugStepForm extends React.Component {
                     <Card.Body>
                         <Form.Row>
                             <Col xs={4}>
-                                <Form.Control id='selectStepCategory'
-                                    as='select'
-                                    required='required'
-                                    onChange={(e) => {this.setState({stepCategory: e.target.value})}}
-                                    value={this.state.stepCategory || 'NOTSELECTED'}>
-                                    <option value='NOTSELECTED'>Select a category</option>
-                                    <option value='extra'>Extra</option>
-                            
-                                </Form.Control>
+                                {selectStepCategory}
                             </Col>
                             <Col xs={4}>
-                                <Form.Control id='selectStepName'
-                                    as='select'
-                                    required='required'
-                                    //disabled={this.state.stepCategory === 'NOTSELECTED'}
-                                    onChange={(e) => {this.setState({stepName: e.target.value})}}
-                                    value={this.state.stepName || 'NOTSELECTED'}>
-                                    <option value='NOTSELECTED'>Select a step</option>
-                                    <option value='extra'>Extra</option>
-                            
-                                </Form.Control>
+                                {selectStepName}
                             </Col>
                             <Col>
-                                <Form.Control id='input'
-                                    type='text'
-                                    placeholder='Input'
-                                    //disabled={this.state.stepCategory === 'NOTSELECTED' | this.state.stepName === 'NOTSELECTED'}
-                                    >
-
-                                </Form.Control>
+                                {inputField}
                             </Col>
                             <Col xs='auto'>
-                                <Button variant='outline-secondary' onClick={this.setRemoveStep}>
-                                    Delete
-                                </Button>
+                                {deleteButton}
                             </Col>
                         </Form.Row>
                         <Form.Row>
-                            <Form.Label>Description: {this.state.stepCategory}</Form.Label>
+                            {stepDescription}
                         </Form.Row>
                         <Form.Row>
-                            <Form.Label>Citation: {this.state.stepName}</Form.Label>
+                            {stepCitation}
                         </Form.Row>
                     </Card.Body>
 
