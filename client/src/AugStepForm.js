@@ -28,7 +28,6 @@ class AugStepForm extends React.Component {
 
         this.setRemoveStep = this.setRemoveStep.bind(this);
         this.clearSelects = this.clearSelects.bind(this);
-        this.populateOptions = this.populateOptions.bind(this);
     }
 
     componentDidMount() {
@@ -50,38 +49,45 @@ class AugStepForm extends React.Component {
         });
     }
 
+    // sets the state value to show that the delete button was pressed
     setRemoveStep() {
         this.setState({removeStep: true});
         alert('Step deleted');  // for testing
     }
 
+    // NOT WORKING
     clearSelects() {
-        if(this.state.stepCategory === '') {
-            document.getElementById('selectStepName').value = '';
-            document.getElementById('inputField').value = '';
-        }
+        //if(this.state.stepCategory === '') {
+        //    document.getElementById('selectStepName').value = '';
+        //    document.getElementById('inputField').value = '';
+        //}
         if(this.state.stepName === '') {
             document.getElementById('inputField').value = '';
         }
     }
 
-    // returns a returnable form of select options from the array
-    populateOptions(array) {
-        let options = '';
-        for(let i in array) {
-            options += `<option value='${array[i][1]}'>${array[i][0]}</option>`;
-        }
-        return options;
+    getInputField(id, placeholder) {
+        return (
+            <Col>
+                <Form.Control id={id}
+                    type='text' 
+                    placeholder={placeholder}
+                    disabled={this.state.stepName === ''}>
+
+                </Form.Control>
+            </Col>
+        );
     }
 
     render() {
-
+        // get list of category options
         let categoryOptions = this.state.categories.length > 0 && this.state.categories.map((item, i) => {
             return (
                 <option value={item.val}>{item.name}</option>
             )
         }, this);
 
+        // get list of step options
         let stepOptions = this.state.steps.length > 0 && this.state.steps.map((item, i) => {
             return (
                 <option value={item.val}>{item.name}</option>
@@ -94,7 +100,7 @@ class AugStepForm extends React.Component {
                                     required='required' 
                                     onChange={(e) => {this.setState({stepCategory: e.target.value}); this.clearSelects()}} 
                                     value={this.state.stepCategory}> 
-                                        <option value='' disabled>SELECT A CATEGORY</option>
+                                        <option value=''>SELECT A CATEGORY</option>
                                         {categoryOptions}
                                     </Form.Control>;
 
@@ -104,27 +110,18 @@ class AugStepForm extends React.Component {
                                 required='required'
                                 onChange={(e) => {this.setState({stepName: e.target.value}); this.clearSelects()}}
                                 value={this.state.stepName}>
-                                    <option value='' disabled>SELECT A STEP</option>
+                                    <option value=''>SELECT A STEP</option>
                                     {stepOptions}
                                 </Form.Control>;
 
-        // small input field
-        let inputField = <Form.Control id='inputField'
-                            type='text' 
-                            placeholder='Input'>
-
-                            </Form.Control>
-
         // label for step description
-        let stepDescription = <Form.Label>Description: {this.state.stepCategory}</Form.Label>;
+        let stepDescription = <Form.Label>Description: {this.state.description}</Form.Label>;
 
         // label for step citation
-        let stepCitation = <Form.Label>Citation: {this.state.stepName}</Form.Label>;
+        let stepCitation = <Form.Label>Citation: {this.state.citation}</Form.Label>;
 
         // button to remove
-        let deleteButton = <Button variant='outline-secondary' onClick={this.setRemoveStep}>
-                                Delete
-                            </Button>
+        let deleteButton = <Button variant='outline-secondary' onClick={this.setRemoveStep}>Delete</Button>
 
         return (
             <div>
@@ -134,14 +131,11 @@ class AugStepForm extends React.Component {
                     </Card.Header>
                     <Card.Body>
                         <Form.Row>
-                            <Col xs={4}>
-                                {selectStepCategory}
-                            </Col>
-                            <Col xs={4}>
+                            <Col xs={7}>
                                 {selectStepName}
                             </Col>
                             <Col>
-                                {inputField}
+                                {this.getInputField('inputField', 'Input')}
                             </Col>
                             <Col xs='auto'>
                                 {deleteButton}
