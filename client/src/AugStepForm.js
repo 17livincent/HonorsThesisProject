@@ -22,15 +22,32 @@ class AugStepForm extends React.Component {
             citation: '',   // step citation, if applicable
             removeStep: false,   // determines whether or not this object should be deleted
 
-            numOfCategories: this.props.numOfCategories || 0,   // number of options in the category dropdown
-            categoriesArray: this.props.categoriesArray || Array(this.props.numOfCategories).fill(null), // array of category options
-            numOfSteps: this.props.numOfSteps || 0, // number of options in the steps dropdown, based on category option
-            stepsArray: this.props.stepsArray || Array(this.props.numOfSteps).fill(null)  // array of step options
+            categories: this.props.categories || [], // array of category options
+            steps: this.props.steps || []  // array of step options
         };
 
         this.setRemoveStep = this.setRemoveStep.bind(this);
         this.clearSelects = this.clearSelects.bind(this);
         this.populateOptions = this.populateOptions.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState({
+            // get list of categories
+            categories: [
+                {name: 'CategoryName', val: 'OptionValue'},
+                {name: 'Category1', val: 'cat1'},
+                {name: 'Category2', val: 'cat2'},
+                {name: 'Category3', val: 'cat3'}
+            ],
+            // get list of steps
+            steps: [
+                {name: 'StepName', val: 'OptionValue'},
+                {name: 'Step1', val: 'step1'},
+                {name: 'Step2', val: 'step2'},
+                {name: 'Step3', val: 'step3'}
+            ]
+        });
     }
 
     setRemoveStep() {
@@ -52,12 +69,24 @@ class AugStepForm extends React.Component {
     populateOptions(array) {
         let options = '';
         for(let i in array) {
-            options += `<option value='${array[i]}'>${array[i]}</option>`;
+            options += `<option value='${array[i][1]}'>${array[i][0]}</option>`;
         }
         return options;
     }
 
     render() {
+
+        let categoryOptions = this.state.categories.length > 0 && this.state.categories.map((item, i) => {
+            return (
+                <option value={item.val}>{item.name}</option>
+            )
+        }, this);
+
+        let stepOptions = this.state.steps.length > 0 && this.state.steps.map((item, i) => {
+            return (
+                <option value={item.val}>{item.name}</option>
+            )
+        })
 
         // select input for step category
         let selectStepCategory = <Form.Control id='selectStepCategory'
@@ -65,8 +94,8 @@ class AugStepForm extends React.Component {
                                     required='required' 
                                     onChange={(e) => {this.setState({stepCategory: e.target.value}); this.clearSelects()}} 
                                     value={this.state.stepCategory}> 
-                                        <option value=''>Select a category</option>
-                                        {this.populateOptions(this.state.categoriesArray)}
+                                        <option value='' disabled>SELECT A CATEGORY</option>
+                                        {categoryOptions}
                                     </Form.Control>;
 
         // select input for specific step
@@ -75,8 +104,8 @@ class AugStepForm extends React.Component {
                                 required='required'
                                 onChange={(e) => {this.setState({stepName: e.target.value}); this.clearSelects()}}
                                 value={this.state.stepName}>
-                                    <option value=''>Select a step</option>
-
+                                    <option value='' disabled>SELECT A STEP</option>
+                                    {stepOptions}
                                 </Form.Control>;
 
         // small input field
@@ -125,7 +154,6 @@ class AugStepForm extends React.Component {
                             {stepCitation}
                         </Form.Row>
                     </Card.Body>
-                    {this.populateOptions(this.state.categoriesArray)}
                 </Form.Group>
                 
             </div>
