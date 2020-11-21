@@ -185,4 +185,4 @@ class AugStepForm extends React.Component {
     }
 }
 
-export default AugStepForm;
+export default AugStepFormGroup;
