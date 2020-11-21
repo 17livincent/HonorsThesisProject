@@ -139,7 +139,7 @@ class AugStepForm extends React.Component {
         let selectStepName = <Form.Control id='selectStepName'
                                 as='select'
                                 required='required'
-                                onChange={(e) => {this.setState({stepName: e.target.value}); this.clearSelects(); this.setDescription(e.target.value); this.setCitation(e.target.value);}}
+                                onChange={(e) => {this.setState({stepName: e.target.value}); this.setDescription(e.target.value); this.setCitation(e.target.value);}}
                                 value={this.state.stepName}>
                                     <option value=''>SELECT A STEP</option>
                                     {stepOptions}
