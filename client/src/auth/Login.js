@@ -8,7 +8,7 @@ import {Form, Button} from 'react-bootstrap';
 import GoogleLogin from 'react-google-login';
 
 import AuthNavbar from './AuthNavbar.js';
-import Footer from './Footer.js';
+import Footer from '../Footer.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LoginSignUp.css';
