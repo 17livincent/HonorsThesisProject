@@ -16,10 +16,9 @@ class PrepStepsForm extends React.Component {
         super(props);
         this.state= {
             numOfSteps: 1,
-            steps: Array(1).fill(1)   // array of steps [1, 2, 3, 4, ...]
+            steps: Array(1).fill('1')   // array of steps [1, 2, 3, 4, ...]
         }
 
-        this.renderFormGroups = this.renderFormGroups.bind(this);
         this.addStep = this.addStep.bind(this);
     }
 
@@ -29,20 +28,18 @@ class PrepStepsForm extends React.Component {
 
     // adds a new step
     addStep() {
-        let currentState = this.state;
-        let currentSteps = currentState.steps[currentState.steps.length - 1];
-        let nextStep = currentState.numOfSteps;
-        this.setState({numOfSteps: nextStep, steps: currentSteps.slice().push(nextStep)});
+        // increment this.state.numOfSteps
+        let nextStep = this.state.numOfSteps + 1;
+        this.setState({numOfSteps: nextStep});
+        // add new step to this.state.steps
+        let newSteps = this.state.steps.slice();
+        newSteps.push(nextStep.toString());
+        this.setState({steps: newSteps});
+
     }
 
     renderPSFormGroup(i) {
-        return (
-            <PrepStepFormGroup stepNumber={i} />
-        );
-    }
-
-    renderFormGroups() {
-        return (this.state.steps).map((stepNumber) => (<PrepStepFormGroup stepNumber={stepNumber} />));
+        return <PrepStepFormGroup stepNumber={i} />;
     }
 
     render() {
@@ -52,6 +49,7 @@ class PrepStepsForm extends React.Component {
         return (
             <div>
                 <Form>
+                    {this.state.steps.map((i) => (this.renderPSFormGroup(i)))}
                     {addStepButton}
                     {this.state.steps}
                 </Form>
