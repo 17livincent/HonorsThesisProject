@@ -7,7 +7,7 @@ import React from 'react';
 import {Form, Card, Col, Button} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './outline.css';
+//import './outline.css';
 
 class PrepStepFormGroup extends React.Component {
 
