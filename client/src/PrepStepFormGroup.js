@@ -14,16 +14,16 @@ class PrepStepFormGroup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            stepNumber: this.props.stepNumber || 0,  // step number
-            stepCategory: '',    // step category
-            stepName: '',    // step name
-            input: '',
+            stepNumber: this.props.stepNumber,  // step number
+            //stepCategory: '',    // step category
+            stepName: this.props.stepName || '',    // step name
+            input: this.props.input || '',
             description: '',    // step description, if applicable
             citation: '',   // step citation, if applicable
             removeStep: false,   // determines whether or not this object should be deleted
 
             categories: this.props.categories || [], // array of category options
-            steps: this.props.steps || []  // array of step options
+            steps: this.props.steps || [],  // array of step options
         };
 
         this.setRemoveStep = this.setRemoveStep.bind(this);
@@ -75,11 +75,20 @@ class PrepStepFormGroup extends React.Component {
                 <Form.Control id={id}
                     type='text' 
                     placeholder={placeholder}
+                    onChange={(e) => (this.setState({input: e}))}
                     disabled={this.state.stepName === ''}>
 
                 </Form.Control>
             </Col>
         );
+    }
+
+    // clears the input field of a step is not selected
+    setInput(stepValSelected) {
+        if(stepValSelected === '') {
+            let input = document.getElementById('inputField');
+            input.value = '';
+        }
     }
 
     // assign the corresponding info to state.description of the chosen step
@@ -141,7 +150,7 @@ class PrepStepFormGroup extends React.Component {
         let selectStepName = <Form.Control id='selectStepName'
                                 as='select'
                                 required='required'
-                                onChange={(e) => {this.setState({stepName: e.target.value}); this.setDescription(e.target.value); this.setCitation(e.target.value);}}
+                                onChange={(e) => {this.setInput(e.target.value); this.setState({stepName: e.target.value}); this.setDescription(e.target.value); this.setCitation(e.target.value);}}
                                 value={this.state.stepName}>
                                     <option value=''>Select a step</option>
                                     {stepOptions}
@@ -154,7 +163,7 @@ class PrepStepFormGroup extends React.Component {
         let stepCitation = <Form.Label>Citation: {this.state.citation}</Form.Label>;
 
         // button to remove
-        let deleteButton = <Button variant='outline-secondary' onClick={this.setRemoveStep}>Delete</Button>
+        let deleteButton = <Button variant='outline-secondary' onClick={this.props.onDelete}>Delete</Button>
 
         return (
             <div id='main'>
