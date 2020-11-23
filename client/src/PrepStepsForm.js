@@ -20,10 +20,7 @@ class PrepStepsForm extends React.Component {
         }
 
         this.addStep = this.addStep.bind(this);
-    }
-
-    componentDidMount() {
-
+        this.deleteStep = this.deleteStep.bind(this);
     }
 
     // adds a new step
@@ -38,8 +35,30 @@ class PrepStepsForm extends React.Component {
 
     }
 
+    // handles deleting a step
+    deleteStep(stepNumber) {
+        if(stepNumber !== '1' && this.state.numOfSteps !== 1) {
+            let currentSteps = this.state.steps.slice();
+            let currentNumOfSteps = this.state.numOfSteps;
+            // remove the step of stepNumber from the state.steps array
+            let newSteps = currentSteps.slice();
+            let index = newSteps.indexOf(stepNumber.toString());
+            newSteps.splice(index, 1);
+            // decrement state.numOfSteps
+            let newNum = currentNumOfSteps -1;
+            // update state
+            this.setState({numOfSteps: newNum, steps: newSteps});
+
+            alert(`Step ${stepNumber} deleted.`);
+        }
+        else {
+            alert('The first step cannot be deleted.');
+        }
+        
+    }
+
     renderPSFormGroup(i) {
-        return <PrepStepFormGroup stepNumber={i} />;
+        return <PrepStepFormGroup stepNumber={i} onDelete={() => this.deleteStep(i)}/>;
     }
 
     render() {
@@ -50,8 +69,9 @@ class PrepStepsForm extends React.Component {
             <div>
                 <Form>
                     {this.state.steps.map((i) => (this.renderPSFormGroup(i)))}
-                    {addStepButton}
-                    {this.state.steps}
+                    {addStepButton} <br />
+                    Steps: {this.state.steps} <br />
+                    NumOfSteps: {this.state.numOfSteps}
                 </Form>
             </div>
         );
