@@ -16,7 +16,7 @@ class PrepStepsForm extends React.Component {
         super(props);
         this.state= {
             numOfSteps: 1,
-            steps: Array(1).fill('1')   // array of steps [1, 2, 3, 4, ...]
+            steps: ['1']
         }
 
         this.addStep = this.addStep.bind(this);
@@ -27,34 +27,39 @@ class PrepStepsForm extends React.Component {
     addStep() {
         // increment this.state.numOfSteps
         let nextStep = this.state.numOfSteps + 1;
-        this.setState({numOfSteps: nextStep});
         // add new step to this.state.steps
-        let newSteps = this.state.steps.slice();
-        newSteps.push(nextStep.toString());
-        this.setState({steps: newSteps});
+        let newSteps = this.range(1, nextStep, 1);
+        // update state
+        this.setState({numOfSteps: nextStep, steps: newSteps});
 
     }
 
     // handles deleting a step
     deleteStep(stepNumber) {
         if(stepNumber !== '1' && this.state.numOfSteps !== 1) {
-            let currentSteps = this.state.steps.slice();
             let currentNumOfSteps = this.state.numOfSteps;
-            // remove the step of stepNumber from the state.steps array
-            let newSteps = currentSteps.slice();
-            let index = newSteps.indexOf(stepNumber.toString());
-            newSteps.splice(index, 1);
+
             // decrement state.numOfSteps
             let newNum = currentNumOfSteps -1;
+            // update steps array
+            let newSteps = this.range(1, newNum, 1);
             // update state
             this.setState({numOfSteps: newNum, steps: newSteps});
 
-            alert(`Step ${stepNumber} deleted.`);
+            //alert(`Step ${stepNumber} deleted.`);            
+            
         }
         else {
             alert('The first step cannot be deleted.');
         }
         
+    }
+
+    /**
+     * Creates an array like the python range function.
+     */
+    range(start, stop, inc) {
+        return Array.from({length: (stop - start) / inc + 1}, (_, i) => start + (i * inc));
     }
 
     renderPSFormGroup(i) {
