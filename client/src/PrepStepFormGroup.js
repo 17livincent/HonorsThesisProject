@@ -15,7 +15,6 @@ class PrepStepFormGroup extends React.Component {
         super(props);
         this.state = {
             stepNumber: this.props.stepNumber,  // step number
-            //stepCategory: '',    // step category
             stepName: this.props.stepName || '',    // step name
             input: this.props.input || '',
             description: '',    // step description, if applicable
@@ -26,8 +25,6 @@ class PrepStepFormGroup extends React.Component {
             steps: this.props.steps || [],  // array of step options
         };
 
-        this.setRemoveStep = this.setRemoveStep.bind(this);
-        //this.clearSelects = this.clearSelects.bind(this);
     }
 
     componentDidMount() {
@@ -47,12 +44,6 @@ class PrepStepFormGroup extends React.Component {
                 {name: 'Step3', val: 'step3', description: 'description3', citation: 'citation3'}
             ]
         });
-    }
-
-    // sets the state value to show that the delete button was pressed
-    setRemoveStep() {
-        this.setState({removeStep: true});
-        alert(`Step ${this.state.stepNumber} deleted`);  // for testing
     }
 
     /*
