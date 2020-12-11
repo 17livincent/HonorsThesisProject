@@ -1,6 +1,6 @@
 /**
  * PrepStepsForm.js
- * This class manages an array of PrepStepFormGroups by handling form submit, step add, and step deletion
+ * This class manages an array of PrepStepFormGroups by handling form submit, stepNums add, and stepNums deletion
  */
 
 import React from 'react';
@@ -16,41 +16,53 @@ class PrepStepsForm extends React.Component {
         super(props);
         this.state= {
             numOfSteps: 1,
-            steps: ['1']
+            stepNums: ['1'],    // array of step numbers
+            stepNames: [''],     // array of selected steps
+            inputs: ['']        // array of inputs
         }
 
         this.addStep = this.addStep.bind(this);
         this.deleteStep = this.deleteStep.bind(this);
     }
 
-    // adds a new step
+    // adds a new stepNums
     addStep() {
         // increment this.state.numOfSteps
         let nextStep = this.state.numOfSteps + 1;
-        // add new step to this.state.steps
+        // add new stepNums to this.state.stepNums
         let newSteps = this.range(1, nextStep, 1);
+        // push new element to stepNames
+        let newStepNames = this.state.stepNames.slice();
+        newStepNames.push('');
+        // push new element to inputs
+        let newInputs = this.state.inputs.slice();
+        newInputs.push('');
         // update state
-        this.setState({numOfSteps: nextStep, steps: newSteps});
+        this.setState({numOfSteps: nextStep, stepNums: newSteps, stepNames: newStepNames, inputs: newInputs});
 
     }
 
-    // handles deleting a step
+    // handles deleting a stepNums
     deleteStep(stepNumber) {
         if(stepNumber !== '1' && this.state.numOfSteps !== 1) {
-            let currentNumOfSteps = this.state.numOfSteps;
-
             // decrement state.numOfSteps
-            let newNum = currentNumOfSteps -1;
-            // update steps array
+            let newNum = this.state.numOfSteps -1;
+            // update stepNums array
             let newSteps = this.range(1, newNum, 1);
+            // update stepNames
+            let newStepNames = this.state.stepNames.slice();
+            newStepNames.splice(stepNumber - 1, 1);
+            // update inputs
+            let newInputs = this.state.inputs.slice();
+            newInputs.splice(stepNumber - 1, 1);
             // update state
-            this.setState({numOfSteps: newNum, steps: newSteps});
+            this.setState({numOfSteps: newNum, stepNums: newSteps, stepNames: newStepNames, inputs: newInputs});
 
-            //alert(`Step ${stepNumber} deleted.`);            
+            //alert(`stepNums ${stepNumber} deleted.`);            
             
         }
         else {
-            alert('The first step cannot be deleted.');
+            alert('The first stepNums cannot be deleted.');
         }
         
     }
@@ -68,14 +80,14 @@ class PrepStepsForm extends React.Component {
 
     render() {
 
-        let addStepButton = <Button onClick={this.addStep}>Add Step</Button>;
+        let addStepButton = <Button onClick={this.addStep}>Add step</Button>;
 
         return (
             <div>
                 <Form>
-                    {this.state.steps.map((i) => (this.renderPSFormGroup(i)))}
+                    {this.state.stepNums.map((i) => (this.renderPSFormGroup(i)))}
                     {addStepButton} <br />
-                    Steps: {this.state.steps} <br />
+                    stepNums: {this.state.stepNums} <br />
                     NumOfSteps: {this.state.numOfSteps}
                 </Form>
             </div>
