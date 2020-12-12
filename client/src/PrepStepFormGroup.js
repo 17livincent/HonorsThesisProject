@@ -19,45 +19,21 @@ class PrepStepFormGroup extends React.Component {
             input: this.props.input || '',
             description: '',    // step description, if applicable
             citation: '',   // step citation, if applicable
-            removeStep: false,   // determines whether or not this object should be deleted
 
-            categories: this.props.categories || [], // array of category options
             steps: this.props.steps || [],  // array of step options
         };
 
     }
 
-    componentDidMount() {
-        this.setState({
-            // get list of categories
-            categories: [   // array of dictionaries
-                {name: 'CategoryName', val: 'OptionValue'},
-                {name: 'Category1', val: 'cat1'},
-                {name: 'Category2', val: 'cat2'},
-                {name: 'Category3', val: 'cat3'}
-            ],
-            // get list of steps
-            steps: [    // array of dictionaries
-                {name: 'StepName', val: 'optionValue', description: 'stepDescription', citation: 'stepCitation'},
-                {name: 'Step1', val: 'step1', description: 'description1', citation: 'citation1'},
-                {name: 'Step2', val: 'step2', description: 'description2', citation: 'citation2'},
-                {name: 'Step3', val: 'step3', description: 'description3', citation: 'citation3'}
-            ]
-        });
+    /**
+     * A prop function passed from PrepStepsForm to update the above state
+     */
+    updateAbove(stepNumber, stepName, input) {
+        stepNumber = (typeof stepNumber !== 'undefined') ? stepNumber : this.state.stepNumber;
+        stepName = (typeof stepName !== 'undefined') ? stepName : this.state.stepName;
+        input = (typeof input !== 'undefined') ? input : this.state.input;
+        this.props.onFormGroupChange(stepNumber, stepName, input);
     }
-
-    /*
-    // NOT WORKING
-    clearSelects() {
-        //if(this.state.stepCategory === '') {
-        //    document.getElementById('selectStepName').value = '';
-        //    document.getElementById('inputField').value = '';
-        //}
-        if(this.state.stepName === '') {
-            document.getElementById('inputField').value = '';
-        }
-    }
-    */
 
     // returns an input field
     getInputField(id, placeholder) {
@@ -66,7 +42,7 @@ class PrepStepFormGroup extends React.Component {
                 <Form.Control id={id}
                     type='text' 
                     placeholder={placeholder}
-                    onChange={(e) => (this.setState({input: e}))}
+                    onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, undefined, e)}}
                     disabled={this.state.stepName === ''}>
 
                 </Form.Control>
@@ -74,7 +50,7 @@ class PrepStepFormGroup extends React.Component {
         );
     }
 
-    // clears the input field of a step is not selected
+    // clears the input field of a step if not selected
     setInput(stepValSelected) {
         if(stepValSelected === '') {
             let input = document.getElementById('inputField');
@@ -111,37 +87,22 @@ class PrepStepFormGroup extends React.Component {
     }
 
     render() {
-        /*
-        // get list of category options
-        let categoryOptions = this.state.categories.length > 0 && this.state.categories.map((item, i) => {
-            return (
-                <option value={item.val}>{item.name}</option>
-            )
-        }, this);
-        */
-
         // get list of step options
         let stepOptions = this.state.steps.length > 0 && this.state.steps.map((item, i) => {
             return (
                 <option value={item.val}>{item.name}</option>
             );
         });
-        /*
-        // select input for step category
-        let selectStepCategory = <Form.Control id='selectStepCategory'
-                                    as='select' 
-                                    required='required' 
-                                    onChange={(e) => {this.setState({stepCategory: e.target.value}); this.clearSelects();}} 
-                                    value={this.state.stepCategory}> 
-                                        <option value=''>SELECT A CATEGORY</option>
-                                        {categoryOptions}
-                                    </Form.Control>;
-        */
+
         // select input for specific step
         let selectStepName = <Form.Control id='selectStepName'
                                 as='select'
                                 required='required'
-                                onChange={(e) => {this.setInput(e.target.value); this.setState({stepName: e.target.value}); this.setDescription(e.target.value); this.setCitation(e.target.value);}}
+                                onChange={(e) => {this.setInput(e.target.value); 
+                                                    this.setState({stepName: e.target.value}); 
+                                                    this.setDescription(e.target.value); 
+                                                    this.setCitation(e.target.value); 
+                                                    this.updateAbove(undefined, e.target.value, undefined)}}
                                 value={this.state.stepName}>
                                     <option value=''>Select a step</option>
                                     {stepOptions}

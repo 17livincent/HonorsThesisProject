@@ -18,11 +18,19 @@ class PrepStepsForm extends React.Component {
             numOfSteps: 1,
             stepNums: ['1'],    // array of step numbers
             stepNames: [''],     // array of selected steps
-            inputs: ['']        // array of inputs
+            inputs: [''],        // array of inputs
+            stepOptions: [
+                {name: 'StepName', val: 'optionValue', description: 'stepDescription', citation: 'stepCitation'},
+                {name: 'Step1', val: 'step1', description: 'description1', citation: 'citation1'},
+                {name: 'Step2', val: 'step2', description: 'description2', citation: 'citation2'},
+                {name: 'Step3', val: 'step3', description: 'description3', citation: 'citation3'}
+            ]
         }
 
         this.addStep = this.addStep.bind(this);
         this.deleteStep = this.deleteStep.bind(this);
+        this.onFormGroupChange = this.onFormGroupChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
     // adds a new stepNums
@@ -68,6 +76,22 @@ class PrepStepsForm extends React.Component {
     }
 
     /**
+     * Called when the inputs of a PrepStepFormGroup are updated
+     */
+    onFormGroupChange(stepNumber, stepName, input) {
+        // get index for this step
+        let index = stepNumber - 1;
+        // create updated stepNames
+        let newStepNames = this.state.stepNames.slice();
+        newStepNames.splice(index, 1, stepName);
+        // create updated inputs
+        let newInputs = this.state.inputs.slice();
+        newInputs.splice(index, 1, input);
+        // update state
+        this.setState({stepNames: newStepNames, inputs: newInputs});
+    }
+
+    /**
      * Creates an array like the python range function.
      */
     range(start, stop, inc) {
@@ -75,20 +99,34 @@ class PrepStepsForm extends React.Component {
     }
 
     renderPSFormGroup(i) {
-        return <PrepStepFormGroup stepNumber={i} onDelete={() => this.deleteStep(i)}/>;
+        return <PrepStepFormGroup 
+                    stepNumber={i} 
+                    stepName={this.state.stepNames[i - 1]}
+                    input={this.state.inputs[i - 1]}
+                    steps={this.state.stepOptions} 
+                    onFormGroupChange={this.onFormGroupChange}
+                    onDelete={() => this.deleteStep(i)}/>;
+    }
+
+    /**
+     * Handles the form submission
+     */
+    onSubmit() {
+
     }
 
     render() {
-
         let addStepButton = <Button onClick={this.addStep}>Add step</Button>;
 
         return (
             <div>
-                <Form>
+                <Form onSubmit={this.onSubmit}>
                     {this.state.stepNums.map((i) => (this.renderPSFormGroup(i)))}
                     {addStepButton} <br />
                     stepNums: {this.state.stepNums} <br />
-                    NumOfSteps: {this.state.numOfSteps}
+                    NumOfSteps: {this.state.numOfSteps} <br />
+                    stepNames: {this.state.stepNames} <br />
+                    stepNames length: {this.state.stepNames.length}
                 </Form>
             </div>
         );
