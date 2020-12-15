@@ -119,7 +119,7 @@ class PrepStepFormGroup extends React.Component {
         let deleteButton = <Button variant='outline-danger' onClick={this.onDelete}>Delete</Button>
 
         return (
-            <div>
+            <React.Fragment>
                 <Form.Group>
                     <Card border='primary'>
                         <Card.Body>
@@ -144,7 +144,7 @@ class PrepStepFormGroup extends React.Component {
                         </Card.Body>
                     </Card>
                 </Form.Group>
-            </div>
+            </React.Fragment>
         );
     }
 }

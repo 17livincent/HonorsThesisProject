@@ -113,7 +113,7 @@ class PrepStepsForm extends React.Component {
      * Handles the form submission
      */
     onSubmit() {
-
+        alert("Submitted");
     }
 
     render() {
@@ -121,7 +121,7 @@ class PrepStepsForm extends React.Component {
         let submitButton = <Button id='submitButton' variant='primary' type='submit'>Submit</Button>;
 
         return (
-            <div id='main'>
+            <React.Fragment id='main'>
                 <Form onSubmit={this.onSubmit}>
                     {this.state.stepNums.map((i) => (this.renderPSFormGroup(i)))}
                     <Form.Row>
@@ -138,7 +138,7 @@ class PrepStepsForm extends React.Component {
                     stepVals: {this.state.stepVals} <br />
                     stepVals length: {this.state.stepVals.length} <br />
                 </Form>
-            </div>
+            </React.Fragment>
         );
     }
 
