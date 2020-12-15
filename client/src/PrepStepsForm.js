@@ -4,9 +4,10 @@
  */
 
 import React from 'react';
-import {Form, Button} from 'react-bootstrap';
+import {Form, Col, Button} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './PrepStepsForm.css';
 //import './outline.css';
 
 import PrepStepFormGroup from './PrepStepFormGroup';
@@ -116,17 +117,26 @@ class PrepStepsForm extends React.Component {
     }
 
     render() {
-        let addStepButton = <Button onClick={this.addStep}>Add step</Button>;
+        let addStepButton = <Button id='addButton' variant='secondary' onClick={this.addStep}>Add step</Button>;
+        let submitButton = <Button id='submitButton' variant='primary' type='submit'>Submit</Button>;
 
         return (
-            <div>
+            <div id='main'>
                 <Form onSubmit={this.onSubmit}>
                     {this.state.stepNums.map((i) => (this.renderPSFormGroup(i)))}
-                    {addStepButton} <br />
+                    <Form.Row>
+                        <Col>
+                            {addStepButton}
+                        </Col>
+                        <Col>
+                            {submitButton}
+                        </Col>
+                    </Form.Row>
+                    <br />
                     stepNums: {this.state.stepNums} <br />
                     NumOfSteps: {this.state.numOfSteps} <br />
                     stepVals: {this.state.stepVals} <br />
-                    stepVals length: {this.state.stepVals.length}
+                    stepVals length: {this.state.stepVals.length} <br />
                 </Form>
             </div>
         );

@@ -116,10 +116,10 @@ class PrepStepFormGroup extends React.Component {
                                 </Form.Control>;
 
         // button to remove
-        let deleteButton = <Button variant='outline-secondary' onClick={this.onDelete}>Delete</Button>
+        let deleteButton = <Button variant='outline-danger' onClick={this.onDelete}>Delete</Button>
 
         return (
-            <div id='main'>
+            <div>
                 <Form.Group>
                     <Card border='primary'>
                         <Card.Body>
