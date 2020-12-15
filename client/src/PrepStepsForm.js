@@ -17,13 +17,13 @@ class PrepStepsForm extends React.Component {
         this.state= {
             numOfSteps: 1,
             stepNums: ['1'],    // array of step numbers
-            stepNames: [''],     // array of selected steps
+            stepVals: [''],     // array of selected steps
             inputs: [''],        // array of inputs
             stepOptions: [
                 {name: 'StepName', val: 'optionValue', description: 'stepDescription', citation: 'stepCitation'},
-                {name: 'Step1', val: 'step1', description: 'description1', citation: 'citation1'},
-                {name: 'Step2', val: 'step2', description: 'description2', citation: 'citation2'},
-                {name: 'Step3', val: 'step3', description: 'description3', citation: 'citation3'}
+                {name: 'Option1', val: 'option1', description: 'description1', citation: 'citation1'},
+                {name: 'Option2', val: 'option2', description: 'description2', citation: 'citation2'},
+                {name: 'Option3', val: 'option3', description: 'description3', citation: 'citation3'}
             ]
         }
 
@@ -39,14 +39,14 @@ class PrepStepsForm extends React.Component {
         let nextStep = this.state.numOfSteps + 1;
         // add new stepNums to this.state.stepNums
         let newSteps = this.range(1, nextStep, 1);
-        // push new element to stepNames
-        let newStepNames = this.state.stepNames.slice();
+        // push new element to stepVals
+        let newStepNames = this.state.stepVals.slice();
         newStepNames.push('');
         // push new element to inputs
         let newInputs = this.state.inputs.slice();
         newInputs.push('');
         // update state
-        this.setState({numOfSteps: nextStep, stepNums: newSteps, stepNames: newStepNames, inputs: newInputs});
+        this.setState({numOfSteps: nextStep, stepNums: newSteps, stepVals: newStepNames, inputs: newInputs});
 
     }
 
@@ -57,14 +57,14 @@ class PrepStepsForm extends React.Component {
             let newNum = this.state.numOfSteps -1;
             // update stepNums array
             let newSteps = this.range(1, newNum, 1);
-            // update stepNames
-            let newStepNames = this.state.stepNames.slice();
+            // update stepVals
+            let newStepNames = this.state.stepVals.slice();
             newStepNames.splice(stepNumber - 1, 1);
             // update inputs
             let newInputs = this.state.inputs.slice();
             newInputs.splice(stepNumber - 1, 1);
             // update state
-            this.setState({numOfSteps: newNum, stepNums: newSteps, stepNames: newStepNames, inputs: newInputs});
+            this.setState({numOfSteps: newNum, stepNums: newSteps, stepVals: newStepNames, inputs: newInputs});
 
             //alert(`stepNums ${stepNumber} deleted.`);            
             
@@ -81,14 +81,14 @@ class PrepStepsForm extends React.Component {
     onFormGroupChange(stepNumber, stepName, input) {
         // get index for this step
         let index = stepNumber - 1;
-        // create updated stepNames
-        let newStepNames = this.state.stepNames.slice();
+        // create updated stepVals
+        let newStepNames = this.state.stepVals.slice();
         newStepNames.splice(index, 1, stepName);
         // create updated inputs
         let newInputs = this.state.inputs.slice();
         newInputs.splice(index, 1, input);
         // update state
-        this.setState({stepNames: newStepNames, inputs: newInputs});
+        this.setState({stepVals: newStepNames, inputs: newInputs});
     }
 
     /**
@@ -101,11 +101,11 @@ class PrepStepsForm extends React.Component {
     renderPSFormGroup(i) {
         return <PrepStepFormGroup 
                     stepNumber={i} 
-                    stepName={this.state.stepNames[i - 1]}
+                    stepName={this.state.stepVals[i - 1]}
                     input={this.state.inputs[i - 1]}
                     steps={this.state.stepOptions} 
                     onFormGroupChange={this.onFormGroupChange}
-                    onDelete={() => this.deleteStep(i)}/>;
+                    onDelete={this.deleteStep}/>;
     }
 
     /**
@@ -125,8 +125,8 @@ class PrepStepsForm extends React.Component {
                     {addStepButton} <br />
                     stepNums: {this.state.stepNums} <br />
                     NumOfSteps: {this.state.numOfSteps} <br />
-                    stepNames: {this.state.stepNames} <br />
-                    stepNames length: {this.state.stepNames.length}
+                    stepVals: {this.state.stepVals} <br />
+                    stepVals length: {this.state.stepVals.length}
                 </Form>
             </div>
         );

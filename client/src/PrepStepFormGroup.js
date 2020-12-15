@@ -15,13 +15,15 @@ class PrepStepFormGroup extends React.Component {
         super(props);
         this.state = {
             stepNumber: this.props.stepNumber,  // step number
-            stepName: this.props.stepName || '',    // step name
-            input: this.props.input || '',
+            stepName: this.props.stepName,    // step name
+            input: this.props.input,
             description: '',    // step description, if applicable
             citation: '',   // step citation, if applicable
 
             steps: this.props.steps || [],  // array of step options
         };
+
+        this.onDelete = this.onDelete.bind(this);
 
     }
 
@@ -33,6 +35,13 @@ class PrepStepFormGroup extends React.Component {
         stepName = (typeof stepName !== 'undefined') ? stepName : this.state.stepName;
         input = (typeof input !== 'undefined') ? input : this.state.input;
         this.props.onFormGroupChange(stepNumber, stepName, input);
+    }
+
+    /**
+     * Called when the delete button is pressed
+     */
+    onDelete() {
+        this.props.onDelete(this.state.stepNumber);
     }
 
     // returns an input field
@@ -98,8 +107,9 @@ class PrepStepFormGroup extends React.Component {
         let selectStepName = <Form.Control id='selectStepName'
                                 as='select'
                                 required='required'
-                                onChange={(e) => {this.setInput(e.target.value); 
+                                onChange={(e) => {
                                                     this.setState({stepName: e.target.value}); 
+                                                    this.setInput(e.target.value); 
                                                     this.setDescription(e.target.value); 
                                                     this.setCitation(e.target.value); 
                                                     this.updateAbove(undefined, e.target.value, undefined)}}
@@ -115,7 +125,7 @@ class PrepStepFormGroup extends React.Component {
         let stepCitation = <Form.Label>Citation: {this.state.citation}</Form.Label>;
 
         // button to remove
-        let deleteButton = <Button variant='outline-secondary' onClick={this.props.onDelete}>Delete</Button>
+        let deleteButton = <Button variant='outline-secondary' onClick={this.onDelete}>Delete</Button>
 
         return (
             <div id='main'>
