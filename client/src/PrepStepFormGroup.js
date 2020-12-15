@@ -15,7 +15,7 @@ class PrepStepFormGroup extends React.Component {
         super(props);
         this.state = {
             stepNumber: this.props.stepNumber,  // step number
-            stepName: this.props.stepName,    // step name
+            //stepName: this.props.stepName,    // step name
             input: this.props.input,
             description: '',    // step description, if applicable
             citation: '',   // step citation, if applicable
@@ -24,7 +24,8 @@ class PrepStepFormGroup extends React.Component {
         };
 
         this.onDelete = this.onDelete.bind(this);
-
+        this.getDescription = this.getDescription.bind(this);
+        this.getCitation = this.getCitation.bind(this);
     }
 
     /**
@@ -52,6 +53,7 @@ class PrepStepFormGroup extends React.Component {
                     type='text' 
                     placeholder={placeholder}
                     onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, undefined, e)}}
+                    value={this.props.input}
                     disabled={this.state.stepName === ''}>
 
                 </Form.Control>
@@ -68,31 +70,39 @@ class PrepStepFormGroup extends React.Component {
     }
 
     // assign the corresponding info to state.description of the chosen step
-    setDescription(stepValSelected) {
+    getDescription(stepValSelected) {
+        let desc;
         if(stepValSelected === '') {
-            this.setState({description: ''});
+            desc = '';
         }
         else {
             for(let i in this.state.steps) {
                 if(stepValSelected === this.state.steps[i].val) {
-                    this.setState({description: this.state.steps[i].description});
+                    desc =  this.props.steps[i].description;
                 }
             }
         }
+        return (
+            <Form.Label>Description: {desc}</Form.Label>
+        );
     }
 
     // assign the corresponding info to state.citation of the chosen step
-    setCitation(stepValSelected) {
+    getCitation(stepValSelected) {
+        let cit;
         if(stepValSelected === '') {
-            this.setState({citation: ''});
+            cit = '';
         }
         else {
             for(let i in this.state.steps) {
                 if(stepValSelected === this.state.steps[i].val) {
-                    this.setState({citation: this.state.steps[i].citation});
+                    cit = this.props.steps[i].citation;
                 }
             }
         }
+        return (
+            <Form.Label>Citation: {cit}</Form.Label>
+        );
     }
 
     render() {
@@ -108,21 +118,19 @@ class PrepStepFormGroup extends React.Component {
                                 as='select'
                                 required='required'
                                 onChange={(e) => {
-                                                    this.setState({stepName: e.target.value}); 
+                                                    //this.setState({stepName: e.target.value}); 
                                                     this.setInput(e.target.value); 
-                                                    this.setDescription(e.target.value); 
-                                                    this.setCitation(e.target.value); 
                                                     this.updateAbove(undefined, e.target.value, undefined)}}
-                                value={this.state.stepName}>
+                                value={this.props.stepName}>
                                     <option value=''>Select a step</option>
                                     {stepOptions}
                                 </Form.Control>;
 
         // label for step description
-        let stepDescription = <Form.Label>Description: {this.state.description}</Form.Label>;
+        //let stepDescription = <Form.Label>Description: {() => (this.getDescription(this.props.stepName))}</Form.Label>;
 
         // label for step citation
-        let stepCitation = <Form.Label>Citation: {this.state.citation}</Form.Label>;
+        //let stepCitation = <Form.Label>Citation: {this.state.citation}</Form.Label>;
 
         // button to remove
         let deleteButton = <Button variant='outline-secondary' onClick={this.onDelete}>Delete</Button>
@@ -132,7 +140,7 @@ class PrepStepFormGroup extends React.Component {
                 <Form.Group>
                     <Card border='primary'>
                         <Card.Body>
-                            <Card.Title>Step {this.state.stepNumber}</Card.Title>
+                            <Card.Title>Step {this.props.stepNumber}</Card.Title>
                             <Form.Row>
                                 <Col xs={7}>
                                     {selectStepName}
@@ -145,10 +153,10 @@ class PrepStepFormGroup extends React.Component {
                                 </Col>
                             </Form.Row>
                             <Form.Row>
-                                {stepDescription}
+                                {this.getDescription(this.props.stepName)}
                             </Form.Row>
                             <Form.Row>
-                                {stepCitation}
+                                {this.getCitation(this.props.stepName)}
                             </Form.Row>
                         </Card.Body>
                     </Card>
