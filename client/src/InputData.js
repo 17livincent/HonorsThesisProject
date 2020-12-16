@@ -4,18 +4,18 @@
  */
 
 import React from 'react';
-import {Form, Button} from 'react-bootstrap';
+import {Form, Button, Col} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './InputData.css';
-import './outline.css';
+//import './outline.css';
 
 class InputData extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             numOfFiles: 1,
-            files: []
+            files: ['']
         }
 
         this.incNumOfFiles = this.incNumOfFiles.bind(this);
@@ -24,16 +24,26 @@ class InputData extends React.Component {
     /**
      * Called when a file is selected
      */
-    updateFiles(index) {
+    updateFiles(index, file) {
         alert(`File ${index} changed`);
+        // update files
+        let newFiles = this.state.files.slice();
+        newFiles.splice(index, 1, file);
+        // update state
+        this.setState({files: newFiles});
     }
 
     /**
      * Increments the state variable numOfFiles
      */
     incNumOfFiles() {
+        // get new numOfFiles
         let newNum = this.state.numOfFiles + 1;
-        this.setState({numOfFiles: newNum});
+        // get new files
+        let newFiles = this.state.files.slice();
+        newFiles.push('');
+        // update state
+        this.setState({numOfFiles: newNum, files: newFiles});
     }
 
     /**
@@ -47,7 +57,7 @@ class InputData extends React.Component {
         return (
             <Form.File 
                 accept='.csv, .png'
-                onChange={() => (this.updateFiles(index))}>
+                onChange={(e) => (this.updateFiles(index, e.target.value))}>
             </Form.File>
         );
     }
@@ -55,12 +65,19 @@ class InputData extends React.Component {
     render() {
         return (
             <React.Fragment id='main'>
-                <h2>Select CSV files</h2>
+                <h3>Select CSV files</h3>
                 <Form>
                     {this.range(0, this.state.numOfFiles - 1, 1).map((i) => this.getFileInput(i))}
                 </Form>
                 <br />
-                <Button onClick={this.incNumOfFiles}>Input another file</Button>
+                <Form.Row>
+                    <Col>
+                        <Button id='addButton' variant='secondary' onClick={this.incNumOfFiles}>Input another file</Button>
+                    </Col>
+                    <Col>
+                        <Button id='submitButton' variant='primary' type='submit'>Submit</Button>
+                    </Col>
+                </Form.Row>
             </React.Fragment>
         );
     }

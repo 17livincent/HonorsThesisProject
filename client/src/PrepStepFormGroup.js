@@ -121,7 +121,7 @@ class PrepStepFormGroup extends React.Component {
         return (
             <React.Fragment>
                 <Form.Group>
-                    <Card border='primary'>
+                    <Card border='primary' bg='light' text='dark'>
                         <Card.Body>
                             <Card.Title>Step {this.props.stepNumber}</Card.Title>
                             <Form.Row>
@@ -135,6 +135,7 @@ class PrepStepFormGroup extends React.Component {
                                     {deleteButton}
                                 </Col>
                             </Form.Row>
+                            <br />
                             <Form.Row>
                                 {this.getDescription(this.props.stepName)}
                             </Form.Row>

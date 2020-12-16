@@ -118,7 +118,7 @@ class PrepStepsForm extends React.Component {
 
     render() {
         let addStepButton = <Button id='addButton' variant='secondary' onClick={this.addStep}>Add step</Button>;
-        let submitButton = <Button id='submitButton' variant='primary' type='submit'>Submit</Button>;
+        let submitButton = <Button id='submitButton' variant='primary' type='submit'>Run steps</Button>;
 
         return (
             <React.Fragment id='main'>
@@ -132,11 +132,6 @@ class PrepStepsForm extends React.Component {
                             {submitButton}
                         </Col>
                     </Form.Row>
-                    <br />
-                    stepNums: {this.state.stepNums} <br />
-                    NumOfSteps: {this.state.numOfSteps} <br />
-                    stepVals: {this.state.stepVals} <br />
-                    stepVals length: {this.state.stepVals.length} <br />
                 </Form>
             </React.Fragment>
         );

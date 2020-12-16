@@ -1,16 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Login from './Login';
-import SignUp from './SignUp';
-import AugStepForm from './AugStepForm';
-import App from './App';
+import App from './App.js';
 
 ReactDOM.render(
-  <React.StrictMode>
-      <AugStepForm />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>,
+    document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function
