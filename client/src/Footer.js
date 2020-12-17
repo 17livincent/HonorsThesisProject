@@ -7,12 +7,15 @@
 import React from 'react';
 import {Navbar} from 'react-bootstrap';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Footer.css';
+
 class Footer extends React.Component {
 
     render() {
         return (
             <div>
-                <Navbar className='FooterNav' sticky='bottom' bg='light' variant='light'>
+                <Navbar id='footer' sticky='bottom' bg='dark' variant='dark'>
                     <Navbar.Text>
                         Developed by Vincent Li<br />
                         Contact: <a href='mailto:vincentl@asu.edu'>vincentl@asu.edu</a>
