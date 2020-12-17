@@ -13,6 +13,25 @@ import './App.css';
 //import './outline.css';
 
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            currentPanel: '0'
+        }
+
+        this.submitData = this.submitData.bind(this);
+    }
+
+    /**
+     * Callback function passed to the InputData
+     */
+    submitData() {
+        alert('CSV files submitted');
+        this.setState({currentPanel: '1'});
+        // close this accordion, open the second
+
+    }
 
     render() {
         return (
@@ -24,7 +43,7 @@ class App extends React.Component {
                         </Accordion.Toggle>
                         <Accordion.Collapse eventKey='0'>
                             <Card.Body>
-                                <InputData id='main' />
+                                <InputData id='main' onSubmit={this.submitData}/>
                             </Card.Body>
                         </Accordion.Collapse>
                     </Card>
