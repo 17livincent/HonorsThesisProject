@@ -4,7 +4,8 @@
  */
 
 import React from 'react';
-import {Form, Button, Col} from 'react-bootstrap';
+import {Form, Button, Col, Alert} from 'react-bootstrap';
+import Space from './Space.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './InputData.css';
@@ -19,13 +20,14 @@ class InputData extends React.Component {
         }
 
         this.incNumOfFiles = this.incNumOfFiles.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
     /**
      * Called when a file is selected
      */
     updateFiles(index, file) {
-        alert(`File ${index} changed`);
+        //alert(`File ${index} changed`);
         // update files
         let newFiles = this.state.files.slice();
         newFiles.splice(index, 1, file);
@@ -35,6 +37,7 @@ class InputData extends React.Component {
 
     /**
      * Increments the state variable numOfFiles
+     * If the last file input hasn't been filled, numOfFiles won't be incremented
      */
     incNumOfFiles() {
         // get new numOfFiles
@@ -55,27 +58,41 @@ class InputData extends React.Component {
 
     getFileInput(index) {
         return (
-            <Form.File 
-                accept='.csv, .png'
-                onChange={(e) => (this.updateFiles(index, e.target.value))}>
-            </Form.File>
+            <React.Fragment>
+                <Form.Row>
+                    <Form.File 
+                        id='fileInput'
+                        accept='.csv, .png'
+                        onChange={(e) => (this.updateFiles(index, e.target.value))}>
+                    </Form.File>
+                </Form.Row>
+                <Space />
+            </React.Fragment>
         );
+    }
+
+    onSubmit() {
+        this.props.onSubmit();
+        
     }
 
     render() {
         return (
             <React.Fragment id='main'>
                 <h3>Select CSV files</h3>
-                <Form>
+                <Form id='files'>
                     {this.range(0, this.state.numOfFiles - 1, 1).map((i) => this.getFileInput(i))}
                 </Form>
                 <br />
+                <Alert variant='light'>
+                    FYI: To undo a file input, click on the corresponding "Choose File" and press "Cancel".
+                </Alert>
                 <Form.Row>
                     <Col>
-                        <Button id='addButton' variant='secondary' onClick={this.incNumOfFiles}>Input another file</Button>
+                        <Button id='addButton' variant='secondary' onClick={this.incNumOfFiles} disabled={(this.state.files[this.state.numOfFiles - 1] !== '') ? false : true}>Input another file</Button>
                     </Col>
                     <Col>
-                        <Button id='submitButton' variant='primary' type='submit'>Submit</Button>
+                        <Button id='submitButton' variant='primary' onClick={this.onSubmit}>Submit</Button>
                     </Col>
                 </Form.Row>
             </React.Fragment>

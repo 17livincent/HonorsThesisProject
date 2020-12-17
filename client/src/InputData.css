@@ -5,3 +5,8 @@
 #submitButton {
     float: right;
 }
+
+#files {
+    margin: auto;
+    width: 50%;
+}
