@@ -71,7 +71,7 @@ class PrepStepsForm extends React.Component {
             
         }
         else {
-            alert('The first stepNums cannot be deleted.');
+            //alert('The first stepNums cannot be deleted.');
         }
         
     }
