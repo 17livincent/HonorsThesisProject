@@ -107,7 +107,6 @@ class PrepStepFormGroup extends React.Component {
                                 as='select'
                                 required='required'
                                 onChange={(e) => {
-                                                    //this.setState({stepName: e.target.value}); 
                                                     this.setInput(e.target.value); 
                                                     this.updateAbove(undefined, e.target.value, undefined)}}
                                 value={this.props.stepName}>
