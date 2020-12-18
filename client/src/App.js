@@ -17,7 +17,8 @@ class App extends React.Component {
         super(props);
 
         this.state = {
-            currentPanel: '0'
+            currentPanel: '0',
+            files: []
         }
 
         this.submitData = this.submitData.bind(this);
@@ -26,21 +27,22 @@ class App extends React.Component {
     /**
      * Callback function passed to the InputData
      */
-    submitData() {
-        alert('CSV files submitted');
-        this.setState({currentPanel: '1'});
+    submitData(files) {
+        alert('CSV files submitted: ' + files);
+        this.setState({files: files});
         // close this accordion, open the second
+        this.setState({currentPanel: '1'});
 
     }
 
     render() {
         return (
             <div>
-                <Accordion id='app' defaultActiveKey='0'>
+                <Accordion id='app' activeKey={this.state.currentPanel}>
                     <Card>
-                        <Accordion.Toggle as={Card.Header} eventKey='0'>
+                        <Card.Header eventKey='0'>
                             <h2>1. Input Data</h2>
-                        </Accordion.Toggle>
+                        </Card.Header>
                         <Accordion.Collapse eventKey='0'>
                             <Card.Body>
                                 <InputData id='main' onSubmit={this.submitData}/>
@@ -48,9 +50,9 @@ class App extends React.Component {
                         </Accordion.Collapse>
                     </Card>
                     <Card>
-                        <Accordion.Toggle as={Card.Header} eventKey='1'>
+                        <Card.Header eventKey='1'>
                             <h2>2. Select Preprocessing Steps</h2>
-                        </Accordion.Toggle>
+                        </Card.Header>
                         <Accordion.Collapse eventKey='1'>
                             <Card.Body>
                                 <PrepStepsForm id='main' />

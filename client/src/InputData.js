@@ -71,9 +71,39 @@ class InputData extends React.Component {
         );
     }
 
+    /**
+     * Called when the Submit button is pressed
+     * Processes the files array and passes it to a callback
+     */
     onSubmit() {
-        this.props.onSubmit();
-        
+        // remove blanks from files
+        let newFiles = this.state.files.slice().filter((element) => (element !== ''));
+        let newNum = newFiles.length;
+
+        this.setState({files: newFiles, numOfFiles: newNum});
+        this.props.onSubmit(newFiles);
+    }
+
+    /**
+     * Conditionally disable the "Input another file" button
+     */
+    disableAdd() {
+        return (this.state.files[this.state.numOfFiles - 1] !== '') ? false : true;
+    }
+
+    /**
+     * Conditionally disable the "Submit" button
+     */
+    disableSubmit() {
+        let status = true;
+        let files = this.state.files;
+        for(let index in files) {
+            if(files[index] !== '') {
+                status = false;
+                break;
+            }
+        }
+        return status;
     }
 
     render() {
@@ -92,7 +122,7 @@ class InputData extends React.Component {
                         <Button id='addButton' variant='secondary' onClick={this.incNumOfFiles} disabled={(this.state.files[this.state.numOfFiles - 1] !== '') ? false : true}>Input another file</Button>
                     </Col>
                     <Col>
-                        <Button id='submitButton' variant='primary' onClick={this.onSubmit}>Submit</Button>
+                        <Button id='submitButton' variant='primary' onClick={this.onSubmit} disabled={this.disableSubmit()}>Submit</Button>
                     </Col>
                 </Form.Row>
             </React.Fragment>
