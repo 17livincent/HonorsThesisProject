@@ -57,22 +57,35 @@ class PrepStepFormGroup extends React.Component {
         }
     }
 
-    // get a description label component based on the step name
-    getDescription(stepValSelected) {
+    /**
+     * Find the index in the transformations object of this stepVal
+     * If the stepValSelected === '', then return -1
+     */
+    getStepIndex(stepValSelected) {
+        let index = -1;
+        if(stepValSelected !== '') {
+            for(let i in this.props.steps) {
+                if(stepValSelected === this.props.steps[i].val) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+
+    // get a description label component based on the step name's index in the transformations object
+    getDescription(index) {
         let desc;
-        if(stepValSelected === '') {
+        if(index === -1) {
             desc = '';
         }
         else {
-            for(let i in this.props.steps) {
-                if(stepValSelected === this.props.steps[i].val) {
-                    if(this.props.steps[i].description !== '') {
-                        desc =  <React.Fragment><b>Description: </b> {this.props.steps[i].description}</React.Fragment>;
-                    }
-                    else {
-                        desc = '';
-                    }
-                }
+            if(this.props.steps[index].description !== '') {
+                desc =  <React.Fragment><b>Description: </b> {this.props.steps[index].description}</React.Fragment>;
+            }
+            else {
+                desc = '';
             }
         }
         return (
@@ -80,22 +93,18 @@ class PrepStepFormGroup extends React.Component {
         );
     }
 
-    // get a citation label component based on the step name
-    getCitation(stepValSelected) {
+    // get a citation label component based on the step name's index in the transformations object
+    getCitation(index) {
         let cit;
-        if(stepValSelected === '') {
+        if(index === -1) {
             cit = '';
         }
         else {
-            for(let i in this.props.steps) {
-                if(stepValSelected === this.props.steps[i].val) {
-                    if(this.props.steps[i].citation !== '') {
-                        cit = <React.Fragment><b>Citation: </b> {this.props.steps[i].citation}</React.Fragment>;
-                    }
-                    else {
-                        cit = '';
-                    }
-                }
+            if(this.props.steps[index].citation !== '') {
+                cit = <React.Fragment><b>Citation: </b> {this.props.steps[index].citation}</React.Fragment>;
+            }
+            else {
+                cit = '';
             }
         }
         return (
@@ -125,10 +134,13 @@ class PrepStepFormGroup extends React.Component {
 
 
         //let numOfInputs = 
-        let inputFields = [].map(() => this.getInputField('inputField', 'Input'));
+        let inputFields = [1,1].map(() => this.getInputField('inputField', 'Input'));
 
         // button to remove
         let deleteButton = <Button id='deleteButton' variant='outline-danger' onClick={this.onDelete}>Delete</Button>
+
+        // index in transformations object of the selected step
+        let index = this.getStepIndex(this.props.stepName);
 
         return (
             <React.Fragment>
@@ -148,10 +160,10 @@ class PrepStepFormGroup extends React.Component {
                                 </Col>
                             </Form.Row>
                             <Form.Row>
-                                {this.getDescription(this.props.stepName)}
+                                {this.getDescription(index)}
                             </Form.Row>
                             <Form.Row>
-                                {this.getCitation(this.props.stepName)}
+                                {this.getCitation(index)}
                             </Form.Row>
                         </Card.Body>
                     </Card>
