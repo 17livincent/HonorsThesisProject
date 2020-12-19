@@ -132,15 +132,21 @@ class PrepStepFormGroup extends React.Component {
                                     {stepOptions}
                                 </Form.Control>;
 
+        // index in transformations object of the selected step
+        let index = this.getStepIndex(this.props.stepName);
 
-        //let numOfInputs = 
-        let inputFields = [1,1].map(() => this.getInputField('inputField', 'Input'));
+        // get the corresponding number of input fields
+        let numOfInputs = 0;
+        try {
+            numOfInputs = this.props.steps[index].numOfInputs
+        }
+        catch(e) {
+            numOfInputs = 0;
+        }
+        let inputFields = Array.apply(null, Array(numOfInputs)).map(() => this.getInputField('inputField', 'Input'));
 
         // button to remove
         let deleteButton = <Button id='deleteButton' variant='outline-danger' onClick={this.onDelete}>Delete</Button>
-
-        // index in transformations object of the selected step
-        let index = this.getStepIndex(this.props.stepName);
 
         return (
             <React.Fragment>
