@@ -6,11 +6,11 @@
 import React from 'react';
 import {Form, Col, Button} from 'react-bootstrap';
 
+import PrepStepFormGroup from './PrepStepFormGroup';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './PrepStepsForm.css';
 //import './outline.css';
-
-import PrepStepFormGroup from './PrepStepFormGroup';
 
 class PrepStepsForm extends React.Component {
     constructor(props) {
@@ -20,18 +20,38 @@ class PrepStepsForm extends React.Component {
             stepNums: ['1'],    // array of step numbers
             stepVals: [''],     // array of selected steps
             inputs: [''],        // array of inputs
-            stepOptions: [
-                {name: 'StepName', val: 'optionValue', description: 'stepDescription', citation: 'stepCitation'},
-                {name: 'Option1', val: 'option1', description: 'description1', citation: 'citation1'},
-                {name: 'Option2', val: 'option2', description: 'description2', citation: 'citation2'},
-                {name: 'Option3', val: 'option3', description: 'description3', citation: 'citation3'}
-            ]
+            stepOptions: this.getTransformations()
         }
 
+        this.getTransformations = this.getTransformations.bind(this);
         this.addStep = this.addStep.bind(this);
         this.deleteStep = this.deleteStep.bind(this);
         this.onFormGroupChange = this.onFormGroupChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    // return the object of transformation info
+    getTransformations() {
+        return (
+            [
+                {
+                    name: 'Standardize', 
+                    val: 'stand', 
+                    numOfInputs: 0, 
+                    inputNames: [], 
+                    description: 'Transform the data to have a mean of 0, and a standard deviation of 1.', 
+                    citation: ''
+                },
+                {
+                    name: 'Normalize', 
+                    val: 'norm', 
+                    numOfInputs: 2, 
+                    inputNames: ['Min', 'Max'], 
+                    description: 'Rescale the range of the data to be between a min and max.', 
+                    citation: ''
+                }
+            ]
+        );
     }
 
     // adds a new stepNums
