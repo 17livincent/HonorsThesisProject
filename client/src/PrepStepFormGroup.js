@@ -53,8 +53,8 @@ class PrepStepFormGroup extends React.Component {
     // clears the input field of a step if not selected
     setInput(stepValSelected) {
         if(stepValSelected === '') {
-            let input = document.getElementById('inputField');
-            input.value = '';
+            //let input = document.getElementById('inputField');
+            //input.value = '';
         }
     }
 
@@ -67,12 +67,17 @@ class PrepStepFormGroup extends React.Component {
         else {
             for(let i in this.props.steps) {
                 if(stepValSelected === this.props.steps[i].val) {
-                    desc =  this.props.steps[i].description;
+                    if(this.props.steps[i].description !== '') {
+                        desc =  'Description ' + this.props.steps[i].description;
+                    }
+                    else {
+                        desc = '';
+                    }
                 }
             }
         }
         return (
-            <Form.Label>Description: {desc}</Form.Label>
+            <Form.Label>{desc}</Form.Label>
         );
     }
 
@@ -85,12 +90,17 @@ class PrepStepFormGroup extends React.Component {
         else {
             for(let i in this.props.steps) {
                 if(stepValSelected === this.props.steps[i].val) {
-                    cit = this.props.steps[i].citation;
+                    if(this.props.steps[i].citation !== '') {
+                        cit = 'Citation: ' + this.props.steps[i].citation;
+                    }
+                    else {
+                        cit = '';
+                    }
                 }
             }
         }
         return (
-            <Form.Label>Citation: {cit}</Form.Label>
+            <Form.Label>{cit}</Form.Label>
         );
     }
 
@@ -114,6 +124,10 @@ class PrepStepFormGroup extends React.Component {
                                     {stepOptions}
                                 </Form.Control>;
 
+
+        //let numOfInputs = 
+        let inputFields = Array.from(1).map((i) => this.getInputField('inputField', 'Input'));
+
         // button to remove
         let deleteButton = <Button variant='outline-danger' onClick={this.onDelete}>Delete</Button>
 
@@ -127,8 +141,8 @@ class PrepStepFormGroup extends React.Component {
                                 <Col xs={7}>
                                     {selectStepName}
                                 </Col>
-                                <Col>
-                                    {this.getInputField('inputField', 'Input')}
+                                <Col xs='auto'>
+                                    {inputFields}
                                 </Col>
                                 <Col xs='auto' display='inline-block'>
                                     {deleteButton}
