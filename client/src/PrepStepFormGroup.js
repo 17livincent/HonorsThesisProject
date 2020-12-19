@@ -7,6 +7,7 @@ import React from 'react';
 import {Form, Card, Col, Button} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './PrepStepFormGroup.css';
 //import './outline.css';
 
 class PrepStepFormGroup extends React.Component {
@@ -37,16 +38,14 @@ class PrepStepFormGroup extends React.Component {
     // returns an input field
     getInputField(id, placeholder) {
         return (
-            <Col>
-                <Form.Control id={id}
-                    type='text' 
-                    placeholder={placeholder}
-                    onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, undefined, e.target.value)}}
-                    value={this.props.input}
-                    disabled={this.props.stepName === ''}>
+            <Form.Control id={id}
+                type='text' 
+                placeholder={placeholder}
+                onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, undefined, e.target.value)}}
+                value={this.props.input}
+                disabled={this.props.stepName === ''}>
 
-                </Form.Control>
-            </Col>
+            </Form.Control>
         );
     }
 
@@ -68,7 +67,7 @@ class PrepStepFormGroup extends React.Component {
             for(let i in this.props.steps) {
                 if(stepValSelected === this.props.steps[i].val) {
                     if(this.props.steps[i].description !== '') {
-                        desc =  'Description ' + this.props.steps[i].description;
+                        desc =  <React.Fragment><b>Description: </b> {this.props.steps[i].description}</React.Fragment>;
                     }
                     else {
                         desc = '';
@@ -91,7 +90,7 @@ class PrepStepFormGroup extends React.Component {
             for(let i in this.props.steps) {
                 if(stepValSelected === this.props.steps[i].val) {
                     if(this.props.steps[i].citation !== '') {
-                        cit = 'Citation: ' + this.props.steps[i].citation;
+                        cit = <React.Fragment><b>Citation: </b> {this.props.steps[i].citation}</React.Fragment>;
                     }
                     else {
                         cit = '';
@@ -126,10 +125,10 @@ class PrepStepFormGroup extends React.Component {
 
 
         //let numOfInputs = 
-        let inputFields = Array.from(1).map((i) => this.getInputField('inputField', 'Input'));
+        let inputFields = [].map(() => this.getInputField('inputField', 'Input'));
 
         // button to remove
-        let deleteButton = <Button variant='outline-danger' onClick={this.onDelete}>Delete</Button>
+        let deleteButton = <Button id='deleteButton' variant='outline-danger' onClick={this.onDelete}>Delete</Button>
 
         return (
             <React.Fragment>
@@ -144,11 +143,10 @@ class PrepStepFormGroup extends React.Component {
                                 <Col xs='auto'>
                                     {inputFields}
                                 </Col>
-                                <Col xs='auto' display='inline-block'>
+                                <Col id='dbCol' xs='auto'>
                                     {deleteButton}
                                 </Col>
                             </Form.Row>
-                            <br />
                             <Form.Row>
                                 {this.getDescription(this.props.stepName)}
                             </Form.Row>
