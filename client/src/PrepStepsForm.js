@@ -138,11 +138,11 @@ class PrepStepsForm extends React.Component {
 
     render() {
         let addStepButton = <Button id='addButton' variant='secondary' onClick={this.addStep}>Add step</Button>;
-        let submitButton = <Button id='submitButton' variant='primary' type='submit'>Run steps</Button>;
+        let submitButton = <Button id='submitButton' variant='primary' onClick={this.onSubmit}>Run steps</Button>;
 
         return (
             <React.Fragment id='main'>
-                <Form onSubmit={this.onSubmit}>
+                <Form>
                     {this.state.stepNums.map((i) => (this.renderPSFormGroup(i)))}
                     <Form.Row>
                         <Col>
