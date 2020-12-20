@@ -112,6 +112,13 @@ class PrepStepFormGroup extends React.Component {
         );
     }
 
+    /**
+     * Creates an array like the python range function.
+     */
+    range(start, stop, inc) {
+        return Array.from({length: (stop - start) / inc + 1}, (_, i) => start + (i * inc));
+    }
+
     render() {
         // get list of step options
         let stepOptions = this.props.steps.length > 0 && this.props.steps.map((item, i) => {
@@ -143,7 +150,16 @@ class PrepStepFormGroup extends React.Component {
         catch(e) {
             numOfInputs = 0;
         }
-        let inputFields = Array.apply(null, Array(numOfInputs)).map(() => this.getInputField('inputField', 'Input'));
+        // get the input names
+        let inputNames;
+        try {
+            inputNames = this.props.steps[index].inputNames.slice();
+        }
+        catch(e) {
+            inputNames = [];
+        }
+        let array = numOfInputs !== 0 ? (this.range(0, numOfInputs - 1, 1)) : [];
+        let inputFields = array.map((i) => this.getInputField('inputField', inputNames[i]));
 
         // button to remove
         let deleteButton = <Button id='deleteButton' variant='outline-danger' onClick={this.onDelete}>Delete</Button>
