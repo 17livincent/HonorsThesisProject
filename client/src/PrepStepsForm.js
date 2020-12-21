@@ -120,13 +120,27 @@ class PrepStepsForm extends React.Component {
     }
 
     renderPSFormGroup(i) {
-        return <PrepStepFormGroup 
-                    stepNumber={i} 
-                    stepName={this.state.stepVals[i - 1]}
-                    input={this.state.inputs[i - 1]}
-                    steps={this.state.stepOptions} 
-                    onFormGroupChange={this.onFormGroupChange}
-                    onDelete={this.deleteStep}/>;
+        return (
+            <PrepStepFormGroup 
+                stepNumber={i} 
+                stepName={this.state.stepVals[i - 1]}
+                input={this.state.inputs[i - 1]}
+                steps={this.state.stepOptions} 
+                onFormGroupChange={this.onFormGroupChange}
+                onDelete={this.deleteStep}/>
+        );
+    }
+
+    renderAddStepButton() {
+        return (
+            <Button id='addButton' variant='secondary' onClick={this.addStep}>Add step</Button>
+        );
+    }
+
+    renderSubmitButton() {
+        return (
+            <Button id='submitButton' variant='primary' onClick={this.onSubmit}>Run steps</Button>
+        );
     }
 
     /**
@@ -137,19 +151,16 @@ class PrepStepsForm extends React.Component {
     }
 
     render() {
-        let addStepButton = <Button id='addButton' variant='secondary' onClick={this.addStep}>Add step</Button>;
-        let submitButton = <Button id='submitButton' variant='primary' onClick={this.onSubmit}>Run steps</Button>;
-
         return (
             <React.Fragment id='main'>
                 <Form>
                     {this.state.stepNums.map((i) => (this.renderPSFormGroup(i)))}
                     <Form.Row>
                         <Col>
-                            {addStepButton}
+                            {this.renderAddStepButton()}
                         </Col>
                         <Col>
-                            {submitButton}
+                            {this.renderSubmitButton()}
                         </Col>
                     </Form.Row>
                 </Form>

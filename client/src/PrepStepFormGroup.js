@@ -35,18 +35,28 @@ class PrepStepFormGroup extends React.Component {
         this.props.onDelete(this.props.stepNumber);
     }
 
-    // returns an input field
-    getInputField(id, placeholder) {
-        return (
-            <Form.Control id={id}
-                type='text' 
-                placeholder={placeholder}
-                onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, undefined, e.target.value)}}
-                value={this.props.input}
-                disabled={this.props.stepName === ''}>
+    // returns the step select input
+    renderStepSelect() {
+        // get list of step options
+        let stepOptions = this.props.steps.length > 0 && this.props.steps.map((item, i) => {
+            return (
+                <option value={item.val}>{item.name}</option>
+            );
+        });
 
+        return (
+            <Form.Control id='selectStepName'
+                as='select'
+                required='required'
+                onChange={(e) => {
+                    this.setInput(e.target.value); 
+                    this.updateAbove(undefined, e.target.value, undefined)}}
+                value={this.props.stepName}>
+                <option value=''>Select a step</option>
+                {stepOptions}
             </Form.Control>
         );
+        
     }
 
     // clears the input field of a step if not selected
@@ -74,8 +84,46 @@ class PrepStepFormGroup extends React.Component {
         return index;
     }
 
+    // returns an input field
+    getInputField(id, placeholder) {
+        return (
+            <Form.Control id={id}
+                type='text' 
+                placeholder={placeholder}
+                onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, undefined, e.target.value)}}
+                value={this.props.input}
+                disabled={this.props.stepName === ''}>
+
+            </Form.Control>
+        );
+    }
+    
+    // gets the right number of input fields based on the step index
+    renderInputFields(index) {
+        // get the corresponding number of input fields
+        let numOfInputs = 0;
+        try {
+            numOfInputs = this.props.steps[index].numOfInputs
+        }
+        catch(e) {
+            numOfInputs = 0;
+        }
+        // get the input names
+        let inputNames;
+        try {
+            inputNames = this.props.steps[index].inputNames.slice();
+        }
+        catch(e) {
+            inputNames = [];
+        }
+        let array = (numOfInputs !== 0) ? (this.range(0, numOfInputs - 1, 1)) : [];
+        let inputFields = array.map((i) => this.getInputField('inputField', inputNames[i]));
+    
+        return inputFields;
+    }
+
     // get a description label component based on the step name's index in the transformations object
-    getDescription(index) {
+    renderDescription(index) {
         let desc;
         if(index === -1) {
             desc = '';
@@ -94,7 +142,7 @@ class PrepStepFormGroup extends React.Component {
     }
 
     // get a citation label component based on the step name's index in the transformations object
-    getCitation(index) {
+    renderCitation(index) {
         let cit;
         if(index === -1) {
             cit = '';
@@ -112,6 +160,12 @@ class PrepStepFormGroup extends React.Component {
         );
     }
 
+    renderDeleteButton() {
+        return (
+            <Button id='deleteButton' variant='outline-danger' onClick={this.onDelete}>Delete</Button>
+        );
+    }
+
     /**
      * Creates an array like the python range function.
      */
@@ -120,49 +174,8 @@ class PrepStepFormGroup extends React.Component {
     }
 
     render() {
-        // get list of step options
-        let stepOptions = this.props.steps.length > 0 && this.props.steps.map((item, i) => {
-            return (
-                <option value={item.val}>{item.name}</option>
-            );
-        });
-
-        // select input for specific step
-        let selectStepName = <Form.Control id='selectStepName'
-                                as='select'
-                                required='required'
-                                onChange={(e) => {
-                                                    this.setInput(e.target.value); 
-                                                    this.updateAbove(undefined, e.target.value, undefined)}}
-                                value={this.props.stepName}>
-                                    <option value=''>Select a step</option>
-                                    {stepOptions}
-                                </Form.Control>;
-
         // index in transformations object of the selected step
         let index = this.getStepIndex(this.props.stepName);
-
-        // get the corresponding number of input fields
-        let numOfInputs = 0;
-        try {
-            numOfInputs = this.props.steps[index].numOfInputs
-        }
-        catch(e) {
-            numOfInputs = 0;
-        }
-        // get the input names
-        let inputNames;
-        try {
-            inputNames = this.props.steps[index].inputNames.slice();
-        }
-        catch(e) {
-            inputNames = [];
-        }
-        let array = numOfInputs !== 0 ? (this.range(0, numOfInputs - 1, 1)) : [];
-        let inputFields = array.map((i) => this.getInputField('inputField', inputNames[i]));
-
-        // button to remove
-        let deleteButton = <Button id='deleteButton' variant='outline-danger' onClick={this.onDelete}>Delete</Button>
 
         return (
             <React.Fragment>
@@ -172,20 +185,20 @@ class PrepStepFormGroup extends React.Component {
                             <Card.Title>Step {this.props.stepNumber}</Card.Title>
                             <Form.Row>
                                 <Col xs={7}>
-                                    {selectStepName}
+                                    {this.renderStepSelect()}
                                 </Col>
                                 <Col xs='auto'>
-                                    {inputFields}
+                                    {this.renderInputFields(index)}
                                 </Col>
                                 <Col id='dbCol' xs='auto'>
-                                    {deleteButton}
+                                    {this.renderDeleteButton()}
                                 </Col>
                             </Form.Row>
                             <Form.Row>
-                                {this.getDescription(index)}
+                                {this.renderDescription(index)}
                             </Form.Row>
                             <Form.Row>
-                                {this.getCitation(index)}
+                                {this.renderCitation(index)}
                             </Form.Row>
                         </Card.Body>
                     </Card>

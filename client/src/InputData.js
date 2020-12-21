@@ -106,12 +106,43 @@ class InputData extends React.Component {
         return status;
     }
 
+    // returns all file inputs
+    renderFileInputs() {
+        return this.range(0, this.state.numOfFiles - 1, 1).map((i) => this.getFileInput(i));
+    }
+
+    // returns a button to add a file
+    renderAddFileButton() {
+        return (
+            <Button 
+                id='addButton' 
+                variant='secondary' 
+                onClick={this.incNumOfFiles} 
+                disabled={(this.state.files[this.state.numOfFiles - 1] !== '') ? false : true}>
+                Input another file
+            </Button>
+        );
+    }
+
+    // returns the submit data button
+    renderSubmitButton() {
+        return (
+            <Button 
+                id='submitButton' 
+                variant='primary' 
+                onClick={this.onSubmit} 
+                disabled={this.disableSubmit()}>
+                Submit
+            </Button>
+        );
+    }
+
     render() {
         return (
             <React.Fragment id='main'>
                 <h3>Select CSV files</h3>
                 <Form id='files'>
-                    {this.range(0, this.state.numOfFiles - 1, 1).map((i) => this.getFileInput(i))}
+                    {this.renderFileInputs()}
                 </Form>
                 <br />
                 <Alert variant='light'>
@@ -119,10 +150,10 @@ class InputData extends React.Component {
                 </Alert>
                 <Form.Row>
                     <Col>
-                        <Button id='addButton' variant='secondary' onClick={this.incNumOfFiles} disabled={(this.state.files[this.state.numOfFiles - 1] !== '') ? false : true}>Input another file</Button>
+                        {this.renderAddFileButton()}
                     </Col>
                     <Col>
-                        <Button id='submitButton' variant='primary' onClick={this.onSubmit} disabled={this.disableSubmit()}>Submit</Button>
+                        {this.renderSubmitButton()}
                     </Col>
                 </Form.Row>
             </React.Fragment>
