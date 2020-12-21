@@ -12,6 +12,16 @@ import './PrepStepFormGroup.css';
 
 class PrepStepFormGroup extends React.Component {
 
+    /**
+     * List of props used:
+     * this.props.stepNumber
+     * this.props.stepName
+     * this.props.input
+     * this.props.steps
+     * this.props.onFormGroupChange
+     * this.props.onDelete
+     */
+    
     constructor(props) {
         super(props);
 
@@ -22,10 +32,10 @@ class PrepStepFormGroup extends React.Component {
      * A prop function passed from PrepStepsForm to update the above state
      */
     updateAbove(stepNumber, stepName, input) {
-        stepNumber = (typeof stepNumber !== 'undefined') ? stepNumber : this.props.stepNumber;
-        stepName = (typeof stepName !== 'undefined') ? stepName : this.props.stepName;
-        input = (typeof input !== 'undefined') ? input : this.props.input;
-        this.props.onFormGroupChange(stepNumber, stepName, input);
+        let newStepNumber = (typeof stepNumber !== 'undefined') ? stepNumber : this.props.stepNumber;
+        let newStepName = (typeof stepName !== 'undefined') ? stepName : this.props.stepName;
+        let newInputs = (typeof input !== 'undefined') ? input : this.props.input;
+        this.props.onFormGroupChange(newStepNumber, newStepName, newInputs);
     }
 
     /**
@@ -117,7 +127,7 @@ class PrepStepFormGroup extends React.Component {
             inputNames = [];
         }
         let array = (numOfInputs !== 0) ? (this.range(0, numOfInputs - 1, 1)) : [];
-        let inputFields = array.map((i) => this.getInputField('inputField', inputNames[i]));
+        let inputFields = array.map((i) => this.getInputField(i, inputNames[i]));
     
         return inputFields;
     }

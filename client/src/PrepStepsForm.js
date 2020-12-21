@@ -15,7 +15,7 @@ import './PrepStepsForm.css';
 class PrepStepsForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state= {
+        this.state = {
             numOfSteps: 1,
             stepNums: ['1'],    // array of step numbers
             stepVals: [''],     // array of selected steps
@@ -48,6 +48,14 @@ class PrepStepsForm extends React.Component {
                     numOfInputs: 2, 
                     inputNames: ['Min', 'Max'], 
                     description: 'Rescale the range of the data to be between a min and max.', 
+                    citation: ''
+                },
+                {
+                    name: 'Moving average filter',
+                    val: 'moving_avg',
+                    numOfInputs: 1,
+                    inputNames: ['Window size'],
+                    description: 'Smooth data by calculating the average out of a defined number of data points.',
                     citation: ''
                 }
             ]
@@ -164,6 +172,7 @@ class PrepStepsForm extends React.Component {
                         </Col>
                     </Form.Row>
                 </Form>
+                {this.state.inputs}
             </React.Fragment>
         );
     }
