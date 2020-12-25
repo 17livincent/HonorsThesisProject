@@ -1,5 +1,5 @@
 /**
- * PrepStepFormGroup.js
+ * StepFormGroup.js
  * A FormGroup which serves as an input of a preprocessing/augmentation step form
  */
 
@@ -7,21 +7,26 @@ import React from 'react';
 import {Form, Card, Col, Button} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './PrepStepFormGroup.css';
+import './StepFormGroup.css';
 //import './outline.css';
 
-class PrepStepFormGroup extends React.Component {
+class StepFormGroup extends React.Component {
 
     /**
      * List of props used:
      * this.props.stepNumber
      * this.props.stepName
-     * this.props.input
+     * this.props.inputs
      * this.props.steps
      * this.props.onFormGroupChange
      * this.props.onDelete
      */
     
+    /**
+     * Object format for passing form details is:
+     * {stepVal: '', inputs: Array(numOfInputs)}
+     */
+
     constructor(props) {
         super(props);
 
@@ -31,10 +36,10 @@ class PrepStepFormGroup extends React.Component {
     /**
      * A prop function passed from PrepStepsForm to update the above state
      */
-    updateAbove(stepNumber, stepName, input) {
+    updateAbove(stepNumber, stepName, inputs) {
         let newStepNumber = (typeof stepNumber !== 'undefined') ? stepNumber : this.props.stepNumber;
         let newStepName = (typeof stepName !== 'undefined') ? stepName : this.props.stepName;
-        let newInputs = (typeof input !== 'undefined') ? input : this.props.input;
+        let newInputs = (typeof inputs !== 'undefined') ? inputs : this.props.inputs;
         this.props.onFormGroupChange(newStepNumber, newStepName, newInputs);
     }
 
@@ -98,11 +103,10 @@ class PrepStepFormGroup extends React.Component {
     getInputField(id, placeholder) {
         return (
             <Form.Control id={id}
-                type='text' 
+                type='number' 
                 placeholder={placeholder}
                 onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, undefined, e.target.value)}}
-                value={this.props.input}
-                disabled={this.props.stepName === ''}>
+                value={this.props.input}>
 
             </Form.Control>
         );
@@ -111,9 +115,9 @@ class PrepStepFormGroup extends React.Component {
     // gets the right number of input fields based on the step index
     renderInputFields(index) {
         // get the corresponding number of input fields
-        let numOfInputs = 0;
+        let numOfInputs;
         try {
-            numOfInputs = this.props.steps[index].numOfInputs
+            numOfInputs = this.props.steps[index].numOfInputs;
         }
         catch(e) {
             numOfInputs = 0;
@@ -210,6 +214,9 @@ class PrepStepFormGroup extends React.Component {
                             <Form.Row>
                                 {this.renderCitation(index)}
                             </Form.Row>
+                            {this.props.stepName}<br />
+                            {this.props.inputs.toString()}
+                            
                         </Card.Body>
                     </Card>
                 </Form.Group>
@@ -218,4 +225,4 @@ class PrepStepFormGroup extends React.Component {
     }
 }
 
-export default PrepStepFormGroup;
+export default StepFormGroup;

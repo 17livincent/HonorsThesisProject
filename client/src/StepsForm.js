@@ -1,25 +1,24 @@
 /**
- * PrepStepsForm.js
+ * StepsForm.js
  * This class manages an array of PrepStepFormGroups by handling form submit, stepNums add, and stepNums deletion
  */
 
 import React from 'react';
 import {Form, Col, Button} from 'react-bootstrap';
 
-import PrepStepFormGroup from './PrepStepFormGroup';
+import StepFormGroup from './StepFormGroup';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './PrepStepsForm.css';
+import './StepsForm.css';
 //import './outline.css';
 
-class PrepStepsForm extends React.Component {
+class StepsForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             numOfSteps: 1,
             stepNums: ['1'],    // array of step numbers
-            stepVals: [''],     // array of selected steps
-            inputs: [''],        // array of inputs
+            formDetails: [this.getFormInfo('', 0), ],
             stepOptions: this.getTransformations()
         }
 
@@ -28,6 +27,20 @@ class PrepStepsForm extends React.Component {
         this.deleteStep = this.deleteStep.bind(this);
         this.onFormGroupChange = this.onFormGroupChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    /**
+     * Returns a dictionary containing stepname and array of inputs
+     * @param stepName the formgroup's chosen step
+     * @param numOfInputs the number of inputs associated with @param stepName 
+     */
+    getFormInfo(stepName, numOfInputs) {
+        return (
+            {
+                step: stepName.toString(),
+                inputs: Array(numOfInputs)
+            }
+        )
     }
 
     // return the object of transformation info
@@ -68,14 +81,11 @@ class PrepStepsForm extends React.Component {
         let nextStep = this.state.numOfSteps + 1;
         // add new stepNums to this.state.stepNums
         let newSteps = this.range(1, nextStep, 1);
-        // push new element to stepVals
-        let newStepNames = this.state.stepVals.slice();
-        newStepNames.push('');
-        // push new element to inputs
-        let newInputs = this.state.inputs.slice();
-        newInputs.push('');
+        // push new element to formDetails
+        let newFormDetails = this.state.formDetails.slice();
+        newFormDetails.push(this.getFormInfo('', 0));
         // update state
-        this.setState({numOfSteps: nextStep, stepNums: newSteps, stepVals: newStepNames, inputs: newInputs});
+        this.setState({numOfSteps: nextStep, stepNums: newSteps, formDetails: newFormDetails});
 
     }
 
@@ -86,14 +96,11 @@ class PrepStepsForm extends React.Component {
             let newNum = this.state.numOfSteps -1;
             // update stepNums array
             let newSteps = this.range(1, newNum, 1);
-            // update stepVals
-            let newStepNames = this.state.stepVals.slice();
-            newStepNames.splice(stepNumber - 1, 1);
-            // update inputs
-            let newInputs = this.state.inputs.slice();
-            newInputs.splice(stepNumber - 1, 1);
+            // update formDetails
+            let newFormDetails = this.state.formDetails.slice();
+            newFormDetails.splice(stepNumber - 1, 1);
             // update state
-            this.setState({numOfSteps: newNum, stepNums: newSteps, stepVals: newStepNames, inputs: newInputs});
+            this.setState({numOfSteps: newNum, stepNums: newSteps, formDetails: newFormDetails});
 
             //alert(`stepNums ${stepNumber} deleted.`);            
             
@@ -101,23 +108,24 @@ class PrepStepsForm extends React.Component {
         else {
             //alert('The first stepNums cannot be deleted.');
         }
-        
     }
 
     /**
-     * Called when the inputs of a PrepStepFormGroup are updated
+     * Called when the inputs of a StepFormGroup are updated
+     * @param stepNumber the step number of the formgroup
+     * @param stepName the selected step name value
+     * @param inputs the array of input arguments form the formgroup
      */
-    onFormGroupChange(stepNumber, stepName, input) {
+    onFormGroupChange(stepNumber, stepName, inputs) {
         // get index for this step
         let index = stepNumber - 1;
-        // create updated stepVals
-        let newStepNames = this.state.stepVals.slice();
-        newStepNames.splice(index, 1, stepName);
-        // create updated inputs
-        let newInputs = this.state.inputs.slice();
-        newInputs.splice(index, 1, input);
+        // update stepname
+        let newFormDetails = this.state.formDetails.slice();
+        newFormDetails[index].step = stepName;
+        // update inputs
+        newFormDetails[index].inputs = inputs;
         // update state
-        this.setState({stepVals: newStepNames, inputs: newInputs});
+        this.setState({formDetails: newFormDetails});
     }
 
     /**
@@ -127,12 +135,12 @@ class PrepStepsForm extends React.Component {
         return Array.from({length: (stop - start) / inc + 1}, (_, i) => start + (i * inc));
     }
 
-    renderPSFormGroup(i) {
+    renderFormGroup(i) {
         return (
-            <PrepStepFormGroup 
+            <StepFormGroup 
                 stepNumber={i} 
-                stepName={this.state.stepVals[i - 1]}
-                input={this.state.inputs[i - 1]}
+                stepName={this.state.formDetails[i - 1].step}
+                inputs={this.state.formDetails[i - 1].inputs}
                 steps={this.state.stepOptions} 
                 onFormGroupChange={this.onFormGroupChange}
                 onDelete={this.deleteStep}/>
@@ -162,7 +170,7 @@ class PrepStepsForm extends React.Component {
         return (
             <React.Fragment id='main'>
                 <Form>
-                    {this.state.stepNums.map((i) => (this.renderPSFormGroup(i)))}
+                    {this.state.stepNums.map((i) => (this.renderFormGroup(i)))}
                     <Form.Row>
                         <Col>
                             {this.renderAddStepButton()}
@@ -172,11 +180,11 @@ class PrepStepsForm extends React.Component {
                         </Col>
                     </Form.Row>
                 </Form>
-                {this.state.inputs}
+                {console.log(this.state.formDetails)}
             </React.Fragment>
         );
     }
 
 }
 
-export default PrepStepsForm;
+export default StepsForm;
