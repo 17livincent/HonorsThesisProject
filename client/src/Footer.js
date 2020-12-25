@@ -5,23 +5,37 @@
  */
 
 import React from 'react';
-import {Navbar} from 'react-bootstrap';
+import {Navbar, Col, Row} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Footer.css';
 
 class Footer extends React.Component {
 
+    getYear() {
+        let today = new Date();
+        return today.getUTCFullYear();
+    }
+
     render() {
         return (
-            <div>
+            <React.Fragment>
                 <Navbar id='footer' sticky='bottom' bg='dark' variant='dark'>
-                    <Navbar.Text>
-                        Developed by Vincent Li<br />
-                        Contact: <a href='mailto:vincentl@asu.edu'>vincentl@asu.edu</a>
-                    </Navbar.Text>
-                </Navbar>
-            </div>
+                    <Row id='row'>
+                        <Col id='left'>
+                            <Navbar.Text>
+                                Developed by Vincent Li {this.getYear()}<br />
+                                Contact: <a href='mailto:vincentl@asu.edu'>vincentl@asu.edu</a>
+                            </Navbar.Text>
+                        </Col>
+                        <Col id='right'>
+                            <Navbar.Text>
+                                This project is sponsored by the Arizona State University, School of Arts, Media, and Engineering.
+                            </Navbar.Text>
+                        </Col>
+                    </Row>
+            </Navbar>
+            </React.Fragment>
         );
     }
 }
