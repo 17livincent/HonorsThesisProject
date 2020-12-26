@@ -45,15 +45,31 @@ class App extends React.Component {
         console.log('Steps submitted:');
         console.log(steps);
         this.setState({steps: steps});
+        // close this accordion, open the next
+        this.setState({currentPanel: '2'});
+    }
+
+    displayFiles() {
+        return (
+            this.state.files.length > 0 && this.state.files.map((file) => 
+                <React.Fragment>
+                    {file.replace('C:\\fakepath\\', '')}<br />
+                </React.Fragment>
+            )   // remove the fakepath if its there
+        );
+    }
+
+    displaySteps() {
+
     }
 
     render() {
         let inputData = <InputData id='main' onSubmit={this.submitData}/>;
         let stepsForm = <StepsForm id='main' onSubmit={this.submitSteps}/>;
         let goBackButton1 = <Button id='goback1' variant='outline-secondary' onClick={() => (this.setState({currentPanel: '0'}))}>Go back</Button>;
+        let goBackButton2 = <Button id='goback2' variant='outline-secondary' onClick={() => (this.setState({currentPanel: '1'}))}>Go back</Button>;
 
-        let displayFiles = this.state.files.length > 0 && this.state.files.map((file) => <React.Fragment>{file.replace('C:\\fakepath\\', '')}<br /></React.Fragment>);   // remove the fakepath if its there
-        let inputDataSummary = <Alert variant='success'><b>Files chosen: </b><br /> {displayFiles}</Alert>;
+        let inputDataSummary = <Alert variant='success'><b>Files chosen: </b><br /> {this.displayFiles()}</Alert>;
 
         return (
             <React.Fragment>
@@ -83,6 +99,18 @@ class App extends React.Component {
                         <Accordion.Collapse eventKey='1'>
                             <Card.Body>{stepsForm}</Card.Body>
                         </Accordion.Collapse>
+                    </Card>
+                    <Card>
+                        <Card.Header eventKey='2'>
+                            <Row>
+                                <Col>
+                                    <h2>3. Run Steps</h2>
+                                </Col>
+                                <Col>
+                                    {(this.state.currentPanel === '2') && goBackButton2}
+                                </Col>
+                            </Row>
+                        </Card.Header>
                     </Card>
                 </Accordion>
                 <Footer />

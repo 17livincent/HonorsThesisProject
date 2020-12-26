@@ -11,7 +11,7 @@ class Header extends React.Component {
             <React.Fragment>
                 <Navbar id='header' bg='dark' variant='dark'>
                     <Navbar.Brand>
-                        App Name
+                        <h2>App Name</h2>
                     </Navbar.Brand>
                 </Navbar>
             </React.Fragment>
