@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import {Form, Button, Row, Col, Alert} from 'react-bootstrap';
+import {Form, Button, Col, Alert} from 'react-bootstrap';
 import Space from './Space.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
