@@ -32,8 +32,6 @@ class InputData extends React.Component {
         newFiles.splice(index, 1, file);
         // update state
         this.setState({files: newFiles});
-
-        console.log(`Files updated: ${newFiles}`);
     }
 
     /**
@@ -82,7 +80,7 @@ class InputData extends React.Component {
         let newNum = newFiles.length;
 
         this.setState({files: newFiles, numOfFiles: newNum});
-        this.props.onSubmit(newFiles);
+        this.props.onSubmit(newFiles.slice());
     }
 
     /**

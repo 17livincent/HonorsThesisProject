@@ -163,7 +163,7 @@ class StepsForm extends React.Component {
      * Handles the form submission
      */
     onSubmit() {
-        alert("Submitted");
+        this.props.onSubmit(this.state.formDetails.slice());
     }
 
     render() {
@@ -180,7 +180,6 @@ class StepsForm extends React.Component {
                         </Col>
                     </Form.Row>
                 </Form>
-                {console.log(this.state.formDetails)}
             </React.Fragment>
         );
     }

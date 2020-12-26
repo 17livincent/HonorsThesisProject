@@ -18,26 +18,36 @@ class App extends React.Component {
 
         this.state = {
             currentPanel: '0',
-            files: []
+            files: [],
+            steps: []
         }
 
         this.submitData = this.submitData.bind(this);
+        this.submitSteps = this.submitSteps.bind(this);
     }
 
     /**
      * Callback function passed to the InputData
      */
     submitData(files) {
-        //alert('CSV files submitted: ' + files);
+        console.log(`Files submitted: ${files.toString()}`);
         this.setState({files: files});
         // close this accordion, open the second
         this.setState({currentPanel: '1'});
+    }
 
+    /**
+     * Callback function passed to the StepsForm
+     */
+    submitSteps(steps) {
+        console.log('Steps submitted:');
+        console.log(steps);
+        this.setState({steps: steps});
     }
 
     render() {
         let inputData = <InputData id='main' onSubmit={this.submitData}/>;
-        let stepsForm = <StepsForm id='main' />;
+        let stepsForm = <StepsForm id='main' onSubmit={this.submitSteps}/>;
         let goBackButton1 = <Button id='goback1' variant='outline-secondary' onClick={() => (this.setState({currentPanel: '0'}))}>Go back</Button>;
 
         let displayFiles = this.state.files.length > 0 && this.state.files.map((file) => <React.Fragment>{file.replace('C:\\fakepath\\', '')}<br /></React.Fragment>);   // remove the fakepath if its there
