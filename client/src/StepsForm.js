@@ -7,6 +7,7 @@ import React from 'react';
 import {Form, Col, Button} from 'react-bootstrap';
 
 import StepFormGroup from './StepFormGroup';
+import Transformations from './Transformations';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/StepsForm.css';
@@ -14,15 +15,16 @@ import './styles/StepsForm.css';
 
 class StepsForm extends React.Component {
     constructor(props) {
+        let trans = new Transformations();
+
         super(props);
         this.state = {
             numOfSteps: 1,
             stepNums: ['1'],    // array of step numbers
             formDetails: [this.getFormInfo('', 0)],
-            stepOptions: this.getTransformations()
+            stepOptions: trans.getTransformations()
         }
 
-        this.getTransformations = this.getTransformations.bind(this);
         this.addStep = this.addStep.bind(this);
         this.deleteStep = this.deleteStep.bind(this);
         this.onFormGroupChange = this.onFormGroupChange.bind(this);
@@ -41,38 +43,6 @@ class StepsForm extends React.Component {
                 inputs: Array(numOfInputs)
             }
         )
-    }
-
-    // return the object of transformation info
-    getTransformations() {
-        return (
-            [
-                {
-                    name: 'Standardize', 
-                    val: 'stand', 
-                    numOfInputs: 0, 
-                    inputNames: [], 
-                    description: 'Transform the data to have a mean of 0, and a standard deviation of 1.', 
-                    citation: ''
-                },
-                {
-                    name: 'Normalize', 
-                    val: 'norm', 
-                    numOfInputs: 2, 
-                    inputNames: ['Min', 'Max'], 
-                    description: 'Rescale the range of the data to be between a min and max.', 
-                    citation: ''
-                },
-                {
-                    name: 'Moving average filter',
-                    val: 'moving_avg',
-                    numOfInputs: 1,
-                    inputNames: ['Window size'],
-                    description: 'Smooth data by calculating the average out of a defined number of data points.',
-                    citation: ''
-                }
-            ]
-        );
     }
 
     // adds a new stepNums
@@ -155,21 +125,22 @@ class StepsForm extends React.Component {
 
     renderSubmitButton() {
         return (
-            <Button id='submitButton' variant='primary' onClick={this.onSubmit}>Run steps</Button>
+            <Button id='submitButton' type='submit' variant='primary'>Run steps</Button>
         );
     }
 
     /**
      * Handles the form submission
      */
-    onSubmit() {
+    onSubmit(event) {
+        event.preventDefault();
         this.props.onSubmit(this.state.formDetails.slice());
     }
 
     render() {
         return (
             <React.Fragment id='main'>
-                <Form>
+                <Form onSubmit={this.onSubmit}>
                     {this.state.stepNums.map((i) => (this.renderFormGroup(i)))}
                     <Form.Row>
                         <Col>

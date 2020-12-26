@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import {Form, Button, Col, Alert} from 'react-bootstrap';
+import {Form, Button, Row, Col, Alert} from 'react-bootstrap';
 import Space from './Space.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -74,7 +74,8 @@ class InputData extends React.Component {
      * Called when the Submit button is pressed
      * Processes the files array and passes it to a callback
      */
-    onSubmit() {
+    onSubmit(event) {
+        event.preventDefault();
         // remove blanks from files
         let newFiles = this.state.files.slice().filter((element) => (element !== ''));
         let newNum = newFiles.length;
@@ -129,7 +130,7 @@ class InputData extends React.Component {
             <Button 
                 id='submitButton' 
                 variant='primary' 
-                onClick={this.onSubmit} 
+                type='submit'
                 disabled={this.disableSubmit()}>
                 Submit
             </Button>
@@ -140,21 +141,24 @@ class InputData extends React.Component {
         return (
             <React.Fragment id='main'>
                 <h3>Select CSV files</h3>
-                <Form id='files'>
-                    {this.renderFileInputs()}
+                <Form onSubmit={this.onSubmit}>
+                    <div id='files'>
+                        {this.renderFileInputs()}
+                    </div>
+                    <br />
+                    <Alert variant='light'>
+                        FYI: To undo a file input, click on the corresponding "Choose File" and press "Cancel".
+                    </Alert>
+                    <Form.Row>
+                        <Col>
+                            {this.renderAddFileButton()}
+                        </Col>
+                        <Col>
+                            {this.renderSubmitButton()}
+                        </Col>
+                    </Form.Row>
                 </Form>
-                <br />
-                <Alert variant='light'>
-                    FYI: To undo a file input, click on the corresponding "Choose File" and press "Cancel".
-                </Alert>
-                <Form.Row>
-                    <Col>
-                        {this.renderAddFileButton()}
-                    </Col>
-                    <Col>
-                        {this.renderSubmitButton()}
-                    </Col>
-                </Form.Row>
+                
             </React.Fragment>
         );
     }
