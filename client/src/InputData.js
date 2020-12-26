@@ -27,12 +27,13 @@ class InputData extends React.Component {
      * Called when a file is selected
      */
     updateFiles(index, file) {
-        //alert(`File ${index} changed`);
         // update files
         let newFiles = this.state.files.slice();
         newFiles.splice(index, 1, file);
         // update state
         this.setState({files: newFiles});
+
+        console.log(`Files updated: ${newFiles}`);
     }
 
     /**

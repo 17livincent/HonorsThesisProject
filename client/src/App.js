@@ -5,7 +5,7 @@ import React from 'react';
 import {Accordion, Card, Col, Row, Button, Alert} from 'react-bootstrap';
 
 import InputData from './InputData.js';
-import PrepStepsForm from './PrepStepsForm.js';
+import StepsForm from './StepsForm.js';
 import Footer from './Footer.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -37,7 +37,7 @@ class App extends React.Component {
 
     render() {
         let inputData = <InputData id='main' onSubmit={this.submitData}/>;
-        let prepStepsForm = <PrepStepsForm id='main' />;
+        let stepsForm = <StepsForm id='main' />;
         let goBackButton1 = <Button id='goback1' variant='outline-secondary' onClick={() => (this.setState({currentPanel: '0'}))}>Go back</Button>;
 
         let displayFiles = this.state.files.length > 0 && this.state.files.map((file) => <React.Fragment>{file.replace('C:\\fakepath\\', '')}<br /></React.Fragment>);   // remove the fakepath if its there
@@ -67,7 +67,7 @@ class App extends React.Component {
                             </Row>
                         </Card.Header>
                         <Accordion.Collapse eventKey='1'>
-                            <Card.Body>{prepStepsForm}</Card.Body>
+                            <Card.Body>{stepsForm}</Card.Body>
                         </Accordion.Collapse>
                     </Card>
                 </Accordion>
