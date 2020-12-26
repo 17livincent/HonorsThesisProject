@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './Space.css';
+import './styles/Space.css';
 
 class Space extends React.Component {
     render() {

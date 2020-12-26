@@ -8,7 +8,7 @@ import React from 'react';
 import {Navbar, Col, Row} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Footer.css';
+import './styles/Footer.css';
 
 class Footer extends React.Component {
 

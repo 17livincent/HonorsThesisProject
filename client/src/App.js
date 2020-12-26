@@ -11,7 +11,7 @@ import StepsForm from './StepsForm.js';
 import Footer from './Footer.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
+import './styles/App.css';
 //import './outline.css';
 
 class App extends React.Component {

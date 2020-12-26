@@ -1,7 +1,7 @@
 import React from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './HomeInfo.css';
+import './styles/HomeInfo.css';
 
 class HomeInfo extends React.Component {
     render() {

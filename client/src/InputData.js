@@ -8,7 +8,7 @@ import {Form, Button, Col, Alert} from 'react-bootstrap';
 import Space from './Space.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './InputData.css';
+import './styles/InputData.css';
 //import './outline.css';
 
 class InputData extends React.Component {

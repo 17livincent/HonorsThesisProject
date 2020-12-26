@@ -9,7 +9,7 @@ import {Form, Col, Button} from 'react-bootstrap';
 import StepFormGroup from './StepFormGroup';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './StepsForm.css';
+import './styles/StepsForm.css';
 //import './outline.css';
 
 class StepsForm extends React.Component {

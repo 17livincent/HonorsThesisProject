@@ -2,7 +2,7 @@ import React from 'react';
 import {Navbar} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Header.css';
+import './styles/Header.css';
 
 class Header extends React.Component {
 
