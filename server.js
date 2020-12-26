@@ -1,30 +1,15 @@
-let express = require('express');
-let path = require('path');
-let app = express();
-let port = 5000;
+const express = require('express');
+const path = require('path');
+const http = require('http');
+
+const app = express();
+const port = 3000;
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-app.get('/', (req, res) => {
-    res.send('Home');
-    //res.sendFile(path.join(__dirname, '/client/src/index.js'));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
 
-// check if the server is connected to React
-app.get('/express_backend', (req, res) => {
-    res.send({express: 'Your express backend is connected to React'});
-});
-
-// signup page
-app.get('/signup', (req, res) => {
-
-});
-
-// login page
-app.get('/login', (req, res) => {
-
-});
-
-app.listen(port, () => {
-
-});
+const server = http.createServer(app);
+server.listen(port);
