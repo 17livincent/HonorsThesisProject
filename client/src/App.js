@@ -4,6 +4,8 @@
 import React from 'react';
 import {Accordion, Card, Col, Row, Button, Alert} from 'react-bootstrap';
 
+import Header from './Header.js';
+import HomeInfo from './HomeInfo.js';
 import InputData from './InputData.js';
 import StepsForm from './StepsForm.js';
 import Footer from './Footer.js';
@@ -54,7 +56,9 @@ class App extends React.Component {
         let inputDataSummary = <Alert variant='success'><b>Files chosen: </b><br /> {displayFiles}</Alert>;
 
         return (
-            <div>
+            <React.Fragment>
+                <Header />
+                <HomeInfo />
                 <Accordion id='app' activeKey={this.state.currentPanel}>
                     <Card>
                         <Card.Header eventKey='0'>
@@ -82,7 +86,7 @@ class App extends React.Component {
                     </Card>
                 </Accordion>
                 <Footer />
-            </div>
+            </React.Fragment>
             
         );
         
