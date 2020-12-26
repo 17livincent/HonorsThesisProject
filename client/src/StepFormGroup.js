@@ -30,17 +30,30 @@ class StepFormGroup extends React.Component {
     constructor(props) {
         super(props);
 
+        this.recordedInputs = this.props.inputs;    // parameter to record the inputs
+
         this.onDelete = this.onDelete.bind(this);
     }
 
     /**
      * A prop function passed from PrepStepsForm to update the above state
+     * @param stepNumber this formgroup's step number
+     * @param stepName this formgroup's selected step name value
+     * @param input one of this formgroup's inputs
+     * @param inputIndex the index of the input to be updated
      */
-    updateAbove(stepNumber, stepName, inputs) {
-        let newStepNumber = (typeof stepNumber !== 'undefined') ? stepNumber : this.props.stepNumber;
+    updateAbove(stepName, input, inputIndex) {
         let newStepName = (typeof stepName !== 'undefined') ? stepName : this.props.stepName;
-        let newInputs = (typeof inputs !== 'undefined') ? inputs : this.props.inputs;
-        this.props.onFormGroupChange(newStepNumber, newStepName, newInputs);
+
+        // set recordedInputs accordingly
+        let numOfInputs = this.props.steps[this.getStepIndex(newStepName)].numOfInputs;
+        if(stepName === '' || numOfInputs === 0) {   // if there is not step selected, or the step selected has 0 required inputs
+            this.recordedInputs = [];
+        }
+        else {
+            this.recordedInputs[inputIndex] = input;
+        }
+        this.props.onFormGroupChange(this.props.stepNumber, newStepName, this.recordedInputs.slice());
     }
 
     /**
@@ -63,23 +76,13 @@ class StepFormGroup extends React.Component {
             <Form.Control id='selectStepName'
                 as='select'
                 required='required'
-                onChange={(e) => {
-                    this.setInput(e.target.value); 
-                    this.updateAbove(undefined, e.target.value, undefined)}}
+                onChange={(e) => {this.updateAbove(e.target.value, undefined, undefined)}}
                 value={this.props.stepName}>
                 <option value=''>Select a step</option>
                 {stepOptions}
             </Form.Control>
         );
         
-    }
-
-    // clears the input field of a step if not selected
-    setInput(stepValSelected) {
-        if(stepValSelected === '') {
-            //let input = document.getElementById('inputField');
-            //input.value = '';
-        }
     }
 
     /**
@@ -105,13 +108,13 @@ class StepFormGroup extends React.Component {
             <Form.Control id={id}
                 type='number' 
                 placeholder={placeholder}
-                onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, undefined, e.target.value)}}
-                value={this.props.input}>
+                onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, e.target.value, id)}}
+                value={this.props.inputs[id]}>
 
             </Form.Control>
         );
     }
-    
+
     // gets the right number of input fields based on the step index
     renderInputFields(index) {
         // get the corresponding number of input fields
@@ -214,9 +217,6 @@ class StepFormGroup extends React.Component {
                             <Form.Row>
                                 {this.renderCitation(index)}
                             </Form.Row>
-                            {this.props.stepName}<br />
-                            {this.props.inputs.toString()}
-                            
                         </Card.Body>
                     </Card>
                 </Form.Group>

@@ -18,7 +18,7 @@ class StepsForm extends React.Component {
         this.state = {
             numOfSteps: 1,
             stepNums: ['1'],    // array of step numbers
-            formDetails: [this.getFormInfo('', 0), ],
+            formDetails: [this.getFormInfo('', 0)],
             stepOptions: this.getTransformations()
         }
 
