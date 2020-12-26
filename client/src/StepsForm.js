@@ -6,8 +6,9 @@
 import React from 'react';
 import {Form, Col, Button} from 'react-bootstrap';
 
-import StepFormGroup from './StepFormGroup';
-import Transformations from './Transformations';
+import StepFormGroup from './StepFormGroup.js';
+import Transformations from './Transformations.js';
+import Util from './Util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/StepsForm.css';
@@ -50,7 +51,7 @@ class StepsForm extends React.Component {
         // increment this.state.numOfSteps
         let nextStep = this.state.numOfSteps + 1;
         // add new stepNums to this.state.stepNums
-        let newSteps = this.range(1, nextStep, 1);
+        let newSteps = Util.range(1, nextStep, 1);
         // push new element to formDetails
         let newFormDetails = this.state.formDetails.slice();
         newFormDetails.push(this.getFormInfo('', 0));
@@ -65,7 +66,7 @@ class StepsForm extends React.Component {
             // decrement state.numOfSteps
             let newNum = this.state.numOfSteps -1;
             // update stepNums array
-            let newSteps = this.range(1, newNum, 1);
+            let newSteps = Util.range(1, newNum, 1);
             // update formDetails
             let newFormDetails = this.state.formDetails.slice();
             newFormDetails.splice(stepNumber - 1, 1);
@@ -96,13 +97,6 @@ class StepsForm extends React.Component {
         newFormDetails[index].inputs = inputs;
         // update state
         this.setState({formDetails: newFormDetails});
-    }
-
-    /**
-     * Creates an array like the python range function.
-     */
-    range(start, stop, inc) {
-        return Array.from({length: (stop - start) / inc + 1}, (_, i) => start + (i * inc));
     }
 
     renderFormGroup(i) {

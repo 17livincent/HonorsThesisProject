@@ -5,7 +5,9 @@
 
 import React from 'react';
 import {Form, Card, Col, Button} from 'react-bootstrap';
+
 import Transformations from './Transformations.js';
+import Util from './Util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/StepFormGroup.css';
@@ -118,7 +120,7 @@ class StepFormGroup extends React.Component {
         catch(e) {
             inputNames = [];
         }
-        let array = (numOfInputs !== 0) ? (this.range(0, numOfInputs - 1, 1)) : [];
+        let array = (numOfInputs !== 0) ? (Util.range(0, numOfInputs - 1, 1)) : [];
         let inputFields = array.map((i) => this.getInputField(i, inputNames[i]));
     
         return inputFields;
@@ -166,13 +168,6 @@ class StepFormGroup extends React.Component {
         return (
             <Button id='deleteButton' variant='outline-danger' onClick={this.onDelete}>Delete</Button>
         );
-    }
-
-    /**
-     * Creates an array like the python range function.
-     */
-    range(start, stop, inc) {
-        return Array.from({length: (stop - start) / inc + 1}, (_, i) => start + (i * inc));
     }
 
     render() {

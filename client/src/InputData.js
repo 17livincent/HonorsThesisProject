@@ -6,6 +6,7 @@
 import React from 'react';
 import {Form, Button, Col, Alert} from 'react-bootstrap';
 import Space from './Space.js';
+import Util from './Util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/InputData.css';
@@ -46,13 +47,6 @@ class InputData extends React.Component {
         newFiles.push('');
         // update state
         this.setState({numOfFiles: newNum, files: newFiles});
-    }
-
-    /**
-     * Creates an array like the python range function.
-     */
-    range(start, stop, inc) {
-        return Array.from({length: (stop - start) / inc + 1}, (_, i) => start + (i * inc));
     }
 
     getFileInput(index) {
@@ -108,7 +102,7 @@ class InputData extends React.Component {
 
     // returns all file inputs
     renderFileInputs() {
-        return this.range(0, this.state.numOfFiles - 1, 1).map((i) => this.getFileInput(i));
+        return Util.range(0, this.state.numOfFiles - 1, 1).map((i) => this.getFileInput(i));
     }
 
     // returns a button to add a file

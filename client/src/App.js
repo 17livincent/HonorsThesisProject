@@ -10,6 +10,7 @@ import InputData from './InputData.js';
 import StepsForm from './StepsForm.js';
 import Footer from './Footer.js';
 import Transformations from './Transformations.js';
+import Util from './Util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
@@ -82,7 +83,7 @@ class App extends React.Component {
             if(transformations[index].numOfInputs !== 0) {
                 let inputNames = transformations[index].inputNames.slice();
                 let inputs = i.inputs.slice();
-                inputInfo = this.range(0, transformations[index].numOfInputs - 1, 1).map((j) => (<React.Fragment>{inputNames[j]}: {inputs[j]}&emsp;</React.Fragment>));
+                inputInfo = Util.range(0, transformations[index].numOfInputs - 1, 1).map((j) => (<React.Fragment>{inputNames[j]}: {inputs[j]}&emsp;</React.Fragment>));
             }
             return (
                 <React.Fragment>
@@ -90,13 +91,6 @@ class App extends React.Component {
                 </React.Fragment>
             );
         });
-    }
-
-    /**
-     * Creates an array like the python range function.
-     */
-    range(start, stop, inc) {
-        return Array.from({length: (stop - start) / inc + 1}, (_, i) => start + (i * inc));
     }
 
     render() {
