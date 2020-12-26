@@ -5,6 +5,7 @@
 
 import React from 'react';
 import {Form, Card, Col, Button} from 'react-bootstrap';
+import Transformations from './Transformations.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/StepFormGroup.css';
@@ -27,7 +28,7 @@ class StepFormGroup extends React.Component {
      * {stepVal: '', inputs: Array(numOfInputs)}
      */
 
-    constructor(props) {
+    constructor(props) {        
         super(props);
 
         this.recordedInputs = this.props.inputs;    // parameter to record the inputs
@@ -45,8 +46,9 @@ class StepFormGroup extends React.Component {
     updateAbove(stepName, input, inputIndex) {
         let newStepName = (typeof stepName !== 'undefined') ? stepName : this.props.stepName;
 
+        let trans = new Transformations();
         // set recordedInputs accordingly
-        if(stepName === '' || this.props.steps[this.getStepIndex(newStepName)].numOfInputs === 0) {   // if there is not step selected, or the step selected has 0 required inputs
+        if(stepName === '' || this.props.steps[trans.getStepIndex(newStepName)].numOfInputs === 0) {   // if there is not step selected, or the step selected has 0 required inputs
             this.recordedInputs = [];
         }
         else {
@@ -84,28 +86,12 @@ class StepFormGroup extends React.Component {
         
     }
 
-    /**
-     * Find the index in the transformations object of this stepVal
-     * If the stepValSelected === '', then return -1
-     */
-    getStepIndex(stepValSelected) {
-        let index = -1;
-        if(stepValSelected !== '') {
-            for(let i in this.props.steps) {
-                if(stepValSelected === this.props.steps[i].val) {
-                    index = i;
-                    break;
-                }
-            }
-        }
-        return index;
-    }
-
     // returns an input field
     getInputField(id, placeholder) {
         return (
             <Form.Control id={id}
                 type='number' 
+                required='true'
                 placeholder={placeholder}
                 onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, e.target.value, id)}}
                 value={this.props.inputs[id]}>
@@ -191,7 +177,8 @@ class StepFormGroup extends React.Component {
 
     render() {
         // index in transformations object of the selected step
-        let index = this.getStepIndex(this.props.stepName);
+        let trans = new Transformations();
+        let index = trans.getStepIndex(this.props.stepName);
 
         return (
             <React.Fragment>
