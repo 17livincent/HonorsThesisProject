@@ -46,8 +46,7 @@ class StepFormGroup extends React.Component {
         let newStepName = (typeof stepName !== 'undefined') ? stepName : this.props.stepName;
 
         // set recordedInputs accordingly
-        let numOfInputs = this.props.steps[this.getStepIndex(newStepName)].numOfInputs;
-        if(stepName === '' || numOfInputs === 0) {   // if there is not step selected, or the step selected has 0 required inputs
+        if(stepName === '' || this.props.steps[this.getStepIndex(newStepName)].numOfInputs === 0) {   // if there is not step selected, or the step selected has 0 required inputs
             this.recordedInputs = [];
         }
         else {
