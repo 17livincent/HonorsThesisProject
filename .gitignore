@@ -27,3 +27,4 @@
 .github
 ui-debug.log
 firebase-debug.log
+/client/public/config.js
