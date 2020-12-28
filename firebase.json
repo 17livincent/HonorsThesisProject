@@ -3,7 +3,7 @@
     "public": "client/build",
     "rewrites": [
       {
-        "source": "**",
+        "source": "/",
         "function": "app"
       }
     ],
