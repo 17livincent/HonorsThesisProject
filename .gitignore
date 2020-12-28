@@ -26,3 +26,4 @@
 .firebase
 .github
 ui-debug.log
+firebase-debug.log
