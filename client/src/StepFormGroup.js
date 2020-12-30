@@ -6,8 +6,8 @@
 import React from 'react';
 import {Form, Card, Col, Button} from 'react-bootstrap';
 
-import Transformations from './Transformations.js';
-import Util from './Util.js';
+import Transformations from './transformations.js';
+import Util from './util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/StepFormGroup.css';

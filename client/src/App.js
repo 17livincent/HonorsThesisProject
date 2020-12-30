@@ -9,8 +9,8 @@ import HomeInfo from './HomeInfo.js';
 import InputData from './InputData.js';
 import StepsForm from './StepsForm.js';
 import Footer from './Footer.js';
-import Transformations from './Transformations.js';
-import Util from './Util.js';
+import Transformations from './transformations.js';
+import Util from './util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';

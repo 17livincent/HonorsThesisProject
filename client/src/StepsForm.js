@@ -7,8 +7,8 @@ import React from 'react';
 import {Form, Col, Button} from 'react-bootstrap';
 
 import StepFormGroup from './StepFormGroup.js';
-import Transformations from './Transformations.js';
-import Util from './Util.js';
+import Transformations from './transformations.js';
+import Util from './util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/StepsForm.css';
