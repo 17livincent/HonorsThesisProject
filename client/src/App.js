@@ -2,15 +2,14 @@
  * The highest-level component of the web app.
  */
 import React from 'react';
-import {Accordion, Card, Col, Row, Button, Alert} from 'react-bootstrap';
+import {Accordion, Card, Col, Row, Button} from 'react-bootstrap';
 
 import Header from './Header.js';
 import HomeInfo from './HomeInfo.js';
 import InputData from './InputData.js';
 import StepsForm from './StepsForm.js';
+import Confirm from './Confirm.js';
 import Footer from './Footer.js';
-import Transformations from './transformations.js';
-import Util from './util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
@@ -51,56 +50,11 @@ class App extends React.Component {
         this.setState({currentPanel: '2'});
     }
 
-    /**
-     * Returns a component with the names of the files chosen
-     */
-    displayFiles() {
-        return (
-            this.state.files.length > 0 && this.state.files.map((file) => 
-                <React.Fragment>
-                    {file.replace('C:\\fakepath\\', '')}<br />
-                </React.Fragment>
-            )   // remove the fakepath if its there
-        );
-    }
-
-    /**
-     * Returns a component with the sequences of chosen steps and their inputs
-     */
-    displaySteps() {
-        let trans = new Transformations();
-        let transformations = trans.getTransformations();
-        let steps = this.state.steps;
-        let counter = 0;
-        return steps.map((i) => {
-            counter++;
-            // find the index of this step
-            let index = trans.getStepIndex(i.step);
-            // get the step name
-            let stepName = transformations[index].name;
-            // get the input names and inputs
-            let inputInfo;
-            if(transformations[index].numOfInputs !== 0) {
-                let inputNames = transformations[index].inputNames.slice();
-                let inputs = i.inputs.slice();
-                inputInfo = Util.range(0, transformations[index].numOfInputs - 1, 1).map((j) => (<React.Fragment>{inputNames[j]}: {inputs[j]}&emsp;</React.Fragment>));
-            }
-            return (
-                <React.Fragment>
-                    <br />{counter}: {stepName}<br />&emsp;{inputInfo}
-                </React.Fragment>
-            );
-        });
-    }
-
     render() {
         let inputData = <InputData id='main' onSubmit={this.submitData}/>;
         let stepsForm = <StepsForm id='main' onSubmit={this.submitSteps}/>;
         let goBackButton1 = <Button id='goback1' variant='outline-secondary' onClick={() => (this.setState({currentPanel: '0'}))}>Go back</Button>;
         let goBackButton2 = <Button id='goback2' variant='outline-secondary' onClick={() => (this.setState({currentPanel: '1'}))}>Go back</Button>;
-
-        let inputDataSummary = <Alert variant='success'><b>Files chosen: </b><br /> {this.displayFiles()}</Alert>;
-        let stepsSummary = <Alert variant='success'><b>Steps chosen: </b>{this.displaySteps()}</Alert>;
 
         return (
             <React.Fragment>
@@ -110,7 +64,6 @@ class App extends React.Component {
                     <Card>
                         <Card.Header eventKey='0'>
                             <h2>1. Input Data</h2>
-                            {(this.state.currentPanel !== '0') && inputDataSummary}
                         </Card.Header>
                         <Accordion.Collapse eventKey='0'>
                             <Card.Body>{inputData}</Card.Body>
@@ -121,7 +74,6 @@ class App extends React.Component {
                             <Row>
                                 <Col>
                                     <h2>2. Select Preprocessing Steps</h2>
-                                    {(this.state.currentPanel > 1) && stepsSummary}
                                 </Col>
                                 <Col>
                                     {(this.state.currentPanel === '1') && goBackButton1}
@@ -143,6 +95,11 @@ class App extends React.Component {
                                 </Col>
                             </Row>
                         </Card.Header>
+                        <Accordion.Collapse eventKey='2'>
+                            <Card.Body>
+                                <Confirm files={this.state.files} steps={this.state.steps}/>
+                            </Card.Body>
+                        </Accordion.Collapse>
                     </Card>
                 </Accordion>
                 <Footer />
