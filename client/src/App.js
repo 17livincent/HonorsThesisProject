@@ -11,6 +11,8 @@ import StepsForm from './StepsForm.js';
 import Confirm from './Confirm.js';
 import Footer from './Footer.js';
 
+import socketClient from 'socket.io-client';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
 //import './outline.css';
@@ -48,6 +50,19 @@ class App extends React.Component {
         this.setState({steps: steps});
         // close this accordion, open the next
         this.setState({currentPanel: '2'});
+    }
+
+    /**
+     * Called in step 3 if the user presses the 'Confirm" button.
+     * 
+     */
+    commitOps() {
+        console.log('Files and steps confirmed.');
+        let socket = socketClient('http://127.0.0.1:3000');
+
+        socket.on('connection', () => {
+            console.log('Connected to server');
+        });
     }
 
     render() {
@@ -97,7 +112,7 @@ class App extends React.Component {
                         </Card.Header>
                         <Accordion.Collapse eventKey='2'>
                             <Card.Body>
-                                <Confirm files={this.state.files} steps={this.state.steps}/>
+                                <Confirm files={this.state.files} steps={this.state.steps} onSubmit={this.commitOps}/>
                             </Card.Body>
                         </Accordion.Collapse>
                     </Card>

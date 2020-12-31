@@ -14,7 +14,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/Confirm.css';
 
 class Confirm extends React.Component {
+    constructor(props) {
+        super(props);
 
+        this.onConfirm = this.onConfirm.bind(this);
+    }
     /**
      * Returns a component with the names of the files chosen
      */
@@ -57,6 +61,14 @@ class Confirm extends React.Component {
         });
     }
 
+    /**
+     * Notifies the parent component that the preprocessing steps are ready to be done
+     */
+    onConfirm(event) {
+        event.preventDefault();
+        this.props.onSubmit();
+    }
+
     render() {
         let inputDataSummary = <Alert variant='success'><h4>Files chosen:</h4>{this.displayFiles()}</Alert>;
         let stepsSummary = <Alert variant='success'><h4>Steps chosen:</h4>{this.displaySteps()}</Alert>;
@@ -65,7 +77,7 @@ class Confirm extends React.Component {
             <React.Fragment>
                 {inputDataSummary}
                 {stepsSummary}
-                <Button id='confirmButton' variant='primary' size='lg'>Confirm</Button>
+                <Button id='confirmButton' variant='primary' size='lg' onClick={this.onConfirm}>Confirm</Button>
             </React.Fragment>
         );
     }
