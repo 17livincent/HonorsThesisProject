@@ -1,0 +1,22 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "This is a web application which allows the user to preprocess time series data files (.csv) with an easy-to-use, file-converter-like interface.  To visit the app, follow this [link](https://honorsthesiswebapp.web.app/).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/17livincent/HonorsThesisWebApp.git"
+  },
+  "author": "Vincent Li",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/17livincent/HonorsThesisWebApp/issues"
+  },
+  "homepage": "https://github.com/17livincent/HonorsThesisWebApp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

@@ -21,10 +21,6 @@
 /client/yarn-debug.log*
 /client/yarn-error.log*
 
-# firebase
-/functions/node_modules/
-.firebase
-.github
-ui-debug.log
-firebase-debug.log
 /client/public/config.js
+
+/node_modules
