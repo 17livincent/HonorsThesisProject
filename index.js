@@ -1,5 +1,7 @@
 const express = require('express'); // express
 const path = require('path');
+const compression = require('compression'); // compression
+const helmet = require('helmet');
 
 const app = express();  // express server
 const server = require('http').createServer(app);  // http
@@ -11,11 +13,13 @@ const io = require('socket.io')(server, {
 
 const port = 3000;
 
+app.use(express.static('client/build'));
+app.use(compression());
+app.use(helmet());
+
 server.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
-
-app.use(express.static('client/build'));
 
 // on getting root directory
 app.get('/', (request, response) => {
