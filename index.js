@@ -2,10 +2,15 @@ const express = require('express'); // express
 const path = require('path');
 const compression = require('compression'); // compression
 const helmet = require('helmet');
+const https = require('https');
+const fs = require('fs');
 
 const app = express();  // express server
-const server = require('http').createServer(app);  // http
-const io = require('socket.io')(server, {
+const httpsServer = https.createServer({
+    key: fs.readFileSync('certs/server.key'),
+    cert: fs.readFileSync('certs/server.crt')
+}, app);  // https
+const io = require('socket.io')(httpsServer, {
     cors: {
         origin: '*',
     }
@@ -17,7 +22,7 @@ app.use(express.static('client/build'));
 app.use(compression());
 app.use(helmet());
 
-server.listen(port, () => {
+httpsServer.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
 
