@@ -1,12 +1,13 @@
 const express = require('express'); // express
 const path = require('path');
+const http = require('http');
 const compression = require('compression'); // compression
 const helmet = require('helmet');
 const fs = require('fs');
 
 const app = express();  // express server
-
-const io = require('socket.io')(httpsServer, {
+const httpServer = http.createServer(app);
+const io = require('socket.io')(httpServer, {
     cors: {
         origin: '*',
     }
@@ -31,5 +32,5 @@ io.on('connection', (socket) => {
 });
 
 app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
+    console.log(`Listening on port ${port}:`);
 });
