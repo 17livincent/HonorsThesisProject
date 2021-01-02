@@ -1,16 +1,17 @@
 const express = require('express'); // express
 const path = require('path');
-const http = require('http');
-const compression = require('compression'); // compression
-const helmet = require('helmet');
 const fs = require('fs');
 const cors = require('cors');
 
 const port = 3000;
-
 const app = express();  // express server
 
-const httpServer = http.createServer(
+app.use(express.static('client/build'));
+app.use(require('compression')());
+app.use(require('helmet')());
+app.use(cors());
+
+const httpServer = require('http').createServer(
     //{key: fs.readFileSync('certs/server.key', 'utf8'), 
     //cert: fs.readFileSync('certs/server.crt', 'utf8'),}, 
     app);
@@ -28,10 +29,6 @@ let corsOps = {
 }
 
 const io = require('socket.io')(httpServer, cors(corsOps));    // initialize socket.io for server
-
-app.use(express.static('client/build'));
-app.use(compression());
-app.use(helmet());
 
 // on getting root directory
 app.get('/', (request, response) => {
