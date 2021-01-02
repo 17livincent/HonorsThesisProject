@@ -16,7 +16,7 @@ const httpServer = require('http').createServer(
     //cert: fs.readFileSync('certs/server.crt', 'utf8'),}, 
     app);
 
-let origins = ['http://localhost:3000', 'http://web-app.li-vincent.com:3000'];
+let origins = ['localhost:3000', 'web-app.li-vincent.com:3000'];
 let corsOps = {
     origin: (origin, callback) => {
         if(origins.indexOf(origin) !== -1 || !origin) {
