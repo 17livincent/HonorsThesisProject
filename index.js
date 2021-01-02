@@ -5,7 +5,7 @@ const compression = require('compression'); // compression
 const helmet = require('helmet');
 const fs = require('fs');
 
-const port = 443;
+const port = 3000;
 
 const app = express();  // express server
 
