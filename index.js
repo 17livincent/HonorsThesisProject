@@ -1,19 +1,23 @@
 const express = require('express'); // express
 const path = require('path');
-const http = require('http');
+const https = require('https');
 const compression = require('compression'); // compression
 const helmet = require('helmet');
 const fs = require('fs');
 
+const port = 443;
+
 const app = express();  // express server
-const httpServer = http.createServer(app);
-const io = require('socket.io')(httpServer, {
+
+const httpsServer = https.createServer(
+    {key: fs.readFileSync('certs/server.key', 'utf8'), 
+    cert: fs.readFileSync('certs/server.crt', 'utf8'),}, app);
+
+const io = require('socket.io')(httpsServer, {
     cors: {
-        origin: '*',
+        origin: '*'
     }
 });    // initialize socket.io for server
-
-const port = 3000;
 
 app.use(express.static('client/build'));
 app.use(compression());
@@ -31,6 +35,6 @@ io.on('connection', (socket) => {
     socket.emit('connection', null);
 });
 
-app.listen(port, () => {
+httpsServer.listen(port, () => {
     console.log(`Listening on port ${port}:`);
 });

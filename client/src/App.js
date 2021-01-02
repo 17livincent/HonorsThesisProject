@@ -58,7 +58,7 @@ class App extends React.Component {
      */
     commitOps() {
         console.log('Files and steps confirmed.');
-        let socket = socketClient('http://127.0.0.1:3000');
+        let socket = socketClient('https://localhost:443');
 
         socket.on('connection', () => {
             console.log('Connected to server');
