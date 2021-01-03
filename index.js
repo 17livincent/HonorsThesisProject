@@ -16,19 +16,7 @@ const httpServer = require('http').createServer(
     //cert: fs.readFileSync('certs/server.crt', 'utf8'),}, 
     app);
 
-let origins = ['localhost:3000', 'web-app.li-vincent.com:3000'];
-let corsOps = {
-    origin: (origin, callback) => {
-        if(origins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        }
-        else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    }
-}
-
-const io = require('socket.io')(httpServer, cors(corsOps));    // initialize socket.io for server
+const io = require('socket.io')(httpServer, cors({origin: '*'}));    // initialize socket.io for server
 
 // on getting root directory
 app.get('/', (request, response) => {

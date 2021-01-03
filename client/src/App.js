@@ -11,7 +11,7 @@ import StepsForm from './StepsForm.js';
 import Confirm from './Confirm.js';
 import Footer from './Footer.js';
 
-import socketClient from 'socket.io-client';
+import socketIOClient from 'socket.io-client';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
@@ -57,8 +57,12 @@ class App extends React.Component {
      * 
      */
     commitOps() {
+        const ENDPOINT = 'http://localhost:3000';
         console.log('Files and steps confirmed.');
-        let socket = socketClient('localhost:3000');
+        let socket = socketIOClient(ENDPOINT, {
+            secure: true,
+            rejectUnauthorized: false
+        });
 
         socket.on('connection', () => {
             console.log('Connected to server');
