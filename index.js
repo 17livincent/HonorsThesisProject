@@ -16,7 +16,7 @@ const httpServer = require('http').createServer(
     //cert: fs.readFileSync('certs/server.crt', 'utf8'),}, 
     app);
 
-const io = require('socket.io')(httpServer, cors({origin: '*'}));    // initialize socket.io for server
+const io = require('socket.io')(httpServer, cors({origins: '*'}));    // initialize socket.io for server
 
 // on getting root directory
 app.get('/', (request, response) => {
