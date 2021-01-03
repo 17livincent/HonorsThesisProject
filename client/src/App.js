@@ -57,11 +57,10 @@ class App extends React.Component {
      * 
      */
     commitOps() {
-        const ENDPOINT = 'http://localhost:3000';
+        const ENDPOINT = 'https://localhost:3000';
         console.log('Files and steps confirmed.');
         let socket = socketIOClient(ENDPOINT, {
             secure: true,
-            rejectUnauthorized: false
         });
 
         socket.on('connection', () => {
