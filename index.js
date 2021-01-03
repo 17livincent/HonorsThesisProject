@@ -1,6 +1,5 @@
 const express = require('express'); // express
 const path = require('path');
-const fs = require('fs');
 const cors = require('cors');
 
 const port = 3000;
