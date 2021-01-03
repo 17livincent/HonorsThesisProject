@@ -57,11 +57,9 @@ class App extends React.Component {
      * 
      */
     commitOps() {
-        const ENDPOINT = 'localhost:3000';
+        const ENDPOINT = 'http://localhost:3000';
         console.log('Files and steps confirmed.');
-        let socket = socketIOClient(ENDPOINT, {
-            secure: true,
-        });
+        let socket = socketIOClient(ENDPOINT);
 
         socket.on('connection', () => {
             console.log('Connected to server');

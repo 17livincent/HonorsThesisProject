@@ -10,10 +10,7 @@ app.use(require('compression')());
 app.use(require('helmet')());
 app.use(cors());
 
-const httpServer = require('http').createServer(
-    //{key: fs.readFileSync('certs/server.key', 'utf8'), 
-    //cert: fs.readFileSync('certs/server.crt', 'utf8'),}, 
-    app);
+const httpServer = require('http').createServer(app);
 
 const io = require('socket.io')(httpServer, cors({origins: '*'}));    // initialize socket.io for server
 
