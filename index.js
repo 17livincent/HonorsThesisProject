@@ -12,7 +12,7 @@ app.use(cors());
 
 const httpServer = require('http').createServer(app);
 
-const io = require('socket.io')(httpServer, cors({origins: '*'}));    // initialize socket.io for server
+const io = require('socket.io')(httpServer, cors({origin: '*'}));    // initialize socket.io for server
 
 // on getting root directory
 app.get('/', (request, response) => {
