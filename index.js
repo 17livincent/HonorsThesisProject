@@ -14,7 +14,7 @@ const httpServer = require('http').createServer(app);
 
 const io = require('socket.io')(httpServer, {
     cors: {
-        origin: 'https://web-app.li-vincent.com:3000',
+        origin: 'localhost:3000',
         methods: ['GET', 'POST']
     }
 });    // initialize socket.io for server
@@ -27,8 +27,17 @@ app.get('/', (request, response) => {
 
 // handler to initiating new connection with a client
 io.on('connection', (socket) => {
-    console.log(`New socket connection of ID: ${socket.id}.`);
-    socket.emit('connection', null);
+    console.log(`${socket.id}: Connected.`);
+    socket.emit('connection');
+
+    socket.on('submit', (data, callback) => {
+        console.log(`${socket.id}: Submitted: ${JSON.stringify(data)}.`);
+        callback('Acknowledged');
+    });
+
+    socket.on('disconnect', () => {
+        console.log(`${socket.id}: Disconnected.`);
+    });
 });
 
 httpServer.listen(port, () => {

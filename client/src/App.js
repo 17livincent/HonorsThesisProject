@@ -21,6 +21,8 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
+        this.socket = socketIOClient('localhost:3000');
+
         this.state = {
             currentPanel: '0',
             files: [],
@@ -29,6 +31,14 @@ class App extends React.Component {
 
         this.submitData = this.submitData.bind(this);
         this.submitSteps = this.submitSteps.bind(this);
+        this.commitOps = this.commitOps.bind(this);
+    }
+
+    componentWillMount() {
+        // verify connection
+        this.socket.on('connection', () => {
+            console.log(`Connected to server with socket ID: ${this.socket.id}`);
+        });
     }
 
     /**
@@ -45,8 +55,7 @@ class App extends React.Component {
      * Callback function passed to the StepsForm
      */
     submitSteps(steps) {
-        console.log('Steps submitted:');
-        console.log(steps);
+        console.log(`Steps submitted: ${JSON.stringify(steps)}`);
         this.setState({steps: steps});
         // close this accordion, open the next
         this.setState({currentPanel: '2'});
@@ -57,12 +66,9 @@ class App extends React.Component {
      * 
      */
     commitOps() {
-        const ENDPOINT = 'localhost:3000';
         console.log('Files and steps confirmed.');
-        let socket = socketIOClient(ENDPOINT);
-
-        socket.on('connection', () => {
-            console.log('Connected to server');
+        this.socket.emit('submit', this.state.steps, (callback) => {
+            console.log(callback);
         });
     }
 
