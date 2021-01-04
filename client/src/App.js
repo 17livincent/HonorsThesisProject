@@ -21,7 +21,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.socket = socketIOClient('localhost:3000');
+        this.socket = socketIOClient('web-app.li-vincent.com:3000');
 
         this.state = {
             currentPanel: '0',
