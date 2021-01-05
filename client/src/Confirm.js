@@ -26,7 +26,7 @@ class Confirm extends React.Component {
         return (
             this.props.files.length > 0 && this.props.files.map((file) => 
                 <React.Fragment>
-                    {file.replace('C:\\fakepath\\', '')}<br />
+                    {file.name}<br />
                 </React.Fragment>
             )   // remove the fakepath if its there
         );

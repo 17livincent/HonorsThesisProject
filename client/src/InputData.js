@@ -56,7 +56,7 @@ class InputData extends React.Component {
                     <Form.File 
                         id='fileInput'
                         accept='.csv'
-                        onChange={(e) => (this.updateFiles(index, e.target.value))}>
+                        onChange={(e) => (this.updateFiles(index, e.target.files[0]))}>
                     </Form.File>
                 </Form.Row>
                 <Space />
