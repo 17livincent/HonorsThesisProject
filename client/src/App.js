@@ -21,12 +21,15 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
+        // socket to send and receive data from server
         this.socket = socketIOClient('web-app.li-vincent.com:3000');
+        // FileList of inputted files
+        this.files = [];
+        // array of selected steps
+        this.steps = [];
 
         this.state = {
-            currentPanel: '0',
-            files: [],
-            steps: []
+            currentPanel: '0'
         }
 
         this.submitData = this.submitData.bind(this);
@@ -45,8 +48,9 @@ class App extends React.Component {
      * Callback function passed to the InputData
      */
     submitData(files) {
-        console.log(`Files submitted: ${files.toString()}`);
-        this.setState({files: files});
+        console.log('Files submitted:');
+        console.log(files);
+        this.files = files;
         // close this accordion, open the second
         this.setState({currentPanel: '1'});
     }
@@ -56,18 +60,25 @@ class App extends React.Component {
      */
     submitSteps(steps) {
         console.log(`Steps submitted: ${JSON.stringify(steps)}`);
-        this.setState({steps: steps});
+        this.steps = steps;
         // close this accordion, open the next
         this.setState({currentPanel: '2'});
     }
 
     /**
      * Called in step 3 if the user presses the 'Confirm" button.
-     * 
      */
     commitOps() {
         console.log('Files and steps confirmed.');
-        this.socket.emit('submit', this.state.steps, (callback) => {
+        this.sendSteps();
+
+    }
+
+    /**
+     * Sends the steps object to the server
+     */
+    sendSteps() {
+        this.socket.emit('submit', this.steps, (callback) => {
             console.log(callback);
         });
     }
@@ -119,7 +130,7 @@ class App extends React.Component {
                         </Card.Header>
                         <Accordion.Collapse eventKey='2'>
                             <Card.Body>
-                                <Confirm files={this.state.files} steps={this.state.steps} onSubmit={this.commitOps}/>
+                                <Confirm files={this.files} steps={this.steps} onSubmit={this.commitOps}/>
                             </Card.Body>
                         </Accordion.Collapse>
                     </Card>
