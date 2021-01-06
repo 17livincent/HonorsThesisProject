@@ -77,7 +77,7 @@ class Confirm extends React.Component {
             <React.Fragment>
                 {inputDataSummary}
                 {stepsSummary}
-                <Button id='confirmButton' variant='primary' size='lg' onClick={this.onConfirm}>Confirm</Button>
+                <Button id='confirmButton' variant='primary' size='lg' onClick={this.onConfirm}>Run and download</Button>
             </React.Fragment>
         );
     }

@@ -30,11 +30,10 @@ io.on('connection', (socket) => {
     console.log(`${socket.id}: Connected.`);
     socket.emit('connection');
 
-    socket.on('submit', (data, callback) => {
-        console.log(`${socket.id}: Submitted: ${JSON.stringify(data)}.`);
-        callback('Acknowledged');
+    socket.on('submit', (steps, files, callback) => {
+        console.log(`${socket.id}: Submitted: ${JSON.stringify(steps)} with ${files.length} files.`);
+        callback(`Acknowledged: ${JSON.stringify(steps)} with ${files.length} files`);
     });
-
     socket.on('disconnect', () => {
         console.log(`${socket.id}: Disconnected.`);
     });

@@ -70,15 +70,24 @@ class App extends React.Component {
      */
     commitOps() {
         console.log('Files and steps confirmed.');
-        this.sendSteps();
-
+        this.sendToServer();
     }
 
     /**
-     * Sends the steps object to the server
+     * Send steps and files to server
      */
-    sendSteps() {
-        this.socket.emit('submit', this.steps, (callback) => {
+    sendToServer() {
+        let filesToSend = [];   // the files to send in base64
+        let stepsToSend = this.steps.slice();
+        // a File is already of type Blob, so can send as-is through socket.io
+        for(let i = 0; i < this.files.length; i++) {
+            let reader = new FileReader();
+            reader.readAsDataURL(this.files[i]);  // read
+            var b64File = reader.result;    // convert to base64
+            filesToSend.push(b64File);  // add to filesToSend
+        }
+        // send to server
+        this.socket.emit('submit', stepsToSend, filesToSend, (callback) => {
             console.log(callback);
         });
     }
