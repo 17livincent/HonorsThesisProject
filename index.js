@@ -1,6 +1,5 @@
 const express = require('express'); // express
 const path = require('path');
-const cors = require('cors');
 
 const port = 3000;
 const app = express();  // express server
@@ -8,7 +7,7 @@ const app = express();  // express server
 app.use(express.static('client/build'));
 app.use(require('compression')());
 app.use(require('helmet')());
-app.use(cors());
+app.use(require('cors')());
 
 const httpServer = require('http').createServer(app);
 
@@ -25,14 +24,23 @@ app.get('/', (request, response) => {
     response.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
 
-// handler to initiating new connection with a client
-io.on('connection', (socket) => {
+io.on('connection', (socket) => {   // when a new client has connected
     console.log(`${socket.id}: Connected.`);
     socket.emit('connection');
 
-    socket.on('submit', (steps, files, callback) => {
+    socket.on('submit', (steps, files, callback) => {   // client sent step info and base64-encoded files
         console.log(`${socket.id}: Submitted: ${JSON.stringify(steps)} with ${files.length} files.`);
-        callback(`Acknowledged: ${JSON.stringify(steps)} with ${files.length} files`);
+        callback(`Acknowledged: ${JSON.stringify(steps)} with ${files.length} files`);  // acknowledge
+        
+        let filesToReturn = []; // array of preprocessed files
+        // perform the specified steps on each file
+        for(let i in files) {
+            let csv = files[i];
+            // perform magic
+            filesToReturn.push(csv);
+        }
+        // send filesToReturn to client
+        
     });
     socket.on('disconnect', () => {
         console.log(`${socket.id}: Disconnected.`);

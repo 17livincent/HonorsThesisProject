@@ -29,7 +29,7 @@ class App extends React.Component {
         this.steps = [];
 
         this.state = {
-            currentPanel: '0'
+            currentPanel: '0'   // which accordion section is open
         }
 
         this.submitData = this.submitData.bind(this);
@@ -77,17 +77,11 @@ class App extends React.Component {
      * Send steps and files to server
      */
     sendToServer() {
-        let filesToSend = [];   // the files to send in base64
-        let stepsToSend = this.steps.slice();
+        let filesToSend = this.files;   // the files to send
+        let stepsToSend = this.steps;   // the steps info to send
         // a File is already of type Blob, so can send as-is through socket.io
-        for(let i = 0; i < this.files.length; i++) {
-            let reader = new FileReader();
-            reader.readAsDataURL(this.files[i]);  // read
-            var b64File = reader.result;    // convert to base64
-            filesToSend.push(b64File);  // add to filesToSend
-        }
-        // send to server
-        this.socket.emit('submit', stepsToSend, filesToSend, (callback) => {
+        // since the app is hosted via HTTPS by default, the files won't be encrypted/encoded
+        this.socket.emit('submit', stepsToSend, filesToSend, (callback) => {    // send to server
             console.log(callback);
         });
     }
