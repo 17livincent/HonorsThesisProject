@@ -38,9 +38,15 @@ class App extends React.Component {
     }
 
     componentWillMount() {
-        // verify connection
-        this.socket.on('connection', () => {
+        this.socket.on('connection', () => {    // verify connection
             console.log(`Connected to server with socket ID: ${this.socket.id}`);
+        });
+        this.socket.on('download', (files) => {
+            console.log('Downloading file(s) from server');
+            console.log(files);
+        });
+        this.socket.on('disconnect', () => {
+            console.log('Disconnected from server');
         });
     }
 
@@ -77,10 +83,16 @@ class App extends React.Component {
      * Send steps and files to server
      */
     sendToServer() {
-        let filesToSend = this.files;   // the files to send
+        let filesToSend = [];   // the files to send, which includes the name and buffer (itself) of each file
         let stepsToSend = this.steps;   // the steps info to send
         // a File is already of type Blob, so can send as-is through socket.io
         // since the app is hosted via HTTPS by default, the files won't be encrypted/encoded
+        for(let i in this.files) {
+            filesToSend.push({
+                name: this.files[i].name, 
+                buffer: this.files[i]
+            });
+        }
         this.socket.emit('submit', stepsToSend, filesToSend, (callback) => {    // send to server
             console.log(callback);
         });

@@ -1,5 +1,9 @@
 const express = require('express'); // express
 const path = require('path');
+const FileAPI = require('file-api');
+const File = FileAPI.File;
+const FileList = FileAPI.FileList;
+const FileReader = FileAPI.FileReader;
 
 const port = 3000;
 const app = express();  // express server
@@ -31,15 +35,26 @@ io.on('connection', (socket) => {   // when a new client has connected
     socket.on('submit', (steps, files, callback) => {   // client sent step info and base64-encoded files
         console.log(`${socket.id}: Submitted: ${JSON.stringify(steps)} with ${files.length} files.`);
         callback(`Acknowledged: ${JSON.stringify(steps)} with ${files.length} files`);  // acknowledge
-        
-        let filesToReturn = []; // array of preprocessed files
-        // perform the specified steps on each file
+        // reconstruct files into File objects from Buffer objects
+        let filesReceived = [];
         for(let i in files) {
-            let csv = files[i];
-            // perform magic
-            filesToReturn.push(csv);
+            let file = new File({
+                name: files[i].name,
+                buffer: Buffer.from(files[i].buffer),
+                jsdom: true,
+                async: true
+            });
+            filesReceived.push(file);
+            console.log(file);
+            /*
+            let reader = new FileReader();
+            reader.readAsText(file, 'utf-8');
+            reader.addEventListener('load', () => {
+                console.log(reader.result);
+            });
+            */
         }
-        // send filesToReturn to client
+        
         
     });
     socket.on('disconnect', () => {
