@@ -17,12 +17,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
 //import './outline.css';
 
+const CHUNKSIZE = 100000;
+
 class App extends React.Component {
     constructor(props) {
         super(props);
 
         // socket to send and receive data from server
-        this.socket = socketIOClient('web-app.li-vincent.com:3000');
+        this.socket = socketIOClient('localhost:3000');
         // FileList of inputted files
         this.files = [];
         // array of selected steps
@@ -80,22 +82,35 @@ class App extends React.Component {
     }
 
     /**
-     * Send steps and files to server
+     * Returns an object representing a file chunk
+     */
+    getFileChunk(fileName, fileType, fileSize, arrayBuffer, i) {
+        return {
+            name: fileName,
+            type: fileType,
+            size: fileSize,
+            data: arrayBuffer,
+        }
+    }
+
+    /**
+     * Send steps and file chunks to server
      */
     sendToServer() {
-        let filesToSend = [];   // the files to send, which includes the name and buffer (itself) of each file
-        let stepsToSend = this.steps;   // the steps info to send
-        // a File is already of type Blob, so can send as-is through socket.io
-        // since the app is hosted via HTTPS by default, the files won't be encrypted/encoded
+        // send steps
+        this.socket.emit('steps', this.steps, (callback) => {console.log(callback)});
+        // send files
         for(let i in this.files) {
-            filesToSend.push({
-                name: this.files[i].name, 
-                buffer: this.files[i]
-            });
+            for(let j = 0; j < Math.floor(this.files[i].size / CHUNKSIZE); j++) {
+                let reader = new FileReader();
+                reader.onload = () => { // on load, send to server
+                    this.socket.emit('file chunk', this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, reader.result), (callback) => {console.log(callback)});
+                }
+                let start = j * CHUNKSIZE;  // get starting byte
+                let slice = this.files[i].slice(start, start + Math.min(CHUNKSIZE, this.files[i].size - start));    // get slice
+                reader.readAsArrayBuffer(slice);    // read as array buffer
+            }
         }
-        this.socket.emit('submit', stepsToSend, filesToSend, (callback) => {    // send to server
-            console.log(callback);
-        });
     }
 
     render() {

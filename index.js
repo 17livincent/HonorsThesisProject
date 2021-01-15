@@ -1,5 +1,6 @@
 const express = require('express'); // express
 const path = require('path');
+const fs = require('fs');
 const FileAPI = require('file-api');
 const File = FileAPI.File;
 const FileList = FileAPI.FileList;
@@ -17,10 +18,18 @@ const httpServer = require('http').createServer(app);
 
 const io = require('socket.io')(httpServer, {
     cors: {
-        origin: 'web-app.li-vincent.com:3000',
+        origin: 'localhost:3000',
         methods: ['GET', 'POST']
     }
 });    // initialize socket.io for server
+
+let clients = [];   // list of clientForms
+
+let clientForm = {  // details associated with a connected client
+    id: null,   // socket ID
+    steps: null,    // sent steps
+    files: []   // sent files
+}
 
 // on getting root directory
 app.get('/', (request, response) => {
@@ -30,35 +39,44 @@ app.get('/', (request, response) => {
 
 io.on('connection', (socket) => {   // when a new client has connected
     console.log(`${socket.id}: Connected.`);
+    // record client
+    let client = Object.assign({}, clientForm);
+    client.id = socket.id;
+    clients.push(client);
+    console.log(clients);
+    // ack connection
     socket.emit('connection');
 
-    socket.on('submit', (steps, files, callback) => {   // client sent step info and base64-encoded files
-        console.log(`${socket.id}: Submitted: ${JSON.stringify(steps)} with ${files.length} files.`);
-        callback(`Acknowledged: ${JSON.stringify(steps)} with ${files.length} files`);  // acknowledge
-        // reconstruct files into File objects from Buffer objects
-        let filesReceived = [];
-        for(let i in files) {
-            let file = new File({
-                name: files[i].name,
-                buffer: Buffer.from(files[i].buffer),
-                jsdom: true,
-                async: true
-            });
-            filesReceived.push(file);
-            console.log(file);
-            /*
-            let reader = new FileReader();
-            reader.readAsText(file, 'utf-8');
-            reader.addEventListener('load', () => {
-                console.log(reader.result);
-            });
-            */
+    socket.on('steps', (stepsSubmitted, callback) => {
+        console.log(`${socket.id}: Submitted steps: ${stepsSubmitted}`);
+        // ack steps
+        callback(`Acknowledged steps`);
+        // add steps to clientForm
+        for(let i in clients) {
+            if(clients[i].id === socket.id) {
+                clients[i].steps = stepsSubmitted;
+                break;
+            }
         }
+        console.log(clients);
+    });
+    socket.on('submit', (callback) => {
         
-        
+    });
+    socket.on('file chunk', (fileChunk, callback) => {
+        callback('Acknowledged file chunk');
+        console.log(fileChunk);
     });
     socket.on('disconnect', () => {
         console.log(`${socket.id}: Disconnected.`);
+        // remove corresponding clientForm
+        for(let i in clients) {
+            if(clients[i].id === socket.id) {
+                clients.splice(i, 1);
+                break;
+            }
+        }
+        console.log(clients);
     });
 });
 
