@@ -65,7 +65,38 @@ io.on('connection', (socket) => {   // when a new client has connected
     });
     socket.on('file chunk', (fileChunk, callback) => {
         callback('Acknowledged file chunk');
-        console.log(fileChunk);
+        // add filechunk to clientForm
+        // find client
+        let cIndex;
+        let fIndex = -1;
+        for(let i in clients) {
+            if(clients[i].id === socket.id) {
+                cIndex = i;
+                break;
+            }
+        }
+        // if there are no files for this client yet
+        if(clients[cIndex].files.length === 0) {
+            // push this filechunk to files
+            clients[cIndex].files.push(fileChunk);
+        }
+        else {
+            // find the existing file with the same filename
+            for(let j in clients[cIndex].files) {
+                if(clients[cIndex].files[j].name === fileChunk.name) {
+                    fIndex = j;
+                }
+            }
+            if(fIndex === -1) { // if this is the first filechunk for this file
+                // push this filechunk to files
+                clients[cIndex].files.push(fileChunk);
+            }
+            else {
+                let data = clients[cIndex].files[fIndex].data;
+                clients[cIndex].files[fIndex].data = Buffer.concat([data, fileChunk.data]); 
+            }
+        }
+        console.log(clients[cIndex].files);
     });
     socket.on('disconnect', () => {
         console.log(`${socket.id}: Disconnected.`);

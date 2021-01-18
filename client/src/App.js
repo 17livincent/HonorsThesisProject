@@ -101,16 +101,20 @@ class App extends React.Component {
         this.socket.emit('steps', this.steps, (callback) => {console.log(callback)});
         // send files
         for(let i in this.files) {
-            for(let j = 0; j < Math.floor(this.files[i].size / CHUNKSIZE); j++) {
+            for(let j = 0; j < Math.ceil(this.files[i].size / CHUNKSIZE); j++) {
                 let reader = new FileReader();
                 reader.onload = () => { // on load, send to server
-                    this.socket.emit('file chunk', this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, reader.result), (callback) => {console.log(callback)});
+                    this.socket.emit('file chunk', 
+                        this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, reader.result), 
+                        (callback) => {console.log(callback)}
+                    );
                 }
                 let start = j * CHUNKSIZE;  // get starting byte
                 let slice = this.files[i].slice(start, start + Math.min(CHUNKSIZE, this.files[i].size - start));    // get slice
                 reader.readAsArrayBuffer(slice);    // read as array buffer
             }
         }
+        console.log('All file uploaded.');
     }
 
     render() {
