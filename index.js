@@ -19,7 +19,9 @@ const httpServer = require('http').createServer(app);
 const io = require('socket.io')(httpServer, {
     cors: {
         origin: 'localhost:3000',
-        methods: ['GET', 'POST']
+        methods: ['GET', 'POST'],
+        allowedHeaders: ['steps', 'file chunk', 'submit'],
+        credentials: true
     }
 });    // initialize socket.io for server
 
@@ -47,8 +49,9 @@ io.on('connection', (socket) => {   // when a new client has connected
     // ack connection
     socket.emit('connection');
 
+    // received steps from client
     socket.on('steps', (stepsSubmitted, callback) => {
-        console.log(`${socket.id}: Submitted steps: ${stepsSubmitted}`);
+        //console.log(`${socket.id}: Submitted steps: ${stepsSubmitted}`);
         // ack steps
         callback(`Acknowledged steps`);
         // add steps to clientForm
@@ -58,13 +61,12 @@ io.on('connection', (socket) => {   // when a new client has connected
                 break;
             }
         }
-        console.log(clients);
+        //console.log(clients);
     });
-    socket.on('submit', (callback) => {
-        
-    });
+
+    // received file chunk from client
     socket.on('file chunk', (fileChunk, callback) => {
-        callback('Acknowledged file chunk');
+        callback(`Acknowledged file chunk`);
         // add filechunk to clientForm
         // find client
         let cIndex;
@@ -96,13 +98,33 @@ io.on('connection', (socket) => {   // when a new client has connected
                 clients[cIndex].files[fIndex].data = Buffer.concat([data, fileChunk.data]); 
             }
         }
+        //console.log(clients[cIndex].files);
+    });
+
+    // received submit from client
+    socket.on('submit', (callback) => {
+        console.log('Submitted');
+        // find this client's info
+        let cIndex;
+        for(let i in clients) {
+            if(clients[i].id === socket.id) {
+                cIndex = i;
+                break;
+            }
+        }
+        callback(`Acknowledged submit: ${clients[cIndex]}`);
         console.log(clients[cIndex].files);
     });
+
+    // client disconnected
     socket.on('disconnect', () => {
         console.log(`${socket.id}: Disconnected.`);
         // remove corresponding clientForm
         for(let i in clients) {
             if(clients[i].id === socket.id) {
+                // delete files
+                clients[i].files.splice(0, clients[i].files.length);
+                // remove client
                 clients.splice(i, 1);
                 break;
             }

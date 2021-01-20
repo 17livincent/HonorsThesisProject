@@ -94,27 +94,65 @@ class App extends React.Component {
     }
 
     /**
-     * Send steps and file chunks to server
+     * Send steps info to server
      */
-    sendToServer() {
-        // send steps
-        this.socket.emit('steps', this.steps, (callback) => {console.log(callback)});
-        // send files
-        for(let i in this.files) {
-            for(let j = 0; j < Math.ceil(this.files[i].size / CHUNKSIZE); j++) {
-                let reader = new FileReader();
-                reader.onload = () => { // on load, send to server
-                    this.socket.emit('file chunk', 
-                        this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, reader.result), 
-                        (callback) => {console.log(callback)}
-                    );
+    async sendSteps() {
+        return new Promise((res, rej) => {
+            this.socket.emit('steps', this.steps, (callback) => {console.log(callback)});
+            res();
+        });
+    }
+
+    /**
+     * Send files in chunks to server
+     */
+    async sendFiles() {
+        return new Promise((res, rej) => {
+            for(let i in this.files) {
+                let lastChunk = Math.ceil(this.files[i].size / CHUNKSIZE);  // the num of the last chunk in the file
+                for(let j = 0; j < lastChunk; j++) {
+                    let reader = new FileReader();
+                    reader.onload = () => { // on load, emit to server
+                        this.socket.emit('file chunk', 
+                            this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, reader.result), 
+                            (callback) => {console.log(callback)}
+                        );
+                    }
+                    let start = j * CHUNKSIZE;  // get starting byte
+                    let slice = this.files[i].slice(start, start + Math.min(CHUNKSIZE, this.files[i].size - start));    // get slice
+                    reader.readAsArrayBuffer(slice);    // read as array buffer
                 }
-                let start = j * CHUNKSIZE;  // get starting byte
-                let slice = this.files[i].slice(start, start + Math.min(CHUNKSIZE, this.files[i].size - start));    // get slice
-                reader.readAsArrayBuffer(slice);    // read as array buffer
             }
-        }
-        console.log('All file uploaded.');
+            console.log('All files uploaded.');
+            res();
+        });
+    }
+
+    /**
+     * Sends the submit message to the server
+     */
+    sendSubmit() {
+        return new Promise((res, rej) => {
+            this.socket.emit('submit', (callback) => {console.log(callback)});
+            res();
+        });
+    }
+
+    /**
+     * Send steps, filechunks, and submit to server
+     */
+    async sendToServer() {
+        await new Promise((res, rej) => {
+            this.files.sort((a, b) => {
+                if(a.size < b.size) return -1;
+                else if(a.size > b.size) return 1;
+                else return 0;
+            });
+            res();
+        });
+        await this.sendSteps();
+        await this.sendFiles();
+        await this.sendSubmit();
     }
 
     render() {
