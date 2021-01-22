@@ -20,7 +20,7 @@ const io = require('socket.io')(httpServer, {
     cors: {
         origin: 'localhost:3000',
         methods: ['GET', 'POST'],
-        allowedHeaders: ['steps', 'file chunk', 'submit'],
+        allowedHeaders: ['steps', 'num of files', 'file chunk', 'submit'],
         credentials: true
     }
 });    // initialize socket.io for server
