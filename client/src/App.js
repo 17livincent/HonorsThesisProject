@@ -43,6 +43,9 @@ class App extends React.Component {
         this.socket.on('connection', () => {    // verify connection
             console.log(`Connected to server with socket ID: ${this.socket.id}`);
         });
+        this.socket.on('ready to submit', () => {   // server acknowledges all steps and files have been received
+            this.sendSubmit();  // send submit request
+        })
         this.socket.on('download', (files) => {
             console.log('Downloading file(s) from server');
             console.log(files);
@@ -56,8 +59,8 @@ class App extends React.Component {
      * Callback function passed to the InputData
      */
     submitData(files) {
-        console.log('Files submitted:');
-        console.log(files);
+        //console.log('Files submitted:');
+        //console.log(files);
         this.files = files;
         // close this accordion, open the second
         this.setState({currentPanel: '1'});
@@ -67,7 +70,7 @@ class App extends React.Component {
      * Callback function passed to the StepsForm
      */
     submitSteps(steps) {
-        console.log(`Steps submitted: ${JSON.stringify(steps)}`);
+        //console.log(`Steps submitted: ${JSON.stringify(steps)}`);
         this.steps = steps;
         // close this accordion, open the next
         this.setState({currentPanel: '2'});
@@ -96,63 +99,45 @@ class App extends React.Component {
     /**
      * Send steps info to server
      */
-    async sendSteps() {
-        return new Promise((res, rej) => {
-            this.socket.emit('steps', this.steps, (callback) => {console.log(callback)});
-            res();
-        });
+    sendSteps() {
+        this.socket.emit('steps', this.steps, (callback) => (console.log(callback)));
     }
 
     /**
-     * Send files in chunks to server
+     * Send files to server
      */
-    async sendFiles() {
-        return new Promise((res, rej) => {
-            for(let i in this.files) {
-                let lastChunk = Math.ceil(this.files[i].size / CHUNKSIZE);  // the num of the last chunk in the file
-                for(let j = 0; j < lastChunk; j++) {
-                    let reader = new FileReader();
-                    reader.onload = () => { // on load, emit to server
-                        this.socket.emit('file chunk', 
-                            this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, reader.result), 
-                            (callback) => {console.log(callback)}
-                        );
-                    }
-                    let start = j * CHUNKSIZE;  // get starting byte
-                    let slice = this.files[i].slice(start, start + Math.min(CHUNKSIZE, this.files[i].size - start));    // get slice
-                    reader.readAsArrayBuffer(slice);    // read as array buffer
-                }
+    sendFiles() {
+        // send number of files
+        this.socket.emit('num of files', this.files.length, (callback) => (console.log(callback)));
+        // send file chunks
+        for(let i in this.files) {
+            let lastChunk = Math.ceil(this.files[i].size / CHUNKSIZE);  // the num of the last chunk in the file
+            for(let j = 0; j < lastChunk; j++) {
+                let reader = new FileReader();
+                reader.onload = () => { // on load, emit to server
+                    this.socket.compress(true).emit('file chunk', this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, reader.result), (callback) => (console.log(callback)));
+                };
+                let start = j * CHUNKSIZE;  // get starting byte
+                let slice = this.files[i].slice(start, start + Math.min(CHUNKSIZE, this.files[i].size - start));    // get slice
+                reader.readAsArrayBuffer(slice);    // read as array buffer
             }
-            console.log('All files uploaded.');
-            res();
-        });
+        }
+        //console.log('All files uploaded.');
     }
 
     /**
      * Sends the submit message to the server
      */
     sendSubmit() {
-        return new Promise((res, rej) => {
-            this.socket.emit('submit', (callback) => {console.log(callback)});
-            res();
-        });
+        this.socket.emit('submit', (callback) => (console.log(callback)));
     }
 
     /**
      * Send steps, filechunks, and submit to server
      */
-    async sendToServer() {
-        await new Promise((res, rej) => {
-            this.files.sort((a, b) => {
-                if(a.size < b.size) return -1;
-                else if(a.size > b.size) return 1;
-                else return 0;
-            });
-            res();
-        });
-        await this.sendSteps();
-        await this.sendFiles();
-        await this.sendSubmit();
+    sendToServer() {
+        this.sendSteps();
+        this.sendFiles();
     }
 
     render() {

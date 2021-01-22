@@ -30,7 +30,9 @@ let clients = [];   // list of clientForms
 let clientForm = {  // details associated with a connected client
     id: null,   // socket ID
     steps: null,    // sent steps
-    files: []   // sent files
+    files: [],   // sent files
+    numOfFiles: 0,  // number of files that will be sent by server
+    numOfReceivedFiles: 0   // number of files fully received
 }
 
 // on getting root directory
@@ -64,13 +66,25 @@ io.on('connection', (socket) => {   // when a new client has connected
         //console.log(clients);
     });
 
+    // received number of files
+    socket.on('num of files', (numSubmitted, callback) => {
+        callback('Acknowledged number of files');
+        // find client
+        for(let i in clients) {
+            if(clients[i].id === socket.id) {
+                clients[i].numOfFiles = numSubmitted;
+                break;
+            }
+        }
+    })
+
     // received file chunk from client
     socket.on('file chunk', (fileChunk, callback) => {
         callback(`Acknowledged file chunk`);
         // add filechunk to clientForm
         // find client
         let cIndex;
-        let fIndex = -1;
+        let fIndex;
         for(let i in clients) {
             if(clients[i].id === socket.id) {
                 cIndex = i;
@@ -81,24 +95,40 @@ io.on('connection', (socket) => {   // when a new client has connected
         if(clients[cIndex].files.length === 0) {
             // push this filechunk to files
             clients[cIndex].files.push(fileChunk);
+            fIndex = 0;
         }
         else {
             // find the existing file with the same filename
             for(let j in clients[cIndex].files) {
                 if(clients[cIndex].files[j].name === fileChunk.name) {
                     fIndex = j;
+                    break;
                 }
             }
-            if(fIndex === -1) { // if this is the first filechunk for this file
+            if(fIndex === undefined) { // if this is the first filechunk for this file
                 // push this filechunk to files
                 clients[cIndex].files.push(fileChunk);
+                fIndex = clients[cIndex].files.length - 1;
             }
             else {
                 let data = clients[cIndex].files[fIndex].data;
                 clients[cIndex].files[fIndex].data = Buffer.concat([data, fileChunk.data]); 
             }
         }
-        //console.log(clients[cIndex].files);
+        // check if the file has all of its chunks
+        if(clients[cIndex].files[fIndex].data.length === clients[cIndex].files[fIndex].size) {
+            console.log('Full file received');
+            // increment client's numOfReceivedFiles
+            clients[cIndex].numOfReceivedFiles++;
+            console.log(clients[cIndex]);
+        }
+        // check if the client has sent all files
+        if(clients[cIndex].numOfFiles !== 0 
+            && clients[cIndex].numOfFiles === clients[cIndex].numOfReceivedFiles
+            && clients[cIndex].steps !== null) {
+            // send request to submit
+            socket.emit('ready to submit');
+        }
     });
 
     // received submit from client
