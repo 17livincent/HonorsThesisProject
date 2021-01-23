@@ -86,7 +86,8 @@ io.on('connection', (socket) => {   // when a new client has connected
                 if(error) throw error;
             });
         }
-
+        // delete files array from clientForm to save memory
+        clients[cIndex].files.splice(0, clients[cIndex].files.length);
     });
 
     // client disconnected
@@ -95,7 +96,7 @@ io.on('connection', (socket) => {   // when a new client has connected
         // remove corresponding clientForm
         let cIndex = getClientIndex(socket.id);
         // delete client
-        deleteClient(cIndex);
+        deleteClient(cIndex, socket.id);
 
         console.log(clients);
     });
@@ -128,6 +129,9 @@ function getClientIndex(socketID) {
     }
 }
 
+/**
+ * Adds the file chunk to the client's corresponding file
+ */
 function addFileChunk(cIndex, fileChunk) {
     let fIndex;
     // if there are no files for this client yet
@@ -166,13 +170,13 @@ function addFileChunk(cIndex, fileChunk) {
 /**
  * Removes the files and clientForm of the client with the given @param cIndex
  */
-function deleteClient(cIndex) {
+function deleteClient(cIndex, socketID) {
     // delete files in clientForm
     clients[cIndex].files.splice(0, clients[cIndex].files.length);
     // remove clientForm
     clients.splice(cIndex, 1);
     // remove client's temporary directory and its files
-    fs.rmdir('temp/' + socket.id, {recursive: true}, (error) => {
+    fs.rmdir('temp/' + socketID, {recursive: true}, (error) => {
         if(error) console.log(error);
     });
 }
