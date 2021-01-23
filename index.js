@@ -1,10 +1,6 @@
 const express = require('express'); // express
 const path = require('path');
 const fs = require('fs');
-const FileAPI = require('file-api');
-const File = FileAPI.File;
-const FileList = FileAPI.FileList;
-const FileReader = FileAPI.FileReader;
 
 const port = 3000;
 const app = express();  // express server
@@ -24,16 +20,6 @@ const io = require('socket.io')(httpServer, {
         credentials: true
     }
 });    // initialize socket.io for server
-
-let clients = [];   // list of clientForms
-
-let clientForm = {  // details associated with a connected client
-    id: null,   // socket ID
-    steps: null,    // sent steps
-    files: [],   // sent files
-    numOfFiles: 0,  // number of files that will be sent by server
-    numOfReceivedFiles: 0   // number of files fully received
-}
 
 // on getting root directory
 app.get('/', (request, response) => {
@@ -57,71 +43,26 @@ io.on('connection', (socket) => {   // when a new client has connected
         // ack steps
         callback(`Acknowledged steps`);
         // add steps to clientForm
-        for(let i in clients) {
-            if(clients[i].id === socket.id) {
-                clients[i].steps = stepsSubmitted;
-                break;
-            }
-        }
+        let cIndex = getClientIndex(socket.id);
+        clients[cIndex].steps = stepsSubmitted;
         //console.log(clients);
     });
 
     // received number of files
     socket.on('num of files', (numSubmitted, callback) => {
         callback('Acknowledged number of files');
-        // find client
-        for(let i in clients) {
-            if(clients[i].id === socket.id) {
-                clients[i].numOfFiles = numSubmitted;
-                break;
-            }
-        }
+        // update numOfFiles
+        let cIndex = getClientIndex(socket.id);
+        clients[cIndex].numOfFiles = numSubmitted;
     })
 
     // received file chunk from client
     socket.on('file chunk', (fileChunk, callback) => {
         callback(`Acknowledged file chunk`);
-        // add filechunk to clientForm
         // find client
-        let cIndex;
-        let fIndex;
-        for(let i in clients) {
-            if(clients[i].id === socket.id) {
-                cIndex = i;
-                break;
-            }
-        }
-        // if there are no files for this client yet
-        if(clients[cIndex].files.length === 0) {
-            // push this filechunk to files
-            clients[cIndex].files.push(fileChunk);
-            fIndex = 0;
-        }
-        else {
-            // find the existing file with the same filename
-            for(let j in clients[cIndex].files) {
-                if(clients[cIndex].files[j].name === fileChunk.name) {
-                    fIndex = j;
-                    break;
-                }
-            }
-            if(fIndex === undefined) { // if this is the first filechunk for this file
-                // push this filechunk to files
-                clients[cIndex].files.push(fileChunk);
-                fIndex = clients[cIndex].files.length - 1;
-            }
-            else {
-                let data = clients[cIndex].files[fIndex].data;
-                clients[cIndex].files[fIndex].data = Buffer.concat([data, fileChunk.data]); 
-            }
-        }
-        // check if the file has all of its chunks
-        if(clients[cIndex].files[fIndex].data.length === clients[cIndex].files[fIndex].size) {
-            console.log('Full file received');
-            // increment client's numOfReceivedFiles
-            clients[cIndex].numOfReceivedFiles++;
-            console.log(clients[cIndex]);
-        }
+        let cIndex = getClientIndex(socket.id);
+        // add filechunk to clientForm
+        addFileChunk(cIndex, fileChunk);
         // check if the client has sent all files
         if(clients[cIndex].numOfFiles !== 0 
             && clients[cIndex].numOfFiles === clients[cIndex].numOfReceivedFiles
@@ -133,32 +74,29 @@ io.on('connection', (socket) => {   // when a new client has connected
 
     // received submit from client
     socket.on('submit', (callback) => {
-        console.log('Submitted');
+        callback(`Acknowledged submit`);
+        let directory = 'temp/' + socket.id;
         // find this client's info
-        let cIndex;
-        for(let i in clients) {
-            if(clients[i].id === socket.id) {
-                cIndex = i;
-                break;
-            }
+        let cIndex = getClientIndex(socket.id);
+        // make a directory for this client's files with its name equalling the socket.id
+        fs.mkdirSync(directory);
+        // write files to this directory
+        for(let i = 0; i < clients[cIndex].files.length; i++) {
+            fs.writeFile(directory + '/' + 'prep_' + clients[cIndex].files[i].name, clients[cIndex].files[i].data, (error) => {
+                if(error) throw error;
+            });
         }
-        callback(`Acknowledged submit: ${clients[cIndex]}`);
-        console.log(clients[cIndex].files);
+
     });
 
     // client disconnected
     socket.on('disconnect', () => {
         console.log(`${socket.id}: Disconnected.`);
         // remove corresponding clientForm
-        for(let i in clients) {
-            if(clients[i].id === socket.id) {
-                // delete files
-                clients[i].files.splice(0, clients[i].files.length);
-                // remove client
-                clients.splice(i, 1);
-                break;
-            }
-        }
+        let cIndex = getClientIndex(socket.id);
+        // delete client
+        deleteClient(cIndex);
+
         console.log(clients);
     });
 });
@@ -166,3 +104,75 @@ io.on('connection', (socket) => {   // when a new client has connected
 httpServer.listen(port, () => {
     console.log(`Listening on port ${port}:`);
 });
+
+// backend code
+
+let clients = [];   // list of clientForms
+
+let clientForm = {  // details associated with a connected client
+    id: null,   // socket ID
+    steps: null,    // sent steps
+    files: [],   // sent files
+    numOfFiles: 0,  // number of files that will be sent by server
+    numOfReceivedFiles: 0   // number of files fully received
+}
+
+/**
+ * Returns the index in clients of the client with the matching @param socketID
+ */
+function getClientIndex(socketID) {
+    for(let i in clients) {
+        if(clients[i].id === socketID) {
+            return i;
+        }
+    }
+}
+
+function addFileChunk(cIndex, fileChunk) {
+    let fIndex;
+    // if there are no files for this client yet
+    if(clients[cIndex].files.length === 0) {
+        // push this filechunk to files
+        clients[cIndex].files.push(fileChunk);
+        fIndex = 0;
+    }
+    else {
+        // find the existing file with the same filename
+        for(let j in clients[cIndex].files) {
+            if(clients[cIndex].files[j].name === fileChunk.name) {
+                fIndex = j;
+                break;
+            }
+        }
+        if(fIndex === undefined) { // if this is the first filechunk for this file
+            // push this filechunk to files
+            clients[cIndex].files.push(fileChunk);
+            fIndex = clients[cIndex].files.length - 1;
+        }
+        else {
+            let data = clients[cIndex].files[fIndex].data;
+            clients[cIndex].files[fIndex].data = Buffer.concat([data, fileChunk.data]); 
+        }
+    }
+    // check if the file has all of its chunks
+    if(clients[cIndex].files[fIndex].data.length === clients[cIndex].files[fIndex].size) {
+        console.log('Full file received');
+        // increment client's numOfReceivedFiles
+        clients[cIndex].numOfReceivedFiles++;
+        console.log(clients[cIndex]);
+    }
+}
+
+/**
+ * Removes the files and clientForm of the client with the given @param cIndex
+ */
+function deleteClient(cIndex) {
+    // delete files in clientForm
+    clients[cIndex].files.splice(0, clients[cIndex].files.length);
+    // remove clientForm
+    clients.splice(cIndex, 1);
+    // remove client's temporary directory and its files
+    fs.rmdir('temp/' + socket.id, {recursive: true}, (error) => {
+        if(error) console.log(error);
+    });
+}
