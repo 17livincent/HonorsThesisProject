@@ -1,0 +1,1 @@
+This directory will contain the files submitted by clients.  Each client will have its own directory in here, with the name of its socket ID.
