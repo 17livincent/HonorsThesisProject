@@ -156,7 +156,6 @@ class StepsForm extends React.Component {
             let inputs = form[i].inputs;
             for(let j = 0; j < this.transformations[stepIndex].rules.length; j++) {    // iterate through each validation rule
                 if(this.transformations[stepIndex].rules[j](inputs) === false) {    // if a rule has been violated
-                    console.log(`D ${Date.now()}`);
                     okToSubmit = false;
                     this.errors.push(`Step ${i + 1}: ${this.transformations[stepIndex].ruleDescs[j]}`);
                 }

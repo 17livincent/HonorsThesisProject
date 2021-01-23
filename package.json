@@ -22,7 +22,6 @@
   "dependencies": {
     "compression": "^1.7.4",
     "express": "^4.17.1",
-    "file-api": "^0.10.4",
     "helmet": "^4.3.1",
     "https": "^1.0.0",
     "socket.io": "^3.0.4"
