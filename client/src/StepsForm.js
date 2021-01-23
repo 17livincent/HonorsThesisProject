@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import {Form, Col, Button} from 'react-bootstrap';
+import {Form, Col, Button, Alert} from 'react-bootstrap';
 
 import StepFormGroup from './StepFormGroup.js';
 import Transformations from './transformations.js';
@@ -15,15 +15,19 @@ import './styles/StepsForm.css';
 //import './outline.css';
 
 class StepsForm extends React.Component {
-    constructor(props) {
-        let trans = new Transformations();
 
+    constructor(props) {
         super(props);
+        this.trans = new Transformations();
+        this.transformations = this.trans.getTransformations();
+        this.errors = [];   // string of errors from input validation
+        
         this.state = {
             numOfSteps: 1,
             stepNums: ['1'],    // array of step numbers
             formDetails: [this.getFormInfo('', 0)],
-            stepOptions: trans.getTransformations()
+            stepOptions: this.transformations,
+            displayErrors: false
         }
 
         this.addStep = this.addStep.bind(this);
@@ -123,12 +127,49 @@ class StepsForm extends React.Component {
         );
     }
 
+    renderErrors() {
+        return (
+            <Alert variant='danger'>
+                <b>Errors: </b><br />
+                {this.errors.map(i => (
+                    <React.Fragment>
+                        {i}<br />
+                    </React.Fragment>
+                ))}
+            </Alert>
+        );
+    }
+
     /**
      * Handles the form submission
      */
     onSubmit(event) {
         event.preventDefault();
-        this.props.onSubmit(this.state.formDetails.slice());
+
+        // validate all inputs
+        let form = this.state.formDetails.slice();
+        let okToSubmit = true;  // whether all validation rules have been met
+        this.errors = [];   // reset errors if necessary
+        // run through validation rules.  If any are violated, don't submit
+        for(let i = 0; i < form.length; i++) {  // iterate through each step selected
+            let stepIndex = this.trans.getStepIndex(form[i].step);  // get step index
+            let inputs = form[i].inputs;
+            for(let j = 0; j < this.transformations[stepIndex].rules.length; j++) {    // iterate through each validation rule
+                if(this.transformations[stepIndex].rules[j](inputs) === false) {    // if a rule has been violated
+                    console.log(`D ${Date.now()}`);
+                    okToSubmit = false;
+                    this.errors.push(`Step ${i + 1}: ${this.transformations[stepIndex].ruleDescs[j]}`);
+                }
+            }
+        }
+        // if all validation rules have been met, submit 
+        if(okToSubmit === true) {
+            this.setState({displayErrors: false});
+            this.props.onSubmit(form.slice());
+        }
+        else {
+            this.setState({displayErrors: true});
+        }
     }
 
     render() {
@@ -144,6 +185,7 @@ class StepsForm extends React.Component {
                             {this.renderSubmitButton()}
                         </Col>
                     </Form.Row>
+                    {this.state.displayErrors && this.renderErrors()}
                 </Form>
             </React.Fragment>
         );
