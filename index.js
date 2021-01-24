@@ -1,6 +1,12 @@
+/**
+ * index.js
+ * Server file for the web application.
+ * Deals with communicating with the clients, sockets, and file transfer, and interaction with the python code for preprocessing steps.
+ */
 const express = require('express'); // express
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs');   // to read and write client files
+const spawn = require('child_process').spawn;   // to run python code
 
 const port = 3000;
 const app = express();  // express server
@@ -75,19 +81,14 @@ io.on('connection', (socket) => {   // when a new client has connected
     // received submit from client
     socket.on('submit', (callback) => {
         callback(`Acknowledged submit`);
-        let directory = 'temp/' + socket.id;
+        let clientDirectory = 'temp/' + socket.id;
         // find this client's info
         let cIndex = getClientIndex(socket.id);
-        // make a directory for this client's files with its name equalling the socket.id
-        fs.mkdirSync(directory);
-        // write files to this directory
-        for(let i = 0; i < clients[cIndex].files.length; i++) {
-            fs.writeFile(directory + '/' + 'prep_' + clients[cIndex].files[i].name, clients[cIndex].files[i].data, (error) => {
-                if(error) throw error;
-            });
-        }
-        // delete files array from clientForm to save memory
-        clients[cIndex].files.splice(0, clients[cIndex].files.length);
+        // write files
+        writeFiles(cIndex, clientDirectory);
+        // preprocess files
+        preprocess(cIndex, clientDirectory);
+
     });
 
     // client disconnected
@@ -160,11 +161,48 @@ function addFileChunk(cIndex, fileChunk) {
     }
     // check if the file has all of its chunks
     if(clients[cIndex].files[fIndex].data.length === clients[cIndex].files[fIndex].size) {
-        console.log('Full file received');
+        //console.log('Full file received');
         // increment client's numOfReceivedFiles
         clients[cIndex].numOfReceivedFiles++;
-        console.log(clients[cIndex]);
+        //console.log(clients[cIndex]);
     }
+}
+
+/**
+ * Writes the client's files into a directory named after its socket.id
+ * New files have a prefix 'prep_' to each name
+ */
+function writeFiles(cIndex, clientDirectory) {
+    // make a directory for this client's files with its name equalling the socket.id
+    fs.mkdirSync(clientDirectory);
+    // write files to this directory
+    for(let i = 0; i < clients[cIndex].files.length; i++) {
+        fs.writeFile(clientDirectory + '/' + 'prep_' + clients[cIndex].files[i].name, clients[cIndex].files[i].data, (error) => {
+            if(error) throw error;
+        });
+    }
+}
+
+/**
+ * Performs the preprocessing steps on each file using the preprocess.py
+ */
+function preprocess(cIndex, clientDirectory) {
+    // create an array of filenames
+    let filenames = [];
+    for(let i = 0; i < clients[cIndex].numOfReceivedFiles; i++) {
+        filenames.push(clientDirectory + '/' + 'prep_' + clients[cIndex].files[i].name);
+    }
+    let filenamesJSON = JSON.stringify(filenames);
+    // turn steps to string
+    let stepsJSON = JSON.stringify(clients[cIndex].steps);
+    // preprocess each file
+    let prep = spawn('python', ['preprocess.py', filenamesJSON, stepsJSON]);
+    prep.stdout.on('data', (data) => {
+        console.log('OK:\n' + data.toString());
+    });
+    prep.stderr.on('data', (data) => {
+        console.log('Error:\n' + data.toString());
+    });
 }
 
 /**
