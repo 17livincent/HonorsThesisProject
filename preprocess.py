@@ -54,6 +54,22 @@ def moving_avg_filter(df, window_size):
     filtered = filtered.dropna()
     return filtered
 
+def call_step(df, step_name, inputs):
+    """
+        Calls the appropriate preprocessing function based on the step name.
+        Returns the transformed dataframe.
+    """
+    if step_name == 'stand':
+        df = standardize(df)
+
+    elif step_name == 'norm':
+        df = normalize(df, inputs_list[0], inputs_list[1])
+
+    elif step_name == 'moving_avg_filter':
+        df = moving_avg_filter(df, inputs_list[0])
+
+    return df
+
 #####################################
 
 # get inputs
@@ -75,21 +91,15 @@ for filename in files_list:
     # iterate through all steps
     for i in range(len(steps_list)):
         step_name = steps_list[i]['name']
-        inputs_list = steps_list[i]['inputs']
+        inputs_list = np.array(steps_list[i]['inputs']).astype(np.float)
         print(step_name)
         print(inputs_list)
         
         # according to the step name, call the appropriate function
-        if step_name == 'stand':
-            fileDF = standardize(fileDF)
+        fileDF = call_step(fileDF, step_name, inputs_list)
+        print(fileDF.head())
 
-        elif step_name == 'norm':
-            fileDF = normalize(fileDF, inputs_list[0], inputs_list[1])
-
-        elif step_name == 'moving_avg_filter':
-            fileDF = moving_avg_filter(fileDF, inputs_list[0])
-
-        print(fileDF)
+    # save file to send
 
 sys.stdout.flush()
 
