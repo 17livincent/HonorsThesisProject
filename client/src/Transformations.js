@@ -56,10 +56,10 @@ class Transformations {
                 },
                 {
                     name: 'Moving average filter',
-                    val: 'moving_avg',
+                    val: 'moving_avg_filter',
                     numOfInputs: 1,
                     inputNames: ['Window size'],
-                    description: 'Smooth data by calculating the average out of a defined number of data points.',
+                    description: 'Smooth data by calculating the average out of a defined number of data points.  NaN\'s will be dropped.',
                     citation: '',
                     rules: [(size) => (size[0] > 0)],
                     ruleDescs: ['Filter window size must be greater than 0.']

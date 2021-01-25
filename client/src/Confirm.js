@@ -7,7 +7,7 @@
 import React from 'react';
 import {Alert, Button} from 'react-bootstrap';
 
-import Transformations from './transformations.js';
+import Transformations from './Transformations.js';
 import Util from './util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -43,7 +43,7 @@ class Confirm extends React.Component {
         return steps.map((i) => {
             counter++;
             // find the index of this step
-            let index = trans.getStepIndex(i.step);
+            let index = trans.getStepIndex(i.name);
             // get the step name
             let stepName = transformations[index].name;
             // get the input names and inputs

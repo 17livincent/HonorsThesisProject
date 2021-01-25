@@ -7,7 +7,7 @@ import React from 'react';
 import {Form, Col, Button, Alert} from 'react-bootstrap';
 
 import StepFormGroup from './StepFormGroup.js';
-import Transformations from './transformations.js';
+import Transformations from './Transformations.js';
 import Util from './util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -44,7 +44,7 @@ class StepsForm extends React.Component {
     getFormInfo(stepName, numOfInputs) {
         return (
             {
-                step: stepName.toString(),
+                name: stepName.toString(),
                 inputs: Array(numOfInputs)
             }
         )
@@ -96,7 +96,7 @@ class StepsForm extends React.Component {
         let index = stepNumber - 1;
         // update stepname
         let newFormDetails = this.state.formDetails.slice();
-        newFormDetails[index].step = stepName;
+        newFormDetails[index].name = stepName;
         // update inputs
         newFormDetails[index].inputs = inputs;
         // update state
@@ -107,7 +107,7 @@ class StepsForm extends React.Component {
         return (
             <StepFormGroup 
                 stepNumber={i} 
-                stepName={this.state.formDetails[i - 1].step}
+                stepName={this.state.formDetails[i - 1].name}
                 inputs={this.state.formDetails[i - 1].inputs}
                 steps={this.state.stepOptions} 
                 onFormGroupChange={this.onFormGroupChange}
@@ -152,7 +152,7 @@ class StepsForm extends React.Component {
         this.errors = [];   // reset errors if necessary
         // run through validation rules.  If any are violated, don't submit
         for(let i = 0; i < form.length; i++) {  // iterate through each step selected
-            let stepIndex = this.trans.getStepIndex(form[i].step);  // get step index
+            let stepIndex = this.trans.getStepIndex(form[i].name);  // get step index
             let inputs = form[i].inputs;
             for(let j = 0; j < this.transformations[stepIndex].rules.length; j++) {    // iterate through each validation rule
                 if(this.transformations[stepIndex].rules[j](inputs) === false) {    // if a rule has been violated

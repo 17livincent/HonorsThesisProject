@@ -24,3 +24,5 @@
 /client/public/config.js
 
 /node_modules
+
+.ipynb_checkpoints
