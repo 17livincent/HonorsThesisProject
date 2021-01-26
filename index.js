@@ -7,6 +7,7 @@ const express = require('express'); // express
 const path = require('path');
 const fs = require('fs');   // to read and write client files
 const spawn = require('child_process').spawn;   // to run python code
+const archiver = require('archiver');
 
 const port = 3000;
 const app = express();  // express server
@@ -86,9 +87,8 @@ io.on('connection', (socket) => {   // when a new client has connected
         let cIndex = getClientIndex(socket.id);
         // write files
         writeFiles(cIndex, clientDirectory);
-        // preprocess files
-        preprocess(cIndex, clientDirectory);
-
+        // preprocess files and then compress
+        preprocess(cIndex, clientDirectory, () => compress(clientDirectory));
     });
 
     // client disconnected
@@ -118,6 +118,9 @@ let clientForm = {  // details associated with a connected client
     numOfFiles: 0,  // number of files that will be sent by server
     numOfReceivedFiles: 0   // number of files fully received
 }
+
+const prefix = 'prep_';
+const resultsZip = '/preprocessed.zip';
 
 /**
  * Returns the index in clients of the client with the matching @param socketID
@@ -177,7 +180,7 @@ function writeFiles(cIndex, clientDirectory) {
     fs.mkdirSync(clientDirectory);
     // write files to this directory
     for(let i = 0; i < clients[cIndex].files.length; i++) {
-        fs.writeFile(clientDirectory + '/' + 'prep_' + clients[cIndex].files[i].name, clients[cIndex].files[i].data, (error) => {
+        fs.writeFile(clientDirectory + '/' + prefix + clients[cIndex].files[i].name, clients[cIndex].files[i].data, (error) => {
             if(error) throw error;
         });
     }
@@ -186,11 +189,11 @@ function writeFiles(cIndex, clientDirectory) {
 /**
  * Performs the preprocessing steps on each file using the preprocess.py
  */
-function preprocess(cIndex, clientDirectory) {
+function preprocess(cIndex, clientDirectory, callback) {
     // create an array of filenames
     let filenames = [];
     for(let i = 0; i < clients[cIndex].numOfReceivedFiles; i++) {
-        filenames.push(clientDirectory + '/' + 'prep_' + clients[cIndex].files[i].name);
+        filenames.push(clientDirectory + '/' + prefix + clients[cIndex].files[i].name);
     }
     let filenamesJSON = JSON.stringify(filenames);
     // turn steps to string
@@ -203,6 +206,36 @@ function preprocess(cIndex, clientDirectory) {
     prep.stderr.on('data', (data) => {
         console.log('Error:\n' + data.toString());
     });
+    prep.on('close', (code) => {    // process completed successfully
+        console.log(`Process complete: ${code}`);
+        callback();
+    });
+}
+
+/**
+ * Compresses the preprocessed files (prefix 'prep_') in the @param clientDirectory
+ */
+function compress(clientDirectory) {
+    const out = fs.createWriteStream(clientDirectory + resultsZip);
+    const zipper = archiver('zip', {
+        zlib: {level: 5}
+    });
+
+    out.on('close', () => {
+        console.log(zipper.pointer() + ' total bytes');
+        console.log('Compressed');
+    });
+    zipper.on('warning', (error) => {
+        if(err.code === 'ENOENT') {
+            console.log(error);
+        }
+        else {
+            throw error;
+        }
+    });
+    zipper.pipe(out);
+    zipper.glob('prefix*', {cwd: clientDirectory})
+    zipper.finalize();
 }
 
 /**
