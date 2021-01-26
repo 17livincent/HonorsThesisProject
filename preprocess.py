@@ -8,7 +8,6 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import sys
 import json
-from collections import OrderedDict
 
 #####################################
 # functions
@@ -34,17 +33,19 @@ def standardize(df):
     """
         Transform data to have a mean of 0, and a standard dev of 1.
     """
+    headers = list(df)
     standardize = StandardScaler()
     trans = standardize.fit_transform(df)
-    return pd.DataFrame(trans)
+    return pd.DataFrame(trans, columns = headers)
 
 def normalize(df, min, max):
     """
         Scale data between min and max.
     """
+    headers = list(df)
     normalize = MinMaxScaler(feature_range = (min, max))
     trans = normalize.fit_transform(df)
-    return pd.DataFrame(trans)
+    return pd.DataFrame(trans, columns = headers)
 
 def moving_avg_filter(df, window_size):
     """
@@ -66,7 +67,7 @@ def call_step(df, step_name, inputs):
         df = normalize(df, inputs_list[0], inputs_list[1])
 
     elif step_name == 'moving_avg_filter':
-        df = moving_avg_filter(df, inputs_list[0])
+        df = moving_avg_filter(df, int(inputs_list[0]))
 
     return df
 
@@ -86,6 +87,7 @@ print(files_list)
 # iterate through files
 for filename in files_list:
     fileDF = read_file(filename)
+    headers = list(fileDF)
     print(fileDF)
 
     # iterate through all steps
@@ -99,7 +101,8 @@ for filename in files_list:
         fileDF = call_step(fileDF, step_name, inputs_list)
         print(fileDF.head())
 
-    # save file to send
+    # save file
+    fileDF.to_csv(path_or_buf = filename, index = False, header = headers)
 
 sys.stdout.flush()
 
