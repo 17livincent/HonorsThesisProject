@@ -7,7 +7,7 @@ const express = require('express'); // express
 const path = require('path');
 const fs = require('fs');   // to read and write client files
 const spawn = require('child_process').spawn;   // to run python code
-const archiver = require('archiver');
+const archiver = require('archiver');   // for file compression
 
 const port = 3000;
 const app = express();  // express server
@@ -195,8 +195,9 @@ function preprocess(cIndex, clientDirectory, callback) {
     for(let i = 0; i < clients[cIndex].numOfReceivedFiles; i++) {
         filenames.push(clientDirectory + '/' + prefix + clients[cIndex].files[i].name);
     }
+    // turn filenames into string
     let filenamesJSON = JSON.stringify(filenames);
-    // turn steps to string
+    // turn steps into string
     let stepsJSON = JSON.stringify(clients[cIndex].steps);
     // preprocess each file
     let prep = spawn('python', ['preprocess.py', filenamesJSON, stepsJSON]);
@@ -234,7 +235,7 @@ function compress(clientDirectory) {
         }
     });
     zipper.pipe(out);
-    zipper.glob('prefix*', {cwd: clientDirectory})
+    zipper.glob(prefix + '*', {cwd: clientDirectory})
     zipper.finalize();
 }
 
