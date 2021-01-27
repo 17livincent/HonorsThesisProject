@@ -46,9 +46,16 @@ class App extends React.Component {
         this.socket.on('ready to submit', () => {   // server acknowledges all steps and files have been received
             this.sendSubmit();  // send submit request
         })
-        this.socket.on('download', (files) => {
-            console.log('Downloading file(s) from server');
-            console.log(files);
+        this.socket.on('download', () => {
+            console.log(`Download ready`);
+            // create invisible hyperlink element to click and download file
+            let file = 'download/' + this.socket.id;
+            let a = document.createElement('a');
+            a.href = file;
+            a.download = 'preprocessed.zip';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         });
         this.socket.on('disconnect', () => {
             console.log('Disconnected from server');

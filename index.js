@@ -34,6 +34,15 @@ app.get('/', (request, response) => {
     response.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
 
+// client requests download
+app.get('/download/:id', (request, response) => {
+    // get socket ID from route parameters
+    let id = request.params.id;     
+    console.log('Download request from ' + id);
+    // send as download
+    response.download('temp/' + id + '/preprocessed.zip');  
+});
+
 io.on('connection', (socket) => {   // when a new client has connected
     console.log(`${socket.id}: Connected.`);
     // record client
@@ -81,14 +90,13 @@ io.on('connection', (socket) => {   // when a new client has connected
 
     // received submit from client
     socket.on('submit', (callback) => {
-        callback(`Acknowledged submit`);
         let clientDirectory = 'temp/' + socket.id;
         // find this client's info
         let cIndex = getClientIndex(socket.id);
         // write files
         writeFiles(cIndex, clientDirectory);
         // preprocess files and then compress
-        preprocess(cIndex, clientDirectory, () => compress(clientDirectory));
+        preprocess(cIndex, clientDirectory, () => compress(clientDirectory, () => socket.emit('download')));
     });
 
     // client disconnected
@@ -216,15 +224,16 @@ function preprocess(cIndex, clientDirectory, callback) {
 /**
  * Compresses the preprocessed files (prefix 'prep_') in the @param clientDirectory
  */
-function compress(clientDirectory) {
+function compress(clientDirectory, callback) {
     const out = fs.createWriteStream(clientDirectory + resultsZip);
     const zipper = archiver('zip', {
         zlib: {level: 5}
     });
 
     out.on('close', () => {
-        console.log(zipper.pointer() + ' total bytes');
-        console.log('Compressed');
+        //console.log(zipper.pointer() + ' total bytes');
+        console.log('Compressed ');
+        callback();
     });
     zipper.on('warning', (error) => {
         if(err.code === 'ENOENT') {
