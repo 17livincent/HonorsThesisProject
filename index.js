@@ -19,14 +19,7 @@ app.use(require('cors')());
 
 const httpServer = require('http').createServer(app);
 
-const io = require('socket.io')(httpServer, {
-    cors: {
-        origin: 'web-app.li-vincent.com:3000',
-        methods: ['GET', 'POST'],
-        allowedHeaders: ['steps', 'num of files', 'file chunk', 'submit'],
-        credentials: true
-    }
-});    // initialize socket.io for server
+const io = require('socket.io')(httpServer);    // initialize socket.io for server
 
 // on getting root directory
 app.get('/', (request, response) => {
