@@ -40,9 +40,10 @@ app.get('/download/:id', (request, response) => {
     let id = request.params.id;     
     console.log('Download request from ' + id);
     // send as download
-    response.download('temp/' + id + '/preprocessed.zip');  
+    response.download('temp/' + id + resultsZip);  
 });
 
+// socket communication
 io.on('connection', (socket) => {   // when a new client has connected
     console.log(`${socket.id}: Connected.`);
     // record client
@@ -232,7 +233,7 @@ function compress(clientDirectory, callback) {
 
     out.on('close', () => {
         //console.log(zipper.pointer() + ' total bytes');
-        console.log('Compressed ');
+        console.log('Compressed');
         callback();
     });
     zipper.on('warning', (error) => {
@@ -244,6 +245,7 @@ function compress(clientDirectory, callback) {
         }
     });
     zipper.pipe(out);
+    // include all files with 'prep_' prefix
     zipper.glob(prefix + '*', {cwd: clientDirectory})
     zipper.finalize();
 }

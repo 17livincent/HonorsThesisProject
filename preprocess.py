@@ -88,21 +88,20 @@ print(files_list)
 for filename in files_list:
     fileDF = read_file(filename)
     headers = list(fileDF)
-    print(fileDF)
+    #print(fileDF)
 
     # iterate through all steps
     for i in range(len(steps_list)):
         step_name = steps_list[i]['name']
         inputs_list = np.array(steps_list[i]['inputs']).astype(np.float)
-        print(step_name)
-        print(inputs_list)
+        #print(step_name)
+        #print(inputs_list)
         
         # according to the step name, call the appropriate function
         fileDF = call_step(fileDF, step_name, inputs_list)
-        print(fileDF.head())
+        #print(fileDF.head())
 
     # save file
     fileDF.to_csv(path_or_buf = filename, index = False, header = headers)
 
 sys.stdout.flush()
-
