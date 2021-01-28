@@ -202,7 +202,7 @@ function preprocess(cIndex, clientDirectory, callback) {
     // turn steps into string
     let stepsJSON = JSON.stringify(clients[cIndex].steps);
     // preprocess each file
-    let prep = spawn('python', ['preprocess.py', filenamesJSON, stepsJSON]);
+    let prep = spawn('python3', ['preprocess.py', filenamesJSON, stepsJSON]);
     prep.stdout.on('data', (data) => {
         console.log('OK:\n' + data.toString());
     });
