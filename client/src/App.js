@@ -2,7 +2,7 @@
  * The highest-level component of the web app.
  */
 import React from 'react';
-import {Accordion, Card, Col, Row, Button} from 'react-bootstrap';
+import {Accordion, Card, Col, Row, Button, ProgressBar} from 'react-bootstrap';
 
 import Header from './Header.js';
 import HomeInfo from './HomeInfo.js';
@@ -31,7 +31,8 @@ class App extends React.Component {
         this.steps = [];
 
         this.state = {
-            currentPanel: '0'   // which accordion section is open
+            currentPanel: '0',  // which accordion section is open
+            inProgress: false   // for the progress bar
         }
 
         this.submitData = this.submitData.bind(this);
@@ -56,6 +57,8 @@ class App extends React.Component {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            // stop the progress bar
+            this.setState({inProgress: false});
         });
         this.socket.on('disconnect', () => {
             console.log('Disconnected from server');
@@ -88,6 +91,9 @@ class App extends React.Component {
      */
     commitOps() {
         console.log('Files and steps confirmed.');
+        // show the progress bar
+        this.setState({inProgress: true});
+        // send steps and files to server
         this.sendToServer();
     }
 
@@ -195,6 +201,7 @@ class App extends React.Component {
                         <Accordion.Collapse eventKey='2'>
                             <Card.Body>
                                 <Confirm files={this.files} steps={this.steps} onSubmit={this.commitOps}/>
+                                {this.state.inProgress && <ProgressBar animated now={100} />}
                             </Card.Body>
                         </Accordion.Collapse>
                     </Card>
