@@ -24,7 +24,7 @@ class App extends React.Component {
         super(props);
 
         // socket to send and receive data from server
-        this.socket = socketIOClient('web-app.li-vincent.com');
+        this.socket = socketIOClient('web-app.li-vincent.com'); // while testing locally, the address should be 'localhost:3000'
         // FileList of inputted files
         this.files = [];
         // array of selected steps
@@ -32,7 +32,9 @@ class App extends React.Component {
 
         this.state = {
             currentPanel: '0',  // which accordion section is open
-            inProgress: false   // for the progress bar
+            showProgressBar: false,   // for the progress bar
+            inProgress: false,  // to animate the progress bar
+            finished: false     // whether the user has received the download or not
         }
 
         this.submitData = this.submitData.bind(this);
@@ -57,8 +59,8 @@ class App extends React.Component {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            // stop the progress bar
-            this.setState({inProgress: false});
+            // change the progress bar and disable the submit button
+            this.setState({inProgress: false, finished: true});
         });
         this.socket.on('disconnect', () => {
             console.log('Disconnected from server');
@@ -92,7 +94,7 @@ class App extends React.Component {
     commitOps() {
         console.log('Files and steps confirmed.');
         // show the progress bar
-        this.setState({inProgress: true});
+        this.setState({showProgressBar: true, inProgress: true});
         // send steps and files to server
         this.sendToServer();
     }
@@ -200,8 +202,8 @@ class App extends React.Component {
                         </Card.Header>
                         <Accordion.Collapse eventKey='2'>
                             <Card.Body>
-                                <Confirm files={this.files} steps={this.steps} onSubmit={this.commitOps}/>
-                                {this.state.inProgress && <ProgressBar animated now={100} />}
+                                <Confirm files={this.files} steps={this.steps} onSubmit={this.commitOps} buttonDisabled={this.state.finished} />
+                                {this.state.showProgressBar && <ProgressBar animated={this.state.inProgress} variant={this.state.finished && 'success'} now={100} />}
                             </Card.Body>
                         </Accordion.Collapse>
                     </Card>
