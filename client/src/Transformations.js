@@ -59,7 +59,7 @@ class Transformations {
                     val: 'box-cox',
                     numOfInputs: 0,
                     inputNames: [],
-                    description: 'Performs a power transformation using the Box-Cox method.  Data are automatically scaled to positive values and returned standardized.',
+                    description: 'Performs a power transformation using the Box-Cox method.  Data are automatically scaled to positive values and returned standardized.  This transformation will not work if data is constant.',
                     citation: '',
                     rules: [],
                     ruleDescs: []
