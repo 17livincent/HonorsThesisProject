@@ -12,3 +12,7 @@
 #goback1, #goback2 {
     float: right;
 }
+
+#status {
+    margin-top: 10px;
+}

@@ -70,8 +70,8 @@ class Confirm extends React.Component {
     }
 
     render() {
-        let inputDataSummary = <Alert variant='success'><h4>Files chosen:</h4>{this.displayFiles()}</Alert>;
-        let stepsSummary = <Alert variant='success'><h4>Steps chosen:</h4>{this.displaySteps()}</Alert>;
+        let inputDataSummary = <Alert variant='dark'><h4>Files chosen:</h4>{this.displayFiles()}</Alert>;
+        let stepsSummary = <Alert variant='dark'><h4>Steps chosen:</h4>{this.displaySteps()}</Alert>;
 
         return (
             <React.Fragment>
