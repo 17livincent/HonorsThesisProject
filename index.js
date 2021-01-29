@@ -260,7 +260,7 @@ function deleteClient(cIndex, socketID) {
     // remove clientForm
     clients.splice(cIndex, 1);
     // remove client's temporary directory and its files
-    fs.rmdir('temp/' + socketID, {recursive: true}, (error) => {
+    fs.rm('temp/' + socketID, {recursive: true, force: true}, (error) => {
         if(error) throw error;
     });
 }
