@@ -5,7 +5,7 @@
 """
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, PowerTransformer
 import sys
 import json
 
@@ -55,6 +55,34 @@ def moving_avg_filter(df, window_size):
     filtered = filtered.dropna()
     return filtered
 
+def difference_trans(df):
+    """
+        Does a difference transformation.
+    """
+    trans = df.diff()
+    trans = trans.dropna()
+    return trans
+
+def box_cox_power_trans(df):
+    """
+        Does a Box-Cox power transformation.
+        Data are initially scaled to positive values, and is returned standardized.
+    """
+    scale = MinMaxScaler(feature_range = (1, 2))
+    bc = PowerTransformer(method='box-cox')
+    trans = scale.fit_transform(df)
+    trans = bc.fit_transform(trans)
+    return pd.DataFrame(trans)
+
+def yeo_johns_power_trans(df):
+    """
+        Does a Yeo-Johnson power transformation.
+        Data is returned standardized.
+    """
+    yj = PowerTransformer(method='yeo-johnson')
+    trans = yj.fit_transform(df)
+    return pd.DataFrame(trans)
+
 def call_step(df, step_name, inputs):
     """
         Calls the appropriate preprocessing function based on the step name.
@@ -68,6 +96,15 @@ def call_step(df, step_name, inputs):
 
     elif step_name == 'moving_avg_filter':
         df = moving_avg_filter(df, int(inputs_list[0]))
+
+    elif step_name == 'dif_trans':
+        df = difference_trans(df)
+
+    elif step_name == 'box-cox':
+        df = box_cox_power_trans(df)
+
+    elif step_name == 'y-j':
+        df = yeo_johns_power_trans(df)
 
     return df
 
@@ -94,12 +131,8 @@ for filename in files_list:
     for i in range(len(steps_list)):
         step_name = steps_list[i]['name']
         inputs_list = np.array(steps_list[i]['inputs']).astype(np.float)
-        #print(step_name)
-        #print(inputs_list)
-        
         # according to the step name, call the appropriate function
         fileDF = call_step(fileDF, step_name, inputs_list)
-        #print(fileDF.head())
 
     # save file
     fileDF.to_csv(path_or_buf = filename, index = False, header = headers)

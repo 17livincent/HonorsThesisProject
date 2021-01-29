@@ -35,16 +35,6 @@ class Transformations {
         return (
             [
                 {
-                    name: 'Standardize', 
-                    val: 'stand', 
-                    numOfInputs: 0, 
-                    inputNames: [], 
-                    description: 'Transform the data to have a mean of 0, and a standard deviation of 1.', 
-                    citation: '',
-                    rules: [],
-                    ruleDescs: []
-                },
-                {
                     name: 'Normalize', 
                     val: 'norm', 
                     numOfInputs: 2, 
@@ -53,6 +43,46 @@ class Transformations {
                     citation: '',
                     rules: [(inputs) => (inputs[0] < inputs[1])],
                     ruleDescs: ['Normalization minimum must be less than the maximum.']
+                },
+                {
+                    name: 'Standardize', 
+                    val: 'stand', 
+                    numOfInputs: 0, 
+                    inputNames: [], 
+                    description: 'Transform the data to have a mean of 0, and a standard deviation of 1.', 
+                    citation: '',
+                    rules: [],
+                    ruleDescs: []
+                }, 
+                {
+                    name: 'Box-Cox transformation',
+                    val: 'box-cox',
+                    numOfInputs: 0,
+                    inputNames: [],
+                    description: 'Performs a power transformation using the Box-Cox method.  Data are automatically scaled to positive values and returned standardized.',
+                    citation: '',
+                    rules: [],
+                    ruleDescs: []
+                },
+                {
+                    name: 'Yeo-Johnson transformation',
+                    val: 'y-j',
+                    numOfInputs: 0,
+                    inputNames: [],
+                    description: 'Performs a power transformation using the Yeo-Johnson method.  Non-positive values are allowed, and data is returned santdardized.',
+                    citation: '',
+                    rules: [],
+                    ruleDescs: []
+                },
+                {
+                    name: 'Difference transformation',
+                    val: 'dif_trans',
+                    numOfInputs: 0,
+                    inputNames: [],
+                    description: 'For all rows, subtracts the value of the previous row from the current row.  NAN\'s are will be dropped.',
+                    citation: '',
+                    rules: [],
+                    ruleDescs: []
                 },
                 {
                     name: 'Moving average filter',
@@ -64,6 +94,7 @@ class Transformations {
                     rules: [(size) => (size[0] > 0)],
                     ruleDescs: ['Filter window size must be greater than 0.']
                 }
+                
             ]
         );
     }
