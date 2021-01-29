@@ -90,7 +90,10 @@ io.on('connection', (socket) => {   // when a new client has connected
         // write files
         writeFiles(cIndex, clientDirectory);
         // preprocess files and then compress
-        preprocess(cIndex, clientDirectory, () => compress(clientDirectory, () => socket.emit('download')));
+        preprocess(cIndex, clientDirectory, 
+            () => compress(clientDirectory, () => socket.emit('download')), // success callback
+            () => socket.emit('error')  // failure callback
+        );
     });
 
     // client disconnected
@@ -191,7 +194,7 @@ function writeFiles(cIndex, clientDirectory) {
 /**
  * Performs the preprocessing steps on each file using the preprocess.py
  */
-function preprocess(cIndex, clientDirectory, callback) {
+function preprocess(cIndex, clientDirectory, success, failure) {
     // create an array of filenames
     let filenames = [];
     for(let i = 0; i < clients[cIndex].numOfReceivedFiles; i++) {
@@ -211,7 +214,12 @@ function preprocess(cIndex, clientDirectory, callback) {
     });
     prep.on('close', (code) => {    // process completed successfully
         console.log(`Process complete: ${code}`);
-        callback();
+        if(code === 0) {    // preprocessing successful
+            success();
+        }
+        if(code === 1) {    // an error occurred
+            failure();
+        }
     });
 }
 

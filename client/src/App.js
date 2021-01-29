@@ -2,7 +2,7 @@
  * The highest-level component of the web app.
  */
 import React from 'react';
-import {Accordion, Card, Col, Row, Button, ProgressBar} from 'react-bootstrap';
+import {Accordion, Card, Col, Row, Button, ProgressBar, Alert} from 'react-bootstrap';
 
 import Header from './Header.js';
 import HomeInfo from './HomeInfo.js';
@@ -32,9 +32,10 @@ class App extends React.Component {
 
         this.state = {
             currentPanel: '0',  // which accordion section is open
-            showProgressBar: false,   // for the progress bar
+            showResult: false,   // for the progress bar
             inProgress: false,  // to animate the progress bar
-            finished: false     // whether the user has received the download or not
+            succeeded: false,   // whether preprocessing succeeded and the user has received he download
+            failed: false   // if the server sends and error message
         }
 
         this.submitData = this.submitData.bind(this);
@@ -49,7 +50,7 @@ class App extends React.Component {
         this.socket.on('ready to submit', () => {   // server acknowledges all steps and files have been received
             this.sendSubmit();  // send submit request
         })
-        this.socket.on('download', () => {
+        this.socket.on('download', () => {  // preprocessing completed and download is ready
             console.log(`Download ready`);
             // create invisible hyperlink element to click and download file
             let file = 'download/' + this.socket.id;
@@ -60,7 +61,11 @@ class App extends React.Component {
             a.click();
             document.body.removeChild(a);
             // change the progress bar and disable the submit button
-            this.setState({inProgress: false, finished: true});
+            this.setState({inProgress: false, showResult: true, succeeded: true});
+        });
+        this.socket.on('error', () => { // preprocessing stopped with error
+            console.log('Preprocessing threw error');
+            this.setState({inProgress: false, showResult: true, failed: true});
         });
         this.socket.on('disconnect', () => {
             console.log('Disconnected from server');
@@ -94,7 +99,7 @@ class App extends React.Component {
     commitOps() {
         console.log('Files and steps confirmed.');
         // show the progress bar
-        this.setState({showProgressBar: true, inProgress: true});
+        this.setState({inProgress: true});
         // send steps and files to server
         this.sendToServer();
     }
@@ -161,6 +166,16 @@ class App extends React.Component {
         let goBackButton1 = <Button id='goback1' variant='outline-secondary' onClick={() => (this.setState({currentPanel: '0'}))}>Go back</Button>;
         let goBackButton2 = <Button id='goback2' variant='outline-secondary' onClick={() => (this.setState({currentPanel: '1'}))}>Go back</Button>;
 
+        let progressBar = <ProgressBar animated now={100} />;
+
+        let status;
+        if(this.state.succeeded === true && this.state.failed === false) status = 'success';
+        else if(this.state.succeeded === false && this.state.failed === true) status = 'danger';
+
+        let successfulStatus = <h4>Preprocessing completed</h4>;
+        let failureStatus = <React.Fragment><h4>Error occurred</h4>Please check the order of steps and try again.</React.Fragment>;
+        let statusComp = <Alert id='status' variant={status}>{(status !== undefined && status === 'success') ? (successfulStatus) : (failureStatus)}</Alert>
+
         return (
             <React.Fragment>
                 <Header />
@@ -202,17 +217,16 @@ class App extends React.Component {
                         </Card.Header>
                         <Accordion.Collapse eventKey='2'>
                             <Card.Body>
-                                <Confirm files={this.files} steps={this.steps} onSubmit={this.commitOps} buttonDisabled={this.state.finished} />
-                                {this.state.showProgressBar && <ProgressBar animated={this.state.inProgress} variant={this.state.finished && 'success'} now={100} />}
+                                <Confirm files={this.files} steps={this.steps} onSubmit={this.commitOps} buttonDisabled={this.state.succeeded || this.state.failed} />
+                                {this.state.inProgress && progressBar}
+                                {this.state.showResult && statusComp}
                             </Card.Body>
                         </Accordion.Collapse>
                     </Card>
                 </Accordion>
                 <Footer />
             </React.Fragment>
-            
         );
-        
     }
 }
 
