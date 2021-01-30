@@ -141,7 +141,7 @@ class InputData extends React.Component {
                     </div>
                     <br />
                     <Alert variant='light'>
-                        FYI: To undo a file input, click on the corresponding "Choose File" and press "Cancel".
+                        FYI: To undo a file input, click on the corresponding "Choose File" and press "Cancel", or refresh the page.
                     </Alert>
                     <Form.Row>
                         <Col>

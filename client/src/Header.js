@@ -12,7 +12,6 @@ class Header extends React.Component {
                 <Navbar id='header' bg='dark' variant='dark'>
                     <Navbar.Brand>
                         <h2>AppName</h2>
-                        *currently under development
                     </Navbar.Brand>
                 </Navbar>
             </React.Fragment>

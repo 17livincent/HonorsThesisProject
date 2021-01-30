@@ -23,13 +23,13 @@ class Footer extends React.Component {
                 <Navbar id='footer' sticky='bottom' bg='dark' variant='dark'>
                     <Row id='row'>
                         <Col id='left' xs={3}>
-                            <Navbar.Text>
+                            <Navbar.Text id='text'>
                                 Developed by Vincent Li {this.getYear()}<br />
                                 Contact: <a href='mailto:vincentl@asu.edu'>vincentl@asu.edu</a>
                             </Navbar.Text>
                         </Col>
                         <Col id='right'>
-                            <Navbar.Text>
+                            <Navbar.Text id='text'>
                                 This web application is an honors thesis project for Barrett, the Honors College at Arizona State University.<br />
                                 This project is sponsored by the Arizona State University, School of Arts, Media, and Engineering.
                             </Navbar.Text>

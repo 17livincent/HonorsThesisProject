@@ -181,7 +181,7 @@ class App extends React.Component {
                 <Header />
                 <HomeInfo />
                 <Accordion id='app' activeKey={this.state.currentPanel}>
-                    <Card>
+                    <Card border='primary'>
                         <Card.Header eventKey='0'>
                             <h2>1. Input Data</h2>
                         </Card.Header>
@@ -189,7 +189,7 @@ class App extends React.Component {
                             <Card.Body>{inputData}</Card.Body>
                         </Accordion.Collapse>
                     </Card>
-                    <Card>
+                    <Card border='primary'>
                         <Card.Header eventKey='1'>
                             <Row>
                                 <Col>
@@ -204,7 +204,7 @@ class App extends React.Component {
                             <Card.Body>{stepsForm}</Card.Body>
                         </Accordion.Collapse>
                     </Card>
-                    <Card>
+                    <Card border='primary'>
                         <Card.Header eventKey='2'>
                             <Row>
                                 <Col>
