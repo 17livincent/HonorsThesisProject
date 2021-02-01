@@ -50,9 +50,15 @@ def normalize(df, min, max):
 def moving_avg_filter(df, window_size):
     """
         Does a moving average filter of the inputted window size.
+        If the window size is too large, it'll be set to the dataframe's size.
     """
-    filtered = df.rolling(window = window_size).mean()
+    ws = window_size
+    if(window_size >= len(df.index)): 
+        ws = len(df.index)
+    print(ws)
+    filtered = df.rolling(window = ws).mean()
     filtered = filtered.dropna()
+    filtered = filtered.reset_index(drop = True)
     return filtered
 
 def difference_trans(df):
@@ -61,6 +67,7 @@ def difference_trans(df):
     """
     trans = df.diff()
     trans = trans.dropna()
+    trans = trans.reset_index(drop = True)
     return trans
 
 def box_cox_power_trans(df):
@@ -83,6 +90,24 @@ def yeo_johns_power_trans(df):
     trans = yj.fit_transform(df)
     return pd.DataFrame(trans)
 
+def div_stand_devs(df):
+    """
+        Divides each column by its standard deviation.
+    """
+    sd = df.std(axis = 0)
+    for i in df:
+        df[i] = df[i] / sd[i]
+    return df
+
+def sub_means(df):
+    """
+        Subtracts the mean from each column.
+    """
+    means = df.mean(axis = 0)
+    for i in df:
+        df[i] = df[i] / means[i]
+    return df
+
 def call_step(df, step_name, inputs):
     """
         Calls the appropriate preprocessing function based on the step name.
@@ -90,21 +115,20 @@ def call_step(df, step_name, inputs):
     """
     if step_name == 'stand':
         df = standardize(df)
-
     elif step_name == 'norm':
         df = normalize(df, inputs_list[0], inputs_list[1])
-
-    elif step_name == 'moving_avg_filter':
+    elif step_name == 'moving_avg_smoother':
         df = moving_avg_filter(df, int(inputs_list[0]))
-
     elif step_name == 'dif_trans':
         df = difference_trans(df)
-
     elif step_name == 'box-cox':
         df = box_cox_power_trans(df)
-
     elif step_name == 'y-j':
         df = yeo_johns_power_trans(df)
+    elif step_name == 'div_stand_devs':
+        df = div_stand_devs(df)
+    elif step_name == 'sub_means':
+        df = sub_means(df)
 
     return df
 

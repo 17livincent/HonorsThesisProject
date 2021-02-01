@@ -65,16 +65,6 @@ class Transformations {
                     ruleDescs: []
                 },
                 {
-                    name: 'Yeo-Johnson transformation',
-                    val: 'y-j',
-                    numOfInputs: 0,
-                    inputNames: [],
-                    description: 'Performs a power transformation using the Yeo-Johnson method.  Non-positive values are allowed, and data is returned santdardized.',
-                    citation: '',
-                    rules: [],
-                    ruleDescs: []
-                },
-                {
                     name: 'Difference transformation',
                     val: 'dif_trans',
                     numOfInputs: 0,
@@ -85,16 +75,45 @@ class Transformations {
                     ruleDescs: []
                 },
                 {
-                    name: 'Moving average filter',
-                    val: 'moving_avg_filter',
+                    name: 'Divide standard deviations',
+                    val: 'div_stand_devs',
+                    numOfInputs: 0,
+                    inputNames: [],
+                    description: 'Divide each column by its standard deviation.',
+                    citation: '',
+                    rules: [],
+                    ruleDescs: []
+                },
+                {
+                    name: 'Moving average smoother',
+                    val: 'moving_avg_smoother',
                     numOfInputs: 1,
                     inputNames: ['Window size'],
                     description: 'Smooth data by calculating the average out of a defined number of data points.  NaN\'s will be dropped.',
                     citation: '',
                     rules: [(size) => (size[0] > 0)],
                     ruleDescs: ['Filter window size must be greater than 0.']
+                },
+                {
+                    name: 'Subtract means',
+                    val: 'sub_means',
+                    numOfInputs: 0,
+                    inputNames: [],
+                    description: 'Subtracts the mean from each column.',
+                    citation: '',
+                    rules: [],
+                    ruleDescs: []
+                },
+                {
+                    name: 'Yeo-Johnson transformation',
+                    val: 'y-j',
+                    numOfInputs: 0,
+                    inputNames: [],
+                    description: 'Performs a power transformation using the Yeo-Johnson method.  Non-positive values are allowed, and data is returned santdardized.',
+                    citation: '',
+                    rules: [],
+                    ruleDescs: []
                 }
-                
             ]
         );
     }
