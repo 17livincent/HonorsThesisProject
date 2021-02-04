@@ -9,6 +9,7 @@ import HomeInfo from './HomeInfo.js';
 import InputData from './InputData.js';
 import StepsForm from './StepsForm.js';
 import Confirm from './Confirm.js';
+import Visualizations from './Visualizations.js';
 import Footer from './Footer.js';
 
 import socketIOClient from 'socket.io-client';
@@ -22,17 +23,18 @@ const CHUNKSIZE = 100000;
 class App extends React.Component {
     constructor(props) {
         super(props);
-
+        this.serverName = 'web-app.li-vincent.com';
         // socket to send and receive data from server
-        this.socket = socketIOClient('web-app.li-vincent.com'); // while testing locally, the address should be 'localhost:3000'
+        this.socket = socketIOClient(this.serverName); // while testing locally, the address should be 'localhost:3000'
         // FileList of inputted files
         this.files = [];
+        // list of the names of the inputted files
+        this.fileNames = [];
         // array of selected steps
         this.steps = [];
 
         this.state = {
             currentPanel: '0',  // which accordion section is open
-            showResult: false,   // for the progress bar
             inProgress: false,  // to animate the progress bar
             succeeded: false,   // whether preprocessing succeeded and the user has received he download
             failed: false   // if the server sends and error message
@@ -61,11 +63,11 @@ class App extends React.Component {
             a.click();
             document.body.removeChild(a);
             // change the progress bar and disable the submit button
-            this.setState({inProgress: false, showResult: true, succeeded: true});
+            this.setState({inProgress: false, succeeded: true});
         });
         this.socket.on('error', () => { // preprocessing stopped with error
             console.log('Preprocessing threw error');
-            this.setState({inProgress: false, showResult: true, failed: true});
+            this.setState({inProgress: false, failed: true});
         });
         this.socket.on('disconnect', () => {
             console.log('Disconnected from server');
@@ -79,6 +81,10 @@ class App extends React.Component {
         //console.log('Files submitted:');
         //console.log(files);
         this.files = files;
+        for(let i = 0; i < files.length; i++) {
+            this.fileNames.push(files[i].name);
+        }
+        //console.log(this.fileNames);
         // close this accordion, open the second
         this.setState({currentPanel: '1'});
     }
@@ -172,9 +178,18 @@ class App extends React.Component {
         if(this.state.succeeded === true && this.state.failed === false) status = 'success';
         else if(this.state.succeeded === false && this.state.failed === true) status = 'danger';
 
-        let successfulStatus = <h4>Preprocessing completed</h4>;
-        let failureStatus = <React.Fragment><h4>Error occurred</h4>Please check the order of steps and try again.</React.Fragment>;
-        let statusComp = <Alert id='status' variant={status}>{(status !== undefined && status === 'success') ? (successfulStatus) : (failureStatus)}</Alert>
+        let successfulStatus = <React.Fragment>
+            <h4>Preprocessing completed</h4>
+            <Visualizations serverName={this.serverName} fileNames={this.fileNames} socketID={this.socket.id} />
+        </React.Fragment>;
+        let failureStatus = <React.Fragment>
+            <h4>Error occurred</h4>
+            Please check the order of steps and try again.
+        </React.Fragment>;
+
+        let statusComp = <Alert id='status' variant={status}>
+            {(status !== undefined && status === 'success') ? (successfulStatus) : (failureStatus)}
+        </Alert>;
 
         return (
             <React.Fragment>
@@ -186,7 +201,9 @@ class App extends React.Component {
                             <h2>1. Input Data</h2>
                         </Card.Header>
                         <Accordion.Collapse eventKey='0'>
-                            <Card.Body>{inputData}</Card.Body>
+                            <Card.Body>
+                                {inputData}
+                            </Card.Body>
                         </Accordion.Collapse>
                     </Card>
                     <Card border='primary'>
@@ -201,7 +218,9 @@ class App extends React.Component {
                             </Row>
                         </Card.Header>
                         <Accordion.Collapse eventKey='1'>
-                            <Card.Body>{stepsForm}</Card.Body>
+                            <Card.Body>
+                                {stepsForm}
+                            </Card.Body>
                         </Accordion.Collapse>
                     </Card>
                     <Card border='primary'>
@@ -211,7 +230,7 @@ class App extends React.Component {
                                     <h2>3. Run Steps</h2>
                                 </Col>
                                 <Col>
-                                    {(this.state.currentPanel === '2') && (this.state.inProgress === false) && (this.state.showResult === false) && goBackButton2}
+                                    {(this.state.currentPanel === '2') && (this.state.inProgress === false) && (this.state.succeeded || this.state.failed) && goBackButton2}
                                 </Col>
                             </Row>
                         </Card.Header>
@@ -219,7 +238,7 @@ class App extends React.Component {
                             <Card.Body>
                                 <Confirm files={this.files} steps={this.steps} onSubmit={this.commitOps} buttonDisabled={this.state.succeeded || this.state.failed} />
                                 {this.state.inProgress && progressBar}
-                                {this.state.showResult && statusComp}
+                                {(this.state.succeeded || this.state.failed) && statusComp}
                             </Card.Body>
                         </Accordion.Collapse>
                     </Card>
