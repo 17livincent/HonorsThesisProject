@@ -1,6 +1,6 @@
 /**
  * Confirm.js
- * 
+ * @author Vincent Li <vincentl@asu.edu>
  * Displays the selected files, selected steps, and accepts confirmation.
  */
 

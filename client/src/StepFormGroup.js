@@ -1,8 +1,8 @@
 /**
  * StepFormGroup.js
+ * @author Vincent Li <vincentl@asu.edu>
  * A FormGroup which serves as an input of a preprocessing/augmentation step form
  */
-
 import React from 'react';
 import {Form, Card, Col, Button} from 'react-bootstrap';
 

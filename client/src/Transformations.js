@@ -1,3 +1,9 @@
+/**
+ * Transformations.js
+ * @author Vincent Li <vincentl@asu.edu>
+ * Includes the details of the transformation options.
+ */
+
 class Transformations {
     /**
      * Find the index in the transformations object of this stepVal

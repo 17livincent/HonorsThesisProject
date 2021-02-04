@@ -1,3 +1,8 @@
+/**
+ * HomeInfo.js
+ * @author Vincent Li <vincentl@asu.edu>
+ * Text on the main page.
+ */
 import React from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';

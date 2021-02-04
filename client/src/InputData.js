@@ -1,8 +1,8 @@
 /**
  * InputData.js
- * This component manages the input of multiple CSV files
+ * @author Vincent Li <vincentl@asu.edu>
+ * This component manages the input of multiple CSV files.
  */
-
 import React from 'react';
 import {Form, Button, Col, Alert} from 'react-bootstrap';
 import Space from './Space.js';

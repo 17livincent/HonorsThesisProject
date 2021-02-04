@@ -1,6 +1,6 @@
 /**
  * Footer.js
- * 
+ * @author Vincent Li <vincentl@asu.edu>
  * This renders a Navbar as a footer.
  */
 

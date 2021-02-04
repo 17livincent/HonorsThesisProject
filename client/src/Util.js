@@ -1,5 +1,6 @@
 /**
  * Util.js
+ * @author Vincent Li <vincentl@asu.edu>
  * Contains methods that are useful to a number of classes.
  */
 class Util {

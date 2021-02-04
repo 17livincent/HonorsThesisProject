@@ -1,3 +1,7 @@
+/**
+ * index.js
+ * @author Vincent Li <vincentl@asu.edu>
+ */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App.js';

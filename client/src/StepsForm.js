@@ -1,8 +1,8 @@
 /**
  * StepsForm.js
+ * @author Vincent Li <vincentl@asu.edu>
  * This class manages an array of PrepStepFormGroups by handling form submit, stepNums add, and stepNums deletion
  */
-
 import React from 'react';
 import {Form, Col, Button, Alert} from 'react-bootstrap';
 

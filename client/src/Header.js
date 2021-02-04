@@ -1,3 +1,8 @@
+/**
+ * Header.js
+ * @author Vincent Li <vincentl@asu.edu>
+ * Header of the App.
+ */
 import React from 'react';
 import {Navbar} from 'react-bootstrap';
 

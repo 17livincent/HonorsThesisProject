@@ -1,5 +1,6 @@
 """
     trans.py
+    Author: Vincent Li <vincentl@asu.edu>
     Python code used to perform transformation steps.
     Takes command line arguments argv[1] for the stringified filenames list and argv[2] for the stringified steps object.
 """
