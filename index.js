@@ -27,13 +27,28 @@ app.get('/', (request, response) => {
     response.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
 
-// client requests download
+// client requests download of zip of preprocessed files
 app.get('/download/:id', (request, response) => {
     // get socket ID from route parameters
     let id = request.params.id;     
     console.log('Download request from ' + id);
-    // send as download
+    // send zip folder as download
     response.download('temp/' + id + resultsZip);  
+});
+
+// client requests a graph image
+app.get('/graphs/:id/:filename/:when/:type', (request, response) => {
+    // get socket ID
+    let id = request.params.id;
+    // get the filename of the data the graph is about
+    let filename = request.params.filename;
+    // get 'orig' or 'prep'
+    let when = request.params.when;
+    // get the type of graph requested
+    let type = request.params.type;
+    console.log(`${id} ${filename} ${when} ${type}`);
+    // format for graph file name on server is temp/<socketID>/vis_<filename>_<when>_<type>.png
+    //response.sendFile(__dirname + '/temp/' + id + '/' + 'vis_' + filename + '_' + when + '_' + type + '.png');
 });
 
 // socket communication
