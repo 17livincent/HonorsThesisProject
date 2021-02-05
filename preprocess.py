@@ -165,7 +165,7 @@ for filename in files_list:
     head, tail = os.path.split(filename)
 
     # Create original plots
-    getLinePlot(fileDF, 'Line Plot: Original ' + tail, tail, head + '/lineplot-original-' + tail[:-4] + '.png')
+    getLinePlot(fileDF, 'Line Plot: Original ' + tail, tail, head + '/lineplot-orig-' + tail[:-4] + '.png')
 
     # iterate through all steps
     for i in range(len(steps_list)):
