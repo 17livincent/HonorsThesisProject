@@ -4,4 +4,10 @@
     margin-right: auto;
     margin-top: auto;
     margin-bottom: auto;
+
+    max-height: 100%;
+    max-width: 100%;
+
+    border-radius: 2px;
+    object-fit: scale-down;
 }
