@@ -7,8 +7,10 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, PowerTransformer
+from matplotlib import pyplot
 import sys
 import json
+import os
 
 #####################################
 # functions
@@ -109,6 +111,14 @@ def sub_means(df):
         df[i] = df[i] / means[i]
     return df
 
+def getLinePlot(data, title, filename, client_directory):
+    """
+        Creates and saves a scatter plot
+    """
+    data.plot()
+    pyplot.title(title)
+    pyplot.savefig(client_directory + '/scatter-original-' + filename[:-4] + '.png')    # png files are temp/<socket ID>/<type>-<when>-<filename>.png
+
 def call_step(df, step_name, inputs):
     """
         Calls the appropriate preprocessing function based on the step name.
@@ -136,8 +146,9 @@ def call_step(df, step_name, inputs):
 #####################################
 
 # get inputs
-file_inputs = sys.argv[1]
-steps_input = sys.argv[2]
+client_directory = sys.argv[1]
+file_inputs = sys.argv[2]
+steps_input = sys.argv[3]
 
 # get lists of filenames and steps
 files_list = read_json_to_list(file_inputs)
@@ -148,9 +159,14 @@ print(files_list)
 
 # iterate through files
 for filename in files_list:
+    # filename(s) are temp/<socket ID>/<file>.csv
     fileDF = read_file(filename)
     headers = list(fileDF)
     #print(fileDF)
+
+
+    # Create original plots
+    getLinePlot(fileDF, 'Line Plot: Original ' + os.path.basename(filename), filename, client_directory)
 
     # iterate through all steps
     for i in range(len(steps_list)):
@@ -158,6 +174,9 @@ for filename in files_list:
         inputs_list = np.array(steps_list[i]['inputs']).astype(np.float)
         # according to the step name, call the appropriate function
         fileDF = call_step(fileDF, step_name, inputs_list)
+
+    # Create new plots
+    getLinePlot(fileDF, 'Line Plot: Preprocessed ' + os.path.basename(filename), filename, client_directory)
 
     # save file
     fileDF.to_csv(path_or_buf = filename, index = False, header = headers)

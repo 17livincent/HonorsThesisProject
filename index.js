@@ -1,5 +1,6 @@
 /**
  * index.js
+ * @author Vincent Li <vincentl@asu.edu>
  * Server file for the web application.
  * Deals with communicating with the clients, sockets, and file transfer, and interaction with the python code for preprocessing steps.
  */
@@ -10,8 +11,8 @@ const spawn = require('child_process').spawn;   // to run python code
 const archiver = require('archiver');   // for file compression
 
 const port = 3000;
-const app = express();  // express server
 
+const app = express();  // express server
 app.use(express.static('client/build'));
 app.use(require('compression')());
 app.use(require('helmet')());
@@ -47,8 +48,8 @@ app.get('/graphs/:id/:filename/:when/:type', (request, response) => {
     // get the type of graph requested
     let type = request.params.type;
     console.log(`${id} ${filename} ${when} ${type}`);
-    // format for graph file name on server is temp/<socketID>/vis_<filename>_<when>_<type>.png
-    //response.sendFile(__dirname + '/temp/' + id + '/' + 'vis_' + filename + '_' + when + '_' + type + '.png');
+    // format for graph file name on server is temp/<socket ID>/<type>-<when>-<filename>.png
+    response.sendFile(__dirname + '/temp/' + id + '/' + type + '-' + when + '-' + filename + '.png');
 });
 
 // socket communication
@@ -220,7 +221,7 @@ function preprocess(cIndex, clientDirectory, success, failure) {
     // turn steps into string
     let stepsJSON = JSON.stringify(clients[cIndex].steps);
     // preprocess each file
-    let prep = spawn('python3', ['preprocess.py', filenamesJSON, stepsJSON]);
+    let prep = spawn('python3', ['preprocess.py', clientDirectory, filenamesJSON, stepsJSON]);
     prep.stdout.on('data', (data) => {
         console.log('OK:\n' + data.toString());
     });

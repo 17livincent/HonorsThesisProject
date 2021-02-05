@@ -1,4 +1,6 @@
 /**
+ * App.js
+ * @author Vincent Li <vincentl@asu.edu>
  * The highest-level component of the web app.
  */
 import React from 'react';
