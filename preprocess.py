@@ -165,7 +165,7 @@ for filename in files_list:
     head, tail = os.path.split(filename)
 
     # Create original plots
-    getLinePlot(fileDF, 'Line Plot: Original ' + tail, tail, head + '/lineplot-orig-' + tail[:-4] + '.png')
+    getLinePlot(fileDF, 'Line Plot: Original ' + tail, tail, head + '/lineplot-orig-' + tail + '.png')
 
     # iterate through all steps
     for i in range(len(steps_list)):
@@ -175,7 +175,7 @@ for filename in files_list:
         fileDF = call_step(fileDF, step_name, inputs_list)
 
     # Create new plots
-    getLinePlot(fileDF, 'Line Plot: Preprocessed ' + tail, tail, head + '/lineplot-prep-' + tail[:-4] + '.png')
+    getLinePlot(fileDF, 'Line Plot: Preprocessed ' + tail, tail, head + '/lineplot-prep-' + tail + '.png')
 
     # save file
     fileDF.to_csv(path_or_buf = filename, index = False, header = headers)
