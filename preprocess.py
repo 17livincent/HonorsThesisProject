@@ -111,13 +111,13 @@ def sub_means(df):
         df[i] = df[i] / means[i]
     return df
 
-def getLinePlot(data, title, filename, client_directory):
+def getLinePlot(data, title, filename, saveas):
     """
         Creates and saves a scatter plot
     """
     data.plot()
     pyplot.title(title)
-    pyplot.savefig(client_directory + '/lineplot-original-' + 'prep_' + filename[:-4] + '.png')    # png files are temp/<socket ID>/<type>-<when>-<filename>.png
+    pyplot.savefig(saveas)    # png files are temp/<socket ID>/<type>-<when>-<filename>.png
 
 def call_step(df, step_name, inputs):
     """
@@ -146,9 +146,8 @@ def call_step(df, step_name, inputs):
 #####################################
 
 # get inputs
-client_directory = sys.argv[1]
-file_inputs = sys.argv[2]
-steps_input = sys.argv[3]
+file_inputs = sys.argv[1]
+steps_input = sys.argv[2]
 
 # get lists of filenames and steps
 files_list = read_json_to_list(file_inputs)
@@ -166,7 +165,7 @@ for filename in files_list:
     head, tail = os.path.split(filename)
 
     # Create original plots
-    getLinePlot(fileDF, 'Line Plot: Original ' + tail, tail, client_directory)
+    getLinePlot(fileDF, 'Line Plot: Original ' + tail, tail, head + '/lineplot-original-' + tail[:-4] + '.png')
 
     # iterate through all steps
     for i in range(len(steps_list)):
@@ -176,7 +175,7 @@ for filename in files_list:
         fileDF = call_step(fileDF, step_name, inputs_list)
 
     # Create new plots
-    getLinePlot(fileDF, 'Line Plot: Preprocessed ' + tail, tail, client_directory)
+    getLinePlot(fileDF, 'Line Plot: Preprocessed ' + tail, tail, head + '/lineplot-prep-' + tail[:-4] + '.png')
 
     # save file
     fileDF.to_csv(path_or_buf = filename, index = False, header = headers)

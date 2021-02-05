@@ -49,7 +49,7 @@ app.get('/graphs/:id/:filename/:when/:type', (request, response) => {
     let type = request.params.type;
     console.log(`${id} ${filename} ${when} ${type}`);
     // format for graph file name on server is temp/<socket ID>/<type>-<when>-<filename>.png
-    response.sendFile(__dirname + '/temp/' + id + '/' + type + '-' + when + '-' + filename + '.png');
+    response.sendFile(__dirname + '/temp/' + id + '/' + type + '-' + when + '-prep_' + filename + '.png');
 });
 
 // socket communication
@@ -221,7 +221,7 @@ function preprocess(cIndex, clientDirectory, success, failure) {
     // turn steps into string
     let stepsJSON = JSON.stringify(clients[cIndex].steps);
     // preprocess each file
-    let prep = spawn('python3', ['preprocess.py', clientDirectory, filenamesJSON, stepsJSON]);
+    let prep = spawn('python3', ['preprocess.py', filenamesJSON, stepsJSON]);
     prep.stdout.on('data', (data) => {
         console.log('OK:\n' + data.toString());
     });
