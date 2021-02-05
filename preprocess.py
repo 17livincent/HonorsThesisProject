@@ -117,7 +117,7 @@ def getLinePlot(data, title, filename, client_directory):
     """
     data.plot()
     pyplot.title(title)
-    pyplot.savefig(client_directory + '/scatter-original-' + filename[:-4] + '.png')    # png files are temp/<socket ID>/<type>-<when>-<filename>.png
+    pyplot.savefig(client_directory + '/lineplot-original-' + filename[:-4] + '.png')    # png files are temp/<socket ID>/<type>-<when>-<filename>.png
 
 def call_step(df, step_name, inputs):
     """
