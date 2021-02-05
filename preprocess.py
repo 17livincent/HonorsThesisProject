@@ -163,10 +163,10 @@ for filename in files_list:
     fileDF = read_file(filename)
     headers = list(fileDF)
     #print(fileDF)
-
+    head, tail = os.path.split(filename)
 
     # Create original plots
-    getLinePlot(fileDF, 'Line Plot: Original ' + os.path.basename(filename), os.path.basename(filename), client_directory)
+    getLinePlot(fileDF, 'Line Plot: Original ' + tail, tail, client_directory)
 
     # iterate through all steps
     for i in range(len(steps_list)):
