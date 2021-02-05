@@ -176,7 +176,7 @@ for filename in files_list:
         fileDF = call_step(fileDF, step_name, inputs_list)
 
     # Create new plots
-    getLinePlot(fileDF, 'Line Plot: Preprocessed ' + os.path.basename(filename), filename, client_directory)
+    getLinePlot(fileDF, 'Line Plot: Preprocessed ' + tail, tail, client_directory)
 
     # save file
     fileDF.to_csv(path_or_buf = filename, index = False, header = headers)
