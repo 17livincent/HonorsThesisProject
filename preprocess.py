@@ -166,7 +166,7 @@ for filename in files_list:
 
 
     # Create original plots
-    getLinePlot(fileDF, 'Line Plot: Original ' + os.path.basename(filename), filename, client_directory)
+    getLinePlot(fileDF, 'Line Plot: Original ' + os.path.basename(filename), os.path.basename(filename), client_directory)
 
     # iterate through all steps
     for i in range(len(steps_list)):
