@@ -47,7 +47,7 @@ app.get('/graphs/:id/:filename/:when/:type', (request, response) => {
     let when = request.params.when;
     // get the type of graph requested
     let type = request.params.type;
-    console.log(`${id} ${filename} ${when} ${type}`);
+    //console.log(`${id} ${filename} ${when} ${type}`);
     // format for graph file name on server is temp/<socket ID>/<type>-<when>-<filename>.png
     response.sendFile(__dirname + '/temp/' + id + '/' + type + '-' + when + '-prep_' + filename + '.png');
 });
