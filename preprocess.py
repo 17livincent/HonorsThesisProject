@@ -118,6 +118,7 @@ def get_line_plot(data, title, filename, saveas):
     data.plot()
     pyplot.title(title)
     pyplot.savefig(saveas)
+    pyplot.close()
 
 def get_histogram(data, title, filename, saveas):
     """
@@ -126,6 +127,7 @@ def get_histogram(data, title, filename, saveas):
     data.iloc[:, 0].hist()
     pyplot.title(title)
     pyplot.savefig(saveas)
+    pyplot.close()
 
 def get_density(data, title, filename, saveas):
     """
@@ -134,6 +136,7 @@ def get_density(data, title, filename, saveas):
     data.plot(kind = 'kde')
     pyplot.title(title)
     pyplot.savefig(saveas)
+    pyplot.close()
 
 def get_heatmap(data, title, filename, saveas):
     """
@@ -142,6 +145,7 @@ def get_heatmap(data, title, filename, saveas):
     pyplot.matshow(data)
     pyplot.title(title)
     pyplot.savefig(saveas)
+    pyplot.close()
 
 def call_step(df, step_name, inputs):
     """
