@@ -192,7 +192,10 @@ for filename in files_list:
     # png files are temp/<socket ID>/<type>-<when>-<filename>.png
     get_line_plot(fileDF, 'Line Plot: Original ' + tail, tail, '%s/lineplot-orig-%s.png' % (head, tail))
     get_histogram(fileDF, 'Histogram of first feature: Original ' + tail, tail, '%s/histogram-orig-%s.png' % (head, tail))
-    get_density(fileDF, 'Density Plot: Original ' + tail, tail, '%s/densityplot-orig-%s.png' % (head, tail))
+    try:
+        get_density(fileDF, 'Density Plot: Original ' + tail, tail, '%s/densityplot-orig-%s.png' % (head, tail))
+    except np.linalg.LinAlgError as error:
+        pass
     get_heatmap(fileDF, 'Heatmap: Original ' + tail, tail, '%s/heatmap-orig-%s.png' % (head, tail))
 
     # iterate through all steps
@@ -205,7 +208,10 @@ for filename in files_list:
     # Create new plots
     get_line_plot(fileDF, 'Line Plot: Preprocessed ' + tail, tail, '%s/lineplot-prep-%s.png' % (head, tail))
     get_histogram(fileDF, 'Histogram of first feature: Preprocessed ' + tail, tail, '%s/histogram-prep-%s.png' % (head, tail))
-    get_density(fileDF, 'Density Plot: Preprocessed ' + tail, tail, '%s/densityplot-prep-%s.png' % (head, tail))
+    try:
+        get_density(fileDF, 'Density Plot: Preprocessed ' + tail, tail, '%s/densityplot-prep-%s.png' % (head, tail))
+    except np.linalg.LinAlgError as error:
+        pass
     get_heatmap(fileDF, 'Heatmap: Preprocessed ' + tail, tail, '%s/heatmap-prep-%s.png' % (head, tail))
 
     # save file
