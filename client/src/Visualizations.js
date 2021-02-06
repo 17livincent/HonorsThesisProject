@@ -46,8 +46,8 @@ class Visualizations extends React.Component {
         let origHeatmaps = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/orig/heatmap'} alt={'Original ' + (i) + ' heatmap'} />);
         let prepHeatmaps = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/prep/heatmap'} alt={'Preprocessed ' + (i) + ' heatmap'} />);
 
-        this.origPlots = this.origPlots.concat(origLinePlots, origHistograms, origDensityPlots, origHeatmaps);
-        this.prepPlots = this.prepPlots.concat(prepLinePlots, prepHistograms, prepDensityPlots, prepHeatmaps);
+        this.origPlots = origLinePlots.concat(origHistograms, origDensityPlots, origHeatmaps);
+        this.prepPlots = prepLinePlots.concat(prepHistograms, prepDensityPlots, prepHeatmaps);
 
         let structure = <Container fluid>
             {
