@@ -43,15 +43,15 @@ class Visualizations extends React.Component {
         let origDensityPlots = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/orig/densityplot'} alt={'Original ' + (i) + ' density plot'} />);
         let prepDensityPlots = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/prep/densityplot'} alt={'Preprocessed ' + (i) + ' density plot'} />);
         // heatmaps
-        let origHeatmaps = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/orig/heatmap'} alt={'Original ' + (i) + ' heatmap'} />);
-        let prepHeatmaps = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/prep/heatmap'} alt={'Preprocessed ' + (i) + ' heatmap'} />);
+        //let origHeatmaps = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/orig/heatmap'} alt={'Original ' + (i) + ' heatmap'} />);
+        //let prepHeatmaps = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/prep/heatmap'} alt={'Preprocessed ' + (i) + ' heatmap'} />);
 
         this.origPlots = [...origLinePlots, ...origHistograms, ...origDensityPlots, ...origHeatmaps];
         this.prepPlots = [...prepLinePlots, ...prepHistograms, ...prepDensityPlots, ...prepHeatmaps];
         
         let structure = <Container fluid>
             {
-                Util.range(0, this.state.fileNames.length * 4 - 1, 1).map((i) => {
+                Util.range(0, this.state.fileNames.length * 3 - 1, 1).map((i) => {
                     return <Row><Col>{this.origPlots[i]}</Col><Col>{this.prepPlots[i]}</Col></Row>
                 })
             }
