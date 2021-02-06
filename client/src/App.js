@@ -177,7 +177,7 @@ class App extends React.Component {
         let progressBar = <ProgressBar animated now={100} />;
 
         let status;
-        if(this.state.succeeded === true && this.state.failed === false) status = 'success';
+        if(this.state.succeeded === true && this.state.failed === false) status = 'dark';
         else if(this.state.succeeded === false && this.state.failed === true) status = 'danger';
 
         let successfulStatus = <React.Fragment>
@@ -190,7 +190,7 @@ class App extends React.Component {
         </React.Fragment>;
 
         let statusComp = <Alert id='status' variant={status}>
-            {(status !== undefined && status === 'success') ? (successfulStatus) : (failureStatus)}
+            {(status !== undefined && status === 'dark') ? (successfulStatus) : (failureStatus)}
         </Alert>;
 
         return (
