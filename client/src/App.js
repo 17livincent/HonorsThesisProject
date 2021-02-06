@@ -232,7 +232,7 @@ class App extends React.Component {
                                     <h2>3. Run Steps</h2>
                                 </Col>
                                 <Col>
-                                    {(this.state.currentPanel === '2') && (this.state.inProgress === false) && (this.state.succeeded || this.state.failed) && goBackButton2}
+                                    {(this.state.currentPanel === '2') && !(this.state.succeeded || this.state.failed) && goBackButton2}
                                 </Col>
                             </Row>
                         </Card.Header>
