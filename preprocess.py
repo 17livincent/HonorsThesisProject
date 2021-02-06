@@ -194,13 +194,13 @@ for filename in files_list:
 
     # Create original plots
     # png files are temp/<socket ID>/<type>-<when>-<filename>.png
-    get_line_plot(fileDF, '\n'.join(wrap('Line Plot: Original ' + tail)), tail, '%s/lineplot-orig-%s.png' % (head, tail))
-    get_histogram(fileDF, '\n'.join(wrap('Histogram of feature 1: Original ' + tail)), tail, '%s/histogram-orig-%s.png' % (head, tail))
+    get_line_plot(fileDF, '\n'.join(wrap('Line Plot: Original ' + tail[5:])), tail, '%s/lineplot-orig-%s.png' % (head, tail))
+    get_histogram(fileDF, '\n'.join(wrap('Histogram of feature 1: Original ' + tail[5:])), tail, '%s/histogram-orig-%s.png' % (head, tail))
     try:
-        get_density(fileDF, '\n'.join(wrap('Density Plot: Original ' + tail)), tail, '%s/densityplot-orig-%s.png' % (head, tail))
+        get_density(fileDF, '\n'.join(wrap('Density Plot: Original ' + tail[5:])), tail, '%s/densityplot-orig-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
-    get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Original ' + tail)), tail, '%s/heatmap-orig-%s.png' % (head, tail))
+    #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Original ' + tail[5:])), tail, '%s/heatmap-orig-%s.png' % (head, tail))
 
     # iterate through all steps
     for i in range(len(steps_list)):
@@ -210,13 +210,13 @@ for filename in files_list:
         fileDF = call_step(fileDF, step_name, inputs_list)
 
     # Create new plots
-    get_line_plot(fileDF, '\n'.join(wrap('Line Plot: Preprocessed ' + tail)), tail, '%s/lineplot-prep-%s.png' % (head, tail))
+    get_line_plot(fileDF, '\n'.join(wrap('Line Plot: Preprocessed ' + tail[5:])), tail, '%s/lineplot-prep-%s.png' % (head, tail))
     get_histogram(fileDF, '\n'.join(wrap('Histogram of feature 1: Preprocessed ' + tail)), tail, '%s/histogram-prep-%s.png' % (head, tail))
     try:
-        get_density(fileDF, '\n'.join(wrap('Density Plot: Preprocessed ' + tail)), tail, '%s/densityplot-prep-%s.png' % (head, tail))
+        get_density(fileDF, '\n'.join(wrap('Density Plot: Preprocessed ' + tail[5:])), tail, '%s/densityplot-prep-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
-    get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Preprocessed ' + tail)), tail, '%s/heatmap-prep-%s.png' % (head, tail))
+    #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Preprocessed ' + tail[5:])), tail, '%s/heatmap-prep-%s.png' % (head, tail))
 
     # save file
     fileDF.to_csv(path_or_buf = filename, index = False, header = headers)
