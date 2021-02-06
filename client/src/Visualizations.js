@@ -51,7 +51,7 @@ class Visualizations extends React.Component {
         
         let structure = <Container fluid>
             {
-                Util.range(0, (this.state.fileNames.length * 4 - 1, 1).map((i) => {
+                Util.range(0, this.state.fileNames.length * 4 - 1, 1).map((i) => {
                     return <Row><Col>{this.origPlots[i]}</Col><Col>{this.prepPlots[i]}</Col></Row>
                 })
             }
