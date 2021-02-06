@@ -33,11 +33,21 @@ class Visualizations extends React.Component {
     }
 
     render() {
-        let origLinePlots = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/orig/lineplot'} alt='original lineplot' />);
-        let prepLinePlots = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/prep/lineplot'} alt='preprocessed lineplot' />);
+        // line plots
+        let origLinePlots = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/orig/lineplot'} alt={'Original ' + (i) + ' lineplot'} />);
+        let prepLinePlots = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/prep/lineplot'} alt={'Preprocessed ' + (i) + ' lineplot'} />);
+        // histograms
+        let origHistograms = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/orig/histogram'} alt={'Original ' + (i) + ' histogram of first feature'} />);
+        let prepHistograms = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/prep/histogram'} alt={'Preprocessed ' + (i) + ' histogram of first feature'} />);
+        // density plots
+        let origDensityPlots = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/orig/densityplot'} alt={'Original ' + (i) + ' density plot'} />);
+        let prepDensityPlots = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/prep/densityplot'} alt={'Preprocessed ' + (i) + ' density plot'} />);
+        // heatmaps
+        let origHeatmaps = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/orig/heatmap'} alt={'Original ' + (i) + ' heatmap'} />);
+        let prepHeatmaps = this.state.fileNames.map((i) => <img id='graph' src={'/graphs/' + this.state.socketID + '/' + (i) + '/prep/heatmap'} alt={'Preprocessed ' + (i) + ' heatmap'} />);
 
-        this.origPlots = this.origPlots.concat(origLinePlots);
-        this.prepPlots = this.prepPlots.concat(prepLinePlots);
+        this.origPlots = [...origLinePlots, ...origHistograms, ...origDensityPlots, ...origHeatmaps];
+        this.prepPlots = [...prepLinePlots, ...prepHistograms, ...prepDensityPlots, ...prepHeatmaps];
 
         let structure = <Container fluid>
             {

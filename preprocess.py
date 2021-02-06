@@ -111,13 +111,37 @@ def sub_means(df):
         df[i] = df[i] / means[i]
     return df
 
-def getLinePlot(data, title, filename, saveas):
+def get_line_plot(data, title, filename, saveas):
     """
         Creates and saves a scatter plot
     """
     data.plot()
     pyplot.title(title)
-    pyplot.savefig(saveas)    # png files are temp/<socket ID>/<type>-<when>-<filename>.png
+    pyplot.savefig(saveas)
+
+def get_histogram(data, title, filename, saveas):
+    """
+        Creates and saves a histogram of the data's first feature
+    """
+    data.iloc[:, 0].hist()
+    pyplot.title(title)
+    pyplot.savefig(saveas)
+
+def get_density(data, title, filename, saveas):
+    """
+        Creates and saves a density plot
+    """
+    data.plot(kind = 'kde')
+    pyplot.title(title)
+    pyplot.savefig(saveas)
+
+def get_heatmap(data, title, filename, saveas):
+    """
+        Creates and saves a heatmap
+    """
+    pyplot.matshow(data)
+    pyplot.title(title)
+    pyplot.savefig(saveas)
 
 def call_step(df, step_name, inputs):
     """
@@ -165,7 +189,11 @@ for filename in files_list:
     head, tail = os.path.split(filename)
 
     # Create original plots
-    getLinePlot(fileDF, 'Line Plot: Original ' + tail, tail, head + '/lineplot-orig-' + tail + '.png')
+    # png files are temp/<socket ID>/<type>-<when>-<filename>.png
+    get_line_plot(fileDF, 'Line Plot: Original ' + tail, tail, '%s/lineplot-orig-%s.png' % (head, tail))
+    get_histogram(fileDF, 'Histogram of first feature: Original ' + tail, tail, '%s/histogram-orig-%s.png' % (head, tail))
+    get_density(fileDF, 'Density Plot: Original ' + tail, tail, '%s/densityplot-orig-%s.png' % (head, tail))
+    get_heatmap(fileDF, 'Heatmap: Original ' + tail, tail, '%s/heatmap-orig-%s.png' % (head, tail))
 
     # iterate through all steps
     for i in range(len(steps_list)):
@@ -175,7 +203,10 @@ for filename in files_list:
         fileDF = call_step(fileDF, step_name, inputs_list)
 
     # Create new plots
-    getLinePlot(fileDF, 'Line Plot: Preprocessed ' + tail, tail, head + '/lineplot-prep-' + tail + '.png')
+    get_line_plot(fileDF, 'Line Plot: Preprocessed ' + tail, tail, '%s/lineplot-prep-%s.png' % (head, tail))
+    get_histogram(fileDF, 'Histogram of first feature: Preprocessed ' + tail, tail, '%s/histogram-prep-%s.png' % (head, tail))
+    get_density(fileDF, 'Density Plot: Preprocessed ' + tail, tail, '%s/densityplot-prep-%s.png' % (head, tail))
+    get_heatmap(fileDF, 'Heatmap: Preprocessed ' + tail, tail, '%s/heatmap-prep-%s.png' % (head, tail))
 
     # save file
     fileDF.to_csv(path_or_buf = filename, index = False, header = headers)
