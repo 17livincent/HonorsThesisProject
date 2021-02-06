@@ -142,7 +142,7 @@ def get_heatmap(data, title, filename, saveas):
     """
         Creates and saves a heatmap
     """
-    pyplot.matshow(data)
+    pyplot.matshow(data[:20])
     pyplot.title(title)
     pyplot.savefig(saveas)
     pyplot.close()
@@ -200,7 +200,7 @@ for filename in files_list:
         get_density(fileDF, 'Density Plot: Original ' + tail, tail, '%s/densityplot-orig-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
-    get_heatmap(fileDF, 'Heatmap: Original ' + tail, tail, '%s/heatmap-orig-%s.png' % (head, tail))
+    get_heatmap(fileDF, 'Heatmap rows 0-20: Original ' + tail, tail, '%s/heatmap-orig-%s.png' % (head, tail))
 
     # iterate through all steps
     for i in range(len(steps_list)):
@@ -216,7 +216,7 @@ for filename in files_list:
         get_density(fileDF, 'Density Plot: Preprocessed ' + tail, tail, '%s/densityplot-prep-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
-    get_heatmap(fileDF, 'Heatmap: Preprocessed ' + tail, tail, '%s/heatmap-prep-%s.png' % (head, tail))
+    get_heatmap(fileDF, 'Heatmap rows 0-20: Preprocessed ' + tail, tail, '%s/heatmap-prep-%s.png' % (head, tail))
 
     # save file
     fileDF.to_csv(path_or_buf = filename, index = False, header = headers)
