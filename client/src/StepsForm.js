@@ -66,7 +66,7 @@ class StepsForm extends React.Component {
 
     // handles deleting a stepNums
     deleteStep(stepNumber) {
-        if(stepNumber !== '1' && this.state.numOfSteps !== 1) {
+        if(this.state.numOfSteps !== 1) {   // there is >1 step
             // decrement state.numOfSteps
             let newNum = this.state.numOfSteps -1;
             // update stepNums array
@@ -75,13 +75,13 @@ class StepsForm extends React.Component {
             let newFormDetails = this.state.formDetails.slice();
             newFormDetails.splice(stepNumber - 1, 1);
             // update state
-            this.setState({numOfSteps: newNum, stepNums: newSteps, formDetails: newFormDetails});
-
-            //alert(`stepNums ${stepNumber} deleted.`);            
-            
+            this.setState({numOfSteps: newNum, stepNums: newSteps, formDetails: newFormDetails});            
         }
-        else {
-            //alert('The first stepNums cannot be deleted.');
+        else {  // if there is only one step, clear its selection
+            let newStep1 = this.getFormInfo('', 0);
+            console.log(newStep1);
+            // update state
+            this.setState({formDetails: [newStep1]});
         }
     }
 
@@ -129,14 +129,17 @@ class StepsForm extends React.Component {
 
     renderErrors() {
         return (
-            <Alert variant='danger'>
-                <b>Errors: </b><br />
-                {this.errors.map(i => (
-                    <React.Fragment>
-                        {i}<br />
-                    </React.Fragment>
-                ))}
-            </Alert>
+            <React.Fragment>
+                <br />
+                <Alert variant='danger'>
+                    <b>Errors: </b><br />
+                    {this.errors.map(i => (
+                        <React.Fragment>
+                            {i}<br />
+                        </React.Fragment>
+                    ))}
+                </Alert>
+            </React.Fragment>
         );
     }
 
@@ -189,7 +192,6 @@ class StepsForm extends React.Component {
             </React.Fragment>
         );
     }
-
 }
 
 export default StepsForm;
