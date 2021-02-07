@@ -93,6 +93,7 @@ class StepFormGroup extends React.Component {
         return (
             <Form.Control id={id}
                 type='number' 
+                step='0.001'
                 required='true'
                 placeholder={placeholder}
                 onChange={(e) => {this.setState({input: e}); this.updateAbove(undefined, e.target.value, id)}}

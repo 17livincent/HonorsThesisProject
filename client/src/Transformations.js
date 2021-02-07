@@ -97,8 +97,8 @@ class Transformations {
                     inputNames: ['Window size'],
                     description: 'Smooth data by calculating the average out of a defined number of data points.  NaN\'s will be dropped.',
                     citation: '',
-                    rules: [(size) => (size[0] > 0)],
-                    ruleDescs: ['Filter window size must be greater than 0.']
+                    rules: [(size) => (size[0] > 0), (size) => (Number.isInteger(size[0]))],
+                    ruleDescs: ['Filter window size must be greater than 0.', 'Filter window size must be an integer.']
                 },
                 {
                     name: 'Subtract means',
