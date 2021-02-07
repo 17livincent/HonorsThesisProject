@@ -35,7 +35,7 @@ class Footer extends React.Component {
                             </Navbar.Text>
                         </Col>
                     </Row>
-            </Navbar>
+                </Navbar>
             </React.Fragment>
         );
     }

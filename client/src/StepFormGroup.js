@@ -27,7 +27,7 @@ class StepFormGroup extends React.Component {
     
     /**
      * Object format for passing form details is:
-     * {stepVal: '', inputs: Array(numOfInputs)}
+     * {name: '', inputs: Array(numOfInputs)}
      */
 
     constructor(props) {        

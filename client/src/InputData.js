@@ -139,9 +139,9 @@ class InputData extends React.Component {
                     <div id='files'>
                         {this.renderFileInputs()}
                     </div>
-                    <br />
                     <Alert variant='light'>
-                        FYI: To undo a file input, click on the corresponding "Choose File" and press "Cancel", or refresh the page.
+                        FYI: Files must contain headers only on the first row and not have an index column.<br />
+                        To undo a file input, click on the corresponding "Choose File" and press "Cancel", or refresh the page.
                     </Alert>
                     <Form.Row>
                         <Col>
@@ -152,7 +152,6 @@ class InputData extends React.Component {
                         </Col>
                     </Form.Row>
                 </Form>
-                
             </React.Fragment>
         );
     }
