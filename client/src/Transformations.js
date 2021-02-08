@@ -47,7 +47,7 @@ class Transformations {
                     inputNames: ['Min', 'Max'], 
                     description: 'Rescale the range of the data to be between a min and max.', 
                     citation: '',
-                    rules: [(inputs) => (inputs[0] < inputs[1])],
+                    rules: [(inputs) => (parseFloat(inputs[0]) < parseFloat(inputs[1]))],
                     ruleDescs: ['Normalization minimum must be less than the maximum.']
                 },
                 {
@@ -97,7 +97,7 @@ class Transformations {
                     inputNames: ['Window size'],
                     description: 'Smooth data by calculating the average out of a defined number of data points.  NaN\'s will be dropped.',
                     citation: '',
-                    rules: [(size) => (size[0] > 0), (size) => (Number.isInteger(size[0]))],
+                    rules: [(size) => (size[0] > 0), (size) => (Number.isInteger(parseFloat(size[0])))],
                     ruleDescs: ['Filter window size must be greater than 0.', 'Filter window size must be an integer.']
                 },
                 {
