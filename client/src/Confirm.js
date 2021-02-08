@@ -8,7 +8,7 @@ import React from 'react';
 import {Alert, Button} from 'react-bootstrap';
 
 import Transformations from './Transformations.js';
-import Util from './util.js';
+import Util from './Util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/Confirm.css';

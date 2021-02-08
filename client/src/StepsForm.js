@@ -8,7 +8,7 @@ import {Form, Col, Button, Alert} from 'react-bootstrap';
 
 import StepFormGroup from './StepFormGroup.js';
 import Transformations from './Transformations.js';
-import Util from './util.js';
+import Util from './Util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/StepsForm.css';

@@ -6,7 +6,7 @@
 import React from 'react';
 import {Form, Button, Col, Alert} from 'react-bootstrap';
 import Space from './Space.js';
-import Util from './util.js';
+import Util from './Util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/InputData.css';

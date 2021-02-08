@@ -7,7 +7,7 @@
 import React from 'react';
 import {Container, Row, Col} from 'react-bootstrap';
 
-import Util from './util.js';
+import Util from './Util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/Visualisations.css';
