@@ -1,12 +1,23 @@
-# SigNorm
+```
+ ____  _       _   _                      
+/ ___|(_) __ _| \ | | ___  _ __ _ __ ___  
+\___ \| |/ _` |  \| |/ _ \| '__| '_ ` _ \ 
+ ___) | | (_| | |\  | (_) | |  | | | | | |
+|____/|_|\__, |_| \_|\___/|_|  |_| |_| |_|
+         |___/                            
+```
+#
 SigNorm is a web application which allows the user to preprocess time series data files (.csv) with an easy-to-use, code-free, and file-converter-like interface.  To use the app, visit [web-app.li-vincent.com](http://web-app.li-vincent.com).  The user can simply upload multiple files, pick the preprocessing steps from dropdowns, and download a zipped file of the processed data.  Visualizations and graphs of the data before and after the transformations will be displayed as well.
 
-Front-end is build with React, back-end with Express, and is hosted on AWS EC2.  It utilizes socket.io for real-time communication and to send file chunks, and HTTP methods to send downloads and visualization pictures.
+Front-end is built with React, back-end with Express, and is hosted on AWS EC2.  It utilizes socket.io for real-time communication and to send file chunks, and HTTP methods to send downloads and visualization pictures.
 
 This project is sponsored by the Arizona State University School of Arts, Media, and Engineering.
 
-## Table of Contents
+# Table of Contents
 - [Notable Files and Directories](#notable)
+- [Brief Design Description](#design)
+    - [Front-end](#design1)
+    - [Back-end](#design2)
 - [How to Run Locally](#locally)
     - [Setting up the Node and React apps](#locally1)
     - [Including the Python packages](#locally2)
@@ -17,7 +28,7 @@ This project is sponsored by the Arizona State University School of Arts, Media,
     - [Read the ```val``` of the step's JSON object to call the function](#add3)
 
 <a name='notable'></a>
-## Notable Files and Directories
+# Notable Files and Directories
 [```index.js```](index.js):
 - Defines the server for the web application
 - Deals with socket communication, file I/O, and client submissions
@@ -37,15 +48,88 @@ This project is sponsored by the Arizona State University School of Arts, Media,
 [```test_preprocess.ipynb```](test_preprocess.ipynb):
 - A Jupyter Notebook to test the transformation functions on example data
 
+<a name='design'></a>
+# Brief Design Description
+
+<a name='design1'></a>
+## Front-End
+The client-side application is built with the React framework.  
+### Purposes
+- Send the files (in chunks) selected by the user to the server
+- Validate user inputs
+- Send the preprocessing steps information to the server
+- Receive a ```.zip``` file as a download
+- Display graphs and visualizations describing the datasets before and after transformation
+
+File chunks are set at 100KB long and defined in a JSON object:
+```
+fileChunk = {
+    name: '',   // the name of this file, including the extension (data.csv)
+    type: '',   // file type which should be .csv
+    size: 0,    // the size of the file for which this chunk belongs to
+    data: []    // an ArrayBuffer or Node.Buffer (array of bytes) of length 100000
+}
+```
+The list of preprocessing steps are organized and sent via ```socket.io``` in a JSON object array like this:
+```
+steps = [
+    {   // the first step to be performed
+        name: '',   // the 'val' of the step defined in client/src/Transformations.js
+        inputs: []  // an array of strings of the decimal-value inputs
+    },
+    {   // the second step and a valid example
+        name: 'norm',               // the string which represents normalization
+        inputs: ['-1.0', '1.0']     // the inputs asked by the form for this step
+    },
+]
+```
+
+<a name='design2'></a>
+## Back-End
+The application server is built with the Express framework on Node.  
+### Purposes
+- Record current users, including their selected preprocessing steps and files
+- Receive file chunks and append them to the appropriate user's files
+- When a client confirms, execute its selected preprocessing steps on its files using a Python child process, and save these files after transformation
+- Send the preprocessed files in a zipped folder back to the client as a download
+- Create graphs and visualizations before and after preprocessing
+- Make those visualizations avaiable to the client via Express routing, so that they can be accessed via something like ```<img src='web-app.li-vincent.com/graphs/:id/:filename/:when/:type' alt='line plot' />```
+
+### Recording clients
+
+Client information is stored in an array of JSON objects like this one:
+```
+let clientForm = {          // details associated with a connected client
+    id: null,               //  a unique parameter from socket.io identifying this client
+    steps: [],              // sent steps
+    files: [],              // sent files
+    numOfFiles: 0,          // number of files that will be sent by this client
+    numOfReceivedFiles: 0   // number of files fully received by the server
+}
+```
+The ```clientForm.files``` attribute is an array of file chunk JSON objects.  Each file will have it's own object, but all of its data would be appended to ```fileChunk.data```.
+
+When a connection with a client is established, a new ```clientForm``` is created with a socket ID in the ```clientForm.id``` attribute.  When a client disconnects, it's associated ```clientForm``` is deleted.
+
+### Completing preprocessing steps
+
+When the client emits a 'submit' message to the server, the server will create a directory in ```temp/``` named after the client's socket ID (```clientForm.id```) and write all of the files into that directory.  From there, the server will execute this command:
+```
+python3 preprocess.py <stringified array of the filenames> <stringified clientForm.steps>
+```
+This command will create the graphs and visualizations of the datasets as they are (before), perform the preprocessing steps, and create those same visualizations again (after).
+
+If the command completes successfully, the server will compress the data files into ```preprocessed.zip``` and emit a 'download' message, notifying the client that the the file can be downloaded via ```web-app.li-vincent.com/download/:socketID```.  If the command returns an error, an 'error' message will be emitted.
+
 <a name='locally'></a>
-## How To Run Locally
+# How To Run Locally
 If you'd like to host and run SigNorm on your own machine, start by cloning the repository into your preferred directory.
 ```
 git clone https://github.com/17livincent/SigNormApp
 ```
 
 <a name='locally1'></a>
-### 1. Setting up the Node and React apps
+## 1. Setting up the Node and React apps
 If you do not have ```Node.js``` and ```npm``` installed on your machine, you must do so through [this link](https://nodejs.org/en/download/current).  You must have the latest current verson of Node to run the app.
 
 Next, navigate into ```SigNormApp/```, initialize the server, and install ```node_modules``` using these commands in the terminal:
@@ -62,7 +146,7 @@ npm run build
 ```
 
 <a name='locally2'></a>
-### 2. Including the Python packages
+## 2. Including the Python packages
 The back-end operations related to performing preprocessing steps are written in Python and use ```python3```, along with ```numpy```, ```pandas```, ```sklearn```, and ```matplotlib```.  If these are already installed, make sure they are up-to-date.  
 
 If they are not downloaded, you can install ```python3``` and ```pip3``` [from here](https://www.python.org/downloads/).  If you are using a Linux machine, you can use these commands:
@@ -79,7 +163,7 @@ pip3 install matplotlib
 ```
 
 <a name='locally3'></a>
-### 3. Running the application
+## 3. Running the application
 Once all the dependencies are in-place, from the ```SigNormApp/``` directory, start the Express server with: 
 ```
 node index.js
@@ -87,10 +171,10 @@ node index.js
 Finally, to access the app, from your web browser, enter the address ```localhost:3000```.
 
 <a name='add'></a>
-## How to Add More Transformations
+# How to Add More Transformations
 
 <a name='add1'></a>
-### 1. Add a JSON object to ```client/src/Transformations.js```
+## 1. Add a JSON object to ```client/src/Transformations.js```
 First, add a new JSON object to the one in ```client/src/Transformations.js```.  The JSON object is of this format, with the attributes' default values:
 ```
 {
@@ -126,17 +210,17 @@ Here is a valid example:
 - ```numOfInputs```: (integer) The number of (numerical) inputs for this step
     - If this is ```0```, then no input fields will be rendered
 - ```inputNames```: (string array) The displayed names of each input, in order
-- ```rules```: (function array) Boolean functions which take in an array of the inputs (floats) and are run to validate and sanitize them
+- ```rules```: (function array) Boolean functions which take in an array of the inputs (stringified floats) and are run to validate and sanitize them
     - If the function is passed ```inputs```, then the individual input values can be accessed with ```inputs[<0 to numOfInputs - 1>]```
     - Each function must return ```true``` (the inputs are validated for this rule) or ```false``` (the inputs have violated this rule)
 - ```ruleDescs```: (string array) The string referenced in ```ruleDescs[index]``` describes why the validation rule in ```rules[index]``` was violated
     - These strings are displayed only when the corresponding rules are violated
     - This array must be the same length as ```rules```
 
-*Note: All of the numerical inputs are floats (3 decimal places) by default.  Non-numerical values cannot be entered by the user.
+*Note: All of the numerical inputs are floats (3 decimal places) by default, but are read as strings, which means the floats must be parsed before any numerical comparison can be made.  Non-numerical values (except '.' and '-') cannot be entered by the user.
 
 <a name='add2'></a>
-### 2. Write your transformation function in ```preprocess.py```
+## 2. Write your transformation function in ```preprocess.py```
 Second, in ```preprocess.py``` in the app's root directory, write a function which takes in a DataFrame and inputs given by the user, performs the transformation on the DataFrame, and returns it.  If it needs to use functions from additional libraries, you must explicitly ```import``` them at the top of the file.
 
 Here is an example:
@@ -153,7 +237,7 @@ def normalize(df, min, max):
 ```
 
 <a name='add3'></a>
-### 3. Read the ```val``` of the step's JSON object to call the function
+## 3. Read the ```val``` of the step's JSON object to call the function
 Finally, back in ```preprocess.py```, add an else-if statement for your function to the bottom of ```def call_step(df, step_name, inputs)```.  The ```step_name``` is exactly the ```val``` of the step's JSON object in ```client/src/Transformations.js```.  The statement should look something like this:
 ```
 elif step_name == 'norm':
