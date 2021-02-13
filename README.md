@@ -1,14 +1,20 @@
 # SigNorm
-SigNorm is a web application which allows the user to preprocess time series data files (.csv) with an easy-to-use, code-free, and file-converter-like interface.  To use the app, visit [web-app.li-vincent.com](http://web-app.li-vincent.com).  The user can simply upload multiple files, pick the preprocessing steps from dropdowns, and download the processed data.  Visualizations and graphs of the data before and after the transformations will be displayed as well.
+SigNorm is a web application which allows the user to preprocess time series data files (.csv) with an easy-to-use, code-free, and file-converter-like interface.  To use the app, visit [web-app.li-vincent.com](http://web-app.li-vincent.com).  The user can simply upload multiple files, pick the preprocessing steps from dropdowns, and download a zipped file of the processed data.  Visualizations and graphs of the data before and after the transformations will be displayed as well.
 
-Front-end is designed with React, back-end with Express, and is hosted on AWS EC2.  It utilizes socket.io for real-time communication.
+Front-end is build with React, back-end with Express, and is hosted on AWS EC2.  It utilizes socket.io for real-time communication and to send file chunks, and HTTP methods to send downloads and visualization pictures.
 
 This project is sponsored by the Arizona State University School of Arts, Media, and Engineering.
 
 ## Table of Contents
 - [Notable Files and Directories](#notable)
 - [How to Run Locally](#locally)
+    - [Setting up the Node and React apps](#locally1)
+    - [Including the Python packages](#locally2)
+    - [Running the application](#locally3)
 - [How to Add More Transformations](#add)
+    - [Add a JSON object to ```client/src/Transformations.js```](#add1)
+    - [Write your transformation function in ```preprocess.py```](#add2)
+    - [Read the ```val``` of the step's JSON object to call the function](#add3)
 
 <a name='notable'></a>
 ## Notable Files and Directories
@@ -33,24 +39,30 @@ This project is sponsored by the Arizona State University School of Arts, Media,
 
 <a name='locally'></a>
 ## How To Run Locally
-If you'd like to host and run SigNorm on your own machine, first, clone the repository into your preferred directory.
+If you'd like to host and run SigNorm on your own machine, start by cloning the repository into your preferred directory.
 ```
 git clone https://github.com/17livincent/SigNormApp
 ```
+
+<a name='locally1'></a>
+### 1. Setting up the Node and React apps
 If you do not have ```Node.js``` and ```npm``` installed on your machine, you must do so through [this link](https://nodejs.org/en/download/current).  You must have the latest current verson of Node to run the app.
 
-Next, navigate into ```SigNormApp/```, initialize the server, and install ```node_modules``` using this command in the terminal:
+Next, navigate into ```SigNormApp/```, initialize the server, and install ```node_modules``` using these commands in the terminal:
 ```
 cd SigNormApp/
 npm init
 npm install
 ```
-Navigate into ```/client``` and install ```node_modules``` for the React app and build it for production.
+From there, navigate into ```client/``` and install ```node_modules``` for the React app and build it for production.
 ```
 cd client/
 npm install
 npm run build
 ```
+
+<a name='locally2'></a>
+### 2. Including the Python packages
 The back-end operations related to performing preprocessing steps are written in Python and use ```python3```, along with ```numpy```, ```pandas```, ```sklearn```, and ```matplotlib```.  If these are already installed, make sure they are up-to-date.  
 
 If they are not downloaded, you can install ```python3``` and ```pip3``` [from here](https://www.python.org/downloads/).  If you are using a Linux machine, you can use these commands:
@@ -65,6 +77,9 @@ pip3 install pandas
 pip3 install scikit-learn
 pip3 install matplotlib
 ```
+
+<a name='locally3'></a>
+### 3. Running the application
 Once all the dependencies are in-place, from the ```SigNormApp/``` directory, start the Express server with: 
 ```
 node index.js
@@ -73,7 +88,9 @@ Finally, to access the app, from your web browser, enter the address ```localhos
 
 <a name='add'></a>
 ## How to Add More Transformations
-### Add a JSON object to ```client/src/Transformations.js```
+
+<a name='add1'></a>
+### 1. Add a JSON object to ```client/src/Transformations.js```
 First, add a new JSON object to the one in ```client/src/Transformations.js```.  The JSON object is of this format, with the attributes' default values:
 ```
 {
@@ -118,7 +135,8 @@ Here is a valid example:
 
 *Note: All of the numerical inputs are floats (3 decimal places) by default.  Non-numerical values cannot be entered by the user.
 
-### Write transformation function in ```preprocess.py```
+<a name='add2'></a>
+### 2. Write your transformation function in ```preprocess.py```
 Second, in ```preprocess.py``` in the app's root directory, write a function which takes in a DataFrame and inputs given by the user, performs the transformation on the DataFrame, and returns it.  If it needs to use functions from additional libraries, you must explicitly ```import``` them at the top of the file.
 
 Here is an example:
@@ -134,7 +152,8 @@ def normalize(df, min, max):
     return pd.DataFrame(trans, columns = headers)   # column names are maintained
 ```
 
-### Read the ```val``` of the step's JSON object to call the function
+<a name='add3'></a>
+### 3. Read the ```val``` of the step's JSON object to call the function
 Finally, back in ```preprocess.py```, add an else-if statement for your function to the bottom of ```def call_step(df, step_name, inputs)```.  The ```step_name``` is exactly the ```val``` of the step's JSON object in ```client/src/Transformations.js```.  The statement should look something like this:
 ```
 elif step_name == 'norm':
