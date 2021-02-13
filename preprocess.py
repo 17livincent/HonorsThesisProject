@@ -155,9 +155,9 @@ def call_step(df, step_name, inputs):
     if step_name == 'stand':
         df = standardize(df)
     elif step_name == 'norm':
-        df = normalize(df, inputs_list[0], inputs_list[1])
+        df = normalize(df, inputs[0], inputs[1])
     elif step_name == 'moving_avg_smoother':
-        df = moving_avg_filter(df, int(inputs_list[0]))
+        df = moving_avg_filter(df, int(inputs[0]))
     elif step_name == 'dif_trans':
         df = difference_trans(df)
     elif step_name == 'box-cox':
