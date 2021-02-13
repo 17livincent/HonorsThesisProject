@@ -52,6 +52,14 @@ app.get('/graphs/:id/:filename/:when/:type', (request, response) => {
     response.sendFile(__dirname + '/temp/' + id + '/' + type + '-' + when + '-prep_' + filename + '.png');
 });
 
+// fun stats/analytics page
+app.get('/stats', (request, response) => {
+    response.send(`
+        <h1>Stats</h1>
+        <p>Number of users currently online: ${clients.length}</p>
+    `);
+});
+
 // socket communication
 io.on('connection', (socket) => {   // when a new client has connected
     console.log(`${socket.id}: Connected.`);
