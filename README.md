@@ -82,9 +82,22 @@ First, add a new JSON object to the one in ```client/src/Transformations.js```. 
     description: '',
     citation: '',
     numOfInputs: 0,
-    inputNames: [''],
+    inputNames: [],
     rules: [],
-    ruleDescs: ['']
+    ruleDescs: []
+},
+```
+Here is a valid example:
+```
+{
+    name: 'Normalize', 
+    val: 'norm', 
+    description: 'Rescale the range of the data to be between a min and max.', 
+    citation: '',
+    numOfInputs: 2, 
+    inputNames: ['Min', 'Max'], 
+    rules: [(inputs) => (parseFloat(inputs[0]) < parseFloat(inputs[1]))],
+    ruleDescs: ['Normalization minimum must be less than the maximum.']
 },
 ```
 - ```name```: (string) The displayed name of the transformation step
@@ -101,6 +114,7 @@ First, add a new JSON object to the one in ```client/src/Transformations.js```. 
     - Each function must return ```true``` (the inputs are validated for this rule) or ```false``` (the inputs have violated this rule)
 - ```ruleDescs```: (string array) The string referenced in ```ruleDescs[index]``` describes why the validation rule in ```rules[index]``` was violated
     - These strings are displayed only when the corresponding rules are violated
+    - This array must be the same length as ```rules```
 
 *Note: All of the numerical inputs are floats (3 decimal places) by default.  Non-numerical values cannot be entered by the user.
 
