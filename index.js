@@ -142,9 +142,9 @@ let clients = [];   // list of clientForms
 
 let clientForm = {  // details associated with a connected client
     id: null,   // socket ID
-    steps: null,    // sent steps
+    steps: [],    // sent steps
     files: [],   // sent files
-    numOfFiles: 0,  // number of files that will be sent by server
+    numOfFiles: 0,  // number of files that will be sent by the client
     numOfReceivedFiles: 0   // number of files fully received
 }
 
