@@ -47,7 +47,7 @@ class App extends React.Component {
         this.commitOps = this.commitOps.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.socket.on('connection', () => {    // verify connection
             console.log(`Connected to server with socket ID: ${this.socket.id}`);
         });
