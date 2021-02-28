@@ -124,7 +124,7 @@ def get_histogram(data, title, filename, saveas):
     """
         Creates and saves a histogram of the data's first feature
     """
-    data.iloc[:, 0].hist()
+    data.hist()
     pyplot.title(title)
     pyplot.savefig(saveas)
     pyplot.close()
@@ -194,10 +194,10 @@ for filename in files_list:
 
     # Create original plots
     # png files are temp/<socket ID>/<type>-<when>-<filename>.png
-    get_line_plot(fileDF, '\n'.join(wrap('Line Plot: Original ' + tail[5:])), tail, '%s/lineplot-orig-%s.png' % (head, tail))
-    get_histogram(fileDF, '\n'.join(wrap('Histogram of feature 1: Original ' + tail[5:])), tail, '%s/histogram-orig-%s.png' % (head, tail))
+    get_line_plot(fileDF.iloc[:, 10], '\n'.join(wrap('Line plot of features 1-10: Original ' + tail[5:])), tail, '%s/lineplot-orig-%s.png' % (head, tail))
+    get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Original ' + tail[5:])), tail, '%s/histogram-orig-%s.png' % (head, tail))
     try:
-        get_density(fileDF, '\n'.join(wrap('Density Plot: Original ' + tail[5:])), tail, '%s/densityplot-orig-%s.png' % (head, tail))
+        get_density(fileDF.iloc[:, 10], '\n'.join(wrap('Density plot of features 1-10: Original ' + tail[5:])), tail, '%s/densityplot-orig-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
     #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Original ' + tail[5:])), tail, '%s/heatmap-orig-%s.png' % (head, tail))
@@ -210,10 +210,10 @@ for filename in files_list:
         fileDF = call_step(fileDF, step_name, inputs_list)
 
     # Create new plots
-    get_line_plot(fileDF, '\n'.join(wrap('Line Plot: Preprocessed ' + tail[5:])), tail, '%s/lineplot-prep-%s.png' % (head, tail))
-    get_histogram(fileDF, '\n'.join(wrap('Histogram of feature 1: Preprocessed ' + tail)), tail, '%s/histogram-prep-%s.png' % (head, tail))
+    get_line_plot(fileDF.iloc[:, 10], '\n'.join(wrap('Line plot of features 1-10: Preprocessed ' + tail[5:])), tail, '%s/lineplot-prep-%s.png' % (head, tail))
+    get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Preprocessed ' + tail)), tail, '%s/histogram-prep-%s.png' % (head, tail))
     try:
-        get_density(fileDF, '\n'.join(wrap('Density Plot: Preprocessed ' + tail[5:])), tail, '%s/densityplot-prep-%s.png' % (head, tail))
+        get_density(fileDF.iloc[:, 10], '\n'.join(wrap('Density plot of features 1-10: Preprocessed ' + tail[5:])), tail, '%s/densityplot-prep-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
     #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Preprocessed ' + tail[5:])), tail, '%s/heatmap-prep-%s.png' % (head, tail))
