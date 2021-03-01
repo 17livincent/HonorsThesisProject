@@ -13,8 +13,8 @@ import json
 from os.path import split
 from textwrap import wrap
 #####################################
-# functions
 
+# functions
 def read_file(file):
     """
         Reads the file from the given path and returns a DataFrame or Series.
@@ -33,7 +33,8 @@ def read_json_to_list(steps):
     """
     return json.loads(steps)
 
-def standardize(df):
+# transformation functions
+def standardize(df, inputs):
     """
         Transform data to have a mean of 0, and a standard dev of 1.
     """
@@ -42,30 +43,31 @@ def standardize(df):
     trans = standardize.fit_transform(df)
     return pd.DataFrame(trans, columns = headers)
 
-def normalize(df, min, max):
+def normalize(df, inputs):
     """
-        Scale data between min and max.
+        Scale data between minimum (inputs[0]) and maximum (inputs[1]).
     """
+    minimum = inputs[0]
+    maximum = inputs[1]
     headers = list(df)
-    normalize = MinMaxScaler(feature_range = (min, max))
+    normalize = MinMaxScaler(feature_range = (minimum, maximum))
     trans = normalize.fit_transform(df)
     return pd.DataFrame(trans, columns = headers)
 
-def moving_avg_filter(df, window_size):
+def moving_avg_filter(df, inputs):
     """
-        Does a moving average filter of the inputted window size.
+        Does a moving average filter of the inputted window size (inputs[0]).
         If the window size is too large, it'll be set to the dataframe's size.
     """
-    ws = window_size
+    window_size = inputs[0]
     if(window_size >= len(df.index)): 
-        ws = len(df.index)
-    print(ws)
-    filtered = df.rolling(window = ws).mean()
+        window_size = len(df.index)
+    filtered = df.rolling(window = window_size).mean()
     filtered = filtered.dropna()
     filtered = filtered.reset_index(drop = True)
     return filtered
 
-def difference_trans(df):
+def difference_trans(df, inputs):
     """
         Does a difference transformation.
     """
@@ -74,7 +76,7 @@ def difference_trans(df):
     trans = trans.reset_index(drop = True)
     return trans
 
-def box_cox_power_trans(df):
+def box_cox_power_trans(df, inputs):
     """
         Does a Box-Cox power transformation.
         Data are initially scaled to positive values, and is returned standardized.
@@ -85,7 +87,7 @@ def box_cox_power_trans(df):
     trans = bc.fit_transform(trans)
     return pd.DataFrame(trans)
 
-def yeo_johns_power_trans(df):
+def yeo_johns_power_trans(df, inputs):
     """
         Does a Yeo-Johnson power transformation.
         Data is returned standardized.
@@ -94,7 +96,7 @@ def yeo_johns_power_trans(df):
     trans = yj.fit_transform(df)
     return pd.DataFrame(trans)
 
-def div_stand_devs(df):
+def div_stand_devs(df, inputs):
     """
         Divides each column by its standard deviation.
     """
@@ -103,7 +105,7 @@ def div_stand_devs(df):
         df[i] = df[i] / sd[i]
     return df
 
-def sub_means(df):
+def sub_means(df, inputs):
     """
         Subtracts the mean from each column.
     """
@@ -148,29 +150,16 @@ def get_heatmap(data, title, saveas):
     pyplot.savefig(saveas)
     pyplot.close()
 
-def call_step(df, step_name, inputs):
-    """
-        Calls the appropriate preprocessing function based on the step name.
-        Returns the transformed dataframe.
-    """
-    if step_name == 'stand':
-        df = standardize(df)
-    elif step_name == 'norm':
-        df = normalize(df, inputs[0], inputs[1])
-    elif step_name == 'moving_avg_smoother':
-        df = moving_avg_filter(df, int(inputs[0]))
-    elif step_name == 'dif_trans':
-        df = difference_trans(df)
-    elif step_name == 'box-cox':
-        df = box_cox_power_trans(df)
-    elif step_name == 'y-j':
-        df = yeo_johns_power_trans(df)
-    elif step_name == 'div_stand_devs':
-        df = div_stand_devs(df)
-    elif step_name == 'sub_means':
-        df = sub_means(df)
-
-    return df
+function_dict = {
+    'stand': standardize,
+    'norm': normalize,
+    'moving_avg_smoother': moving_avg_filter,
+    'dif_trans': difference_trans,
+    'box-cox': box_cox_power_trans,
+    'y-j': yeo_johns_power_trans,
+    'div_stand_devs': div_stand_devs,
+    'sub_means': sub_means
+}
 
 #####################################
 
@@ -210,9 +199,9 @@ for filename in files_list:
     # iterate through all steps
     for i in range(len(steps_list)):
         step_name = steps_list[i]['name']
-        inputs_list = np.array(steps_list[i]['inputs']).astype(np.float32)
-        # according to the step name, call the appropriate function
-        fileDF = call_step(fileDF, step_name, inputs_list)
+        inputs_list = np.array(steps_list[i]['inputs']).astype(np.float)
+        # according to the step name, call the appropriate function from the dictionary
+        fileDF = function_dict[step_name](fileDF, inputs_list)
 
     # Create new plots
     get_line_plot(fileDF.iloc[:, 0: cols_to_plot - 1], '\n'.join(wrap('Line plot of features 1-10: Preprocessed ' + tail[5:])), '%s/lineplot-prep-%s.png' % (head, tail))
