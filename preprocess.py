@@ -23,6 +23,7 @@ def read_file(file):
     file_df = pd.read_csv(filepath_or_buffer = file, 
                             header = 0, 
                             skip_blank_lines = True, 
+                            error_bad_lines = False,
                             encoding = 'utf-8')
     return file_df
 
@@ -111,7 +112,7 @@ def sub_means(df):
         df[i] = df[i] / means[i]
     return df
 
-def get_line_plot(data, title, filename, saveas):
+def get_line_plot(data, title, saveas):
     """
         Creates and saves a scatter plot
     """
@@ -120,7 +121,7 @@ def get_line_plot(data, title, filename, saveas):
     pyplot.savefig(saveas)
     pyplot.close()
 
-def get_histogram(data, title, filename, saveas):
+def get_histogram(data, title, saveas):
     """
         Creates and saves a histogram of the data's first feature
     """
@@ -129,7 +130,7 @@ def get_histogram(data, title, filename, saveas):
     pyplot.savefig(saveas)
     pyplot.close()
 
-def get_density(data, title, filename, saveas):
+def get_density(data, title, saveas):
     """
         Creates and saves a density plot
     """
@@ -138,7 +139,7 @@ def get_density(data, title, filename, saveas):
     pyplot.savefig(saveas)
     pyplot.close()
 
-def get_heatmap(data, title, filename, saveas):
+def get_heatmap(data, title, saveas):
     """
         Creates and saves a heatmap
     """
@@ -189,15 +190,19 @@ for filename in files_list:
     # filename(s) are temp/<socket ID>/<file>.csv
     fileDF = read_file(filename)
     headers = list(fileDF)
+    print(headers[0:5])
     #print(fileDF)
     head, tail = split(filename)
+    # number of colums to plot
+    cols_to_plot = fileDF.shape[1]
+    if(cols_to_plot > 10): cols_to_plot = 10
 
     # Create original plots
     # png files are temp/<socket ID>/<type>-<when>-<filename>.png
-    get_line_plot(fileDF.iloc[:, 10], '\n'.join(wrap('Line plot of features 1-10: Original ' + tail[5:])), tail, '%s/lineplot-orig-%s.png' % (head, tail))
-    get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Original ' + tail[5:])), tail, '%s/histogram-orig-%s.png' % (head, tail))
+    get_line_plot(fileDF.iloc[:, 0: cols_to_plot - 1], '\n'.join(wrap('Line plot of features 1-10: Original ' + tail[5:])), '%s/lineplot-orig-%s.png' % (head, tail))
+    get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Original ' + tail[5:])), '%s/histogram-orig-%s.png' % (head, tail))
     try:
-        get_density(fileDF.iloc[:, 10], '\n'.join(wrap('Density plot of features 1-10: Original ' + tail[5:])), tail, '%s/densityplot-orig-%s.png' % (head, tail))
+        get_density(fileDF.iloc[:, 0: cols_to_plot - 1], '\n'.join(wrap('Density plot of features 1-10: Original ' + tail[5:])), '%s/densityplot-orig-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
     #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Original ' + tail[5:])), tail, '%s/heatmap-orig-%s.png' % (head, tail))
@@ -205,15 +210,15 @@ for filename in files_list:
     # iterate through all steps
     for i in range(len(steps_list)):
         step_name = steps_list[i]['name']
-        inputs_list = np.array(steps_list[i]['inputs']).astype(np.float)
+        inputs_list = np.array(steps_list[i]['inputs']).astype(np.float32)
         # according to the step name, call the appropriate function
         fileDF = call_step(fileDF, step_name, inputs_list)
 
     # Create new plots
-    get_line_plot(fileDF.iloc[:, 10], '\n'.join(wrap('Line plot of features 1-10: Preprocessed ' + tail[5:])), tail, '%s/lineplot-prep-%s.png' % (head, tail))
-    get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Preprocessed ' + tail)), tail, '%s/histogram-prep-%s.png' % (head, tail))
+    get_line_plot(fileDF.iloc[:, 0: cols_to_plot - 1], '\n'.join(wrap('Line plot of features 1-10: Preprocessed ' + tail[5:])), '%s/lineplot-prep-%s.png' % (head, tail))
+    get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Preprocessed ' + tail)), '%s/histogram-prep-%s.png' % (head, tail))
     try:
-        get_density(fileDF.iloc[:, 10], '\n'.join(wrap('Density plot of features 1-10: Preprocessed ' + tail[5:])), tail, '%s/densityplot-prep-%s.png' % (head, tail))
+        get_density(fileDF.iloc[:, 0: cols_to_plot - 1], '\n'.join(wrap('Density plot of features 1-10: Preprocessed ' + tail[5:])), '%s/densityplot-prep-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
     #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Preprocessed ' + tail[5:])), tail, '%s/heatmap-prep-%s.png' % (head, tail))
