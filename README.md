@@ -221,26 +221,29 @@ Here is a valid example:
 
 <a name='add2'></a>
 ## 2. Write your transformation function in ```preprocess.py```
-Second, in ```preprocess.py``` in the app's root directory, write a function which takes in a DataFrame and inputs given by the user, performs the transformation on the DataFrame, and returns it.  If it needs to use functions from additional libraries, you must explicitly ```import``` them at the top of the file.
+Second, in ```preprocess.py``` in the app's root directory, write a function which takes in a DataFrame and inputs given by the user, performs the transformation on the DataFrame, and returns it.  The function inputs should be a DataFrame and then an array of the numerical inputs.  Both must be present in the function definition because the functions will be called from a dictionary, as described later.  
+If it needs to use functions from additional libraries, you must explicitly ```import``` them at the top of the file.  
 
 Here is an example:
 ```
-def normalize(df, min, max):
+def normalize(df, inputs):
     """
-        Scale data between min and max.
+        Scale data between minimum (inputs[0]) and maximum (inputs[1]).
     """
-    headers = list(df)  # saving column names
-    # sklearn.preprocessing.MinMaxScaler is imported at the top of the file
-    normalize = MinMaxScaler(feature_range = (min, max))    
+    minimum = inputs[0]
+    maximum = inputs[1]
+    headers = list(df)      # maintain headers before and after
+    normalize = MinMaxScaler(feature_range = (minimum, maximum))    # imported above
     trans = normalize.fit_transform(df)
-    return pd.DataFrame(trans, columns = headers)   # column names are maintained
+    return pd.DataFrame(trans, columns = headers)
 ```
 
 <a name='add3'></a>
 ## 3. Read the ```val``` of the step's JSON object to call the function
-Finally, back in ```preprocess.py```, add an else-if statement for your function to the bottom of ```def call_step(df, step_name, inputs)```.  The ```step_name``` is exactly the ```val``` of the step's JSON object in ```client/src/Transformations.js```.  The statement should look something like this:
+Finally, back in ```preprocess.py```, add a key-value pair to the ```function_dict```.  The key is exactly the ```val``` of the step from the JSON object in ```client/src/Transformations.js```, and the value is the name of the function.  The pair should look something like this:
 ```
-elif step_name == 'norm':
-        df = normalize(df, inputs[0], inputs[1])
+'norm': normalize
 ```
+The functions will be called from the ```function_dict``` based on that key.
+
 Once that is done, rebuild the React app using ```npm run build``` in ```clients/``` and check for any errors in ```preprocess.py```.  Run the application, and if things work correctly, then you have successfully added a transformation step.  Otherwise, go over your code, and compare it with the existing transformations.

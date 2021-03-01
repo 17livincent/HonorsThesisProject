@@ -18,7 +18,6 @@ from textwrap import wrap
 def read_file(file):
     """
         Reads the file from the given path and returns a DataFrame or Series.
-
     """
     file_df = pd.read_csv(filepath_or_buffer = file, 
                             header = 0, 
@@ -26,12 +25,6 @@ def read_file(file):
                             error_bad_lines = False,
                             encoding = 'utf-8')
     return file_df
-
-def read_json_to_list(steps):
-    """
-        Converts the steps JSON to python dictionary.
-    """
-    return json.loads(steps)
 
 # transformation functions
 def standardize(df, inputs):
@@ -159,6 +152,7 @@ function_dict = {
     'y-j': yeo_johns_power_trans,
     'div_stand_devs': div_stand_devs,
     'sub_means': sub_means
+    # add more here
 }
 
 #####################################
@@ -168,8 +162,8 @@ file_inputs = sys.argv[1]
 steps_input = sys.argv[2]
 
 # get lists of filenames and steps
-files_list = read_json_to_list(file_inputs)
-steps_list = read_json_to_list(steps_input)
+files_list = json.loads(file_inputs)
+steps_list = json.loads(steps_input)
 
 print(steps_list)
 print(files_list)
