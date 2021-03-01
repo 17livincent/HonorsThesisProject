@@ -5,8 +5,6 @@
  */
 import React from 'react';
 import {Form, Button, Col, Alert} from 'react-bootstrap';
-import Space from './Space.js';
-import Util from './Util.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/InputData.css';
@@ -15,53 +13,25 @@ import './styles/InputData.css';
 class InputData extends React.Component {
     constructor(props) {
         super(props);
+
+        this.files = [];
+
         this.state = {
-            numOfFiles: 1,
-            files: ['']
+            filesAdded: false   // used to disable submit button on condition
         }
 
-        this.incNumOfFiles = this.incNumOfFiles.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     /**
-     * Called when a file is selected
+     * Updates this.files when the file input is changed
      */
-    updateFiles(index, file) {
-        // update files
-        let newFiles = this.state.files.slice();
-        newFiles.splice(index, 1, file);
-        // update state
-        this.setState({files: newFiles});
-    }
-
-    /**
-     * Increments the state variable numOfFiles
-     * If the last file input hasn't been filled, numOfFiles won't be incremented
-     */
-    incNumOfFiles() {
-        // get new numOfFiles
-        let newNum = this.state.numOfFiles + 1;
-        // get new files
-        let newFiles = this.state.files.slice();
-        newFiles.push('');
-        // update state
-        this.setState({numOfFiles: newNum, files: newFiles});
-    }
-
-    getFileInput(index) {
-        return (
-            <React.Fragment>
-                <Form.Row>
-                    <Form.File 
-                        id='fileInput'
-                        accept='.csv'
-                        onChange={(e) => (this.updateFiles(index, e.target.files[0]))}>
-                    </Form.File>
-                </Form.Row>
-                <Space />
-            </React.Fragment>
-        );
+    updateFiles(fileList) {
+        this.files = Array.from(fileList);
+        console.log(this.files);
+        // update submit button
+        if(this.files.length !== 0) this.setState({filesAdded: true});
+        else this.setState({filesAdded: false});
     }
 
     /**
@@ -70,52 +40,7 @@ class InputData extends React.Component {
      */
     onSubmit(event) {
         event.preventDefault();
-        // remove blanks from files
-        let newFiles = this.state.files.slice().filter((element) => (element !== ''));
-        let newNum = newFiles.length;
-
-        this.setState({files: newFiles, numOfFiles: newNum});
-        this.props.onSubmit(newFiles.slice());
-    }
-
-    /**
-     * Conditionally disable the "Input another file" button
-     */
-    disableAdd() {
-        return (this.state.files[this.state.numOfFiles - 1] !== '') ? false : true;
-    }
-
-    /**
-     * Conditionally disable the "Submit" button
-     */
-    disableSubmit() {
-        let status = true;
-        let files = this.state.files;
-        for(let index in files) {
-            if(files[index] !== '') {
-                status = false;
-                break;
-            }
-        }
-        return status;
-    }
-
-    // returns all file inputs
-    renderFileInputs() {
-        return Util.range(0, this.state.numOfFiles - 1, 1).map((i) => this.getFileInput(i));
-    }
-
-    // returns a button to add a file
-    renderAddFileButton() {
-        return (
-            <Button 
-                id='addButton' 
-                variant='secondary' 
-                onClick={this.incNumOfFiles} 
-                disabled={(this.state.files[this.state.numOfFiles - 1] !== '') ? false : true}>
-                Input another file
-            </Button>
-        );
+        this.props.onSubmit(this.files);
     }
 
     // returns the submit data button
@@ -125,7 +50,7 @@ class InputData extends React.Component {
                 id='submitButton' 
                 variant='primary' 
                 type='submit'
-                disabled={this.disableSubmit()}>
+                disabled={!this.state.filesAdded}>
                 Submit
             </Button>
         );
@@ -137,16 +62,19 @@ class InputData extends React.Component {
                 <h3>Select CSV files</h3>
                 <Form onSubmit={this.onSubmit}>
                     <div id='files'>
-                        {this.renderFileInputs()}
+                        <input type='file'
+                            accept='.csv'
+                            multiple
+                            onChange={(e) => (this.updateFiles(e.target.files))}
+                        />
                     </div>
+                    
                     <Alert variant='light'>
-                        FYI: Files must contain headers only on the first row and not have an index column.<br />
-                        To undo a file input, click on the corresponding "Choose File" and press "Cancel", or refresh the page.
+                        Files must contain headers only on the first row and should not have an index column.<br />
+                        To undo file input, simply reselect files or refresh the page.
                     </Alert>
                     <Form.Row>
-                        <Col>
-                            {this.renderAddFileButton()}
-                        </Col>
+                        <Col></Col>
                         <Col>
                             {this.renderSubmitButton()}
                         </Col>
