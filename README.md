@@ -242,7 +242,9 @@ def normalize(df, inputs):
 ## 3. Read the ```val``` of the step's JSON object to call the function
 Finally, back in ```preprocess.py```, add a key-value pair to the ```function_dict```.  The key is exactly the ```val``` of the step from the JSON object in ```client/src/Transformations.js```, and the value is the name of the function.  The pair should look something like this:
 ```
-'norm': normalize
+# 'norm' is the string name of the transformation step
+# normalize is the name of the corresponding funtion
+'norm': normalize   
 ```
 The functions will be called from the ```function_dict``` based on that key.
 

@@ -107,6 +107,7 @@ def sub_means(df, inputs):
         df[i] = df[i] / means[i]
     return df
 
+# plotting functions
 def get_line_plot(data, title, saveas):
     """
         Creates and saves a scatter plot
@@ -143,6 +144,9 @@ def get_heatmap(data, title, saveas):
     pyplot.savefig(saveas)
     pyplot.close()
 
+#####################################
+
+# dictionary of transformation functions
 function_dict = {
     'stand': standardize,
     'norm': normalize,
@@ -154,8 +158,6 @@ function_dict = {
     'sub_means': sub_means
     # add more here
 }
-
-#####################################
 
 # get inputs
 file_inputs = sys.argv[1]
