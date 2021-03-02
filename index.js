@@ -209,7 +209,7 @@ function writeFiles(cIndex, clientDirectory) {
     fs.mkdirSync(clientDirectory);
     // write files to this directory
     for(let i = 0; i < clients[cIndex].files.length; i++) {
-        fs.writeFile(clientDirectory + '/' + prefix + clients[cIndex].files[i].name, clients[cIndex].files[i].data, (error) => {
+        fs.writeFile(clientDirectory + '/' + prefix + clients[cIndex].files[i].name, clients[cIndex].files[i].data, encoding = 'utf8', (error) => {
             if(error) throw error;
         });
     }
