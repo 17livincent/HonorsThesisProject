@@ -221,7 +221,7 @@ Here is a valid example:
 
 <a name='add2'></a>
 ## 2. Write your transformation function in ```preprocess.py```
-Second, in ```preprocess.py``` in the app's root directory, write a function which takes in a DataFrame and inputs given by the user, performs the transformation on the DataFrame, and returns it.  The function inputs should be a DataFrame and then an array of the numerical inputs.  Both must be present in the function definition because the functions will be called from a dictionary, as described later.  
+Second, in ```preprocess.py``` in the app's root directory, write a function which takes in a DataFrame and inputs given by the user, performs the transformation on the DataFrame, and returns it.  The function inputs should be a DataFrame and then an array of the numerical inputs (floats).  Both must be present in the function definition because the functions will be called from a dictionary, as described later.  
 If it needs to use functions from additional libraries, you must explicitly ```import``` them at the top of the file.  
 
 Here is an example:
