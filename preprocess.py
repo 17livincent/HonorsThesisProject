@@ -31,7 +31,7 @@ def standardize(df, inputs):
     """
         Transform data to have a mean of 0, and a standard dev of 1.
     """
-    headers = list(df)
+    headers = list(df.columns)
     standardize = StandardScaler()
     trans = standardize.fit_transform(df)
     return pd.DataFrame(trans, columns = headers)
@@ -42,7 +42,7 @@ def normalize(df, inputs):
     """
     minimum = inputs[0]
     maximum = inputs[1]
-    headers = list(df)
+    headers = list(df.columns)
     normalize = MinMaxScaler(feature_range = (minimum, maximum))
     trans = normalize.fit_transform(df)
     return pd.DataFrame(trans, columns = headers)
@@ -52,7 +52,7 @@ def moving_avg_filter(df, inputs):
         Does a moving average filter of the inputted window size (inputs[0]).
         If the window size is too large, it'll be set to the dataframe's size.
     """
-    window_size = inputs[0]
+    window_size = int(inputs[0])
     if(window_size >= len(df.index)): 
         window_size = len(df.index)
     filtered = df.rolling(window = window_size).mean()
@@ -74,20 +74,22 @@ def box_cox_power_trans(df, inputs):
         Does a Box-Cox power transformation.
         Data are initially scaled to positive values, and is returned standardized.
     """
+    headers = list(df.columns)
     scale = MinMaxScaler(feature_range = (1, 2))
     bc = PowerTransformer(method='box-cox')
     trans = scale.fit_transform(df)
     trans = bc.fit_transform(trans)
-    return pd.DataFrame(trans)
+    return pd.DataFrame(trans, columns = headers)
 
 def yeo_johns_power_trans(df, inputs):
     """
         Does a Yeo-Johnson power transformation.
         Data is returned standardized.
     """
+    headers = list(df.columns)
     yj = PowerTransformer(method='yeo-johnson')
     trans = yj.fit_transform(df)
-    return pd.DataFrame(trans)
+    return pd.DataFrame(trans, columns = headers)
 
 def div_stand_devs(df, inputs):
     """
@@ -174,8 +176,8 @@ print(files_list)
 for filename in files_list:
     # filename(s) are temp/<socket ID>/<file>.csv
     fileDF = read_file(filename)
-    headers = list(fileDF)
-    print(headers[0:5])
+    headers = list(fileDF.columns)
+    #print(headers[0:5])
     #print(fileDF)
     head, tail = split(filename)
     # number of colums to plot
@@ -184,10 +186,10 @@ for filename in files_list:
 
     # Create original plots
     # png files are temp/<socket ID>/<type>-<when>-<filename>.png
-    get_line_plot(fileDF.iloc[:, 0: cols_to_plot - 1], '\n'.join(wrap('Line plot of features 1-10: Original ' + tail[5:])), '%s/lineplot-orig-%s.png' % (head, tail))
+    get_line_plot(fileDF.iloc[:, 0: cols_to_plot], '\n'.join(wrap('Line plot of %s features: Original %s' % (cols_to_plot, tail[5:]))), '%s/lineplot-orig-%s.png' % (head, tail))
     get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Original ' + tail[5:])), '%s/histogram-orig-%s.png' % (head, tail))
     try:
-        get_density(fileDF.iloc[:, 0: cols_to_plot - 1], '\n'.join(wrap('Density plot of features 1-10: Original ' + tail[5:])), '%s/densityplot-orig-%s.png' % (head, tail))
+        get_density(fileDF.iloc[:, 0: cols_to_plot], '\n'.join(wrap('Density plot of %s features: Original %s' % (cols_to_plot, tail[5:]))), '%s/densityplot-orig-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
     #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Original ' + tail[5:])), tail, '%s/heatmap-orig-%s.png' % (head, tail))
@@ -195,20 +197,20 @@ for filename in files_list:
     # iterate through all steps
     for i in range(len(steps_list)):
         step_name = steps_list[i]['name']
-        inputs_list = np.array(steps_list[i]['inputs']).astype(np.float)
+        inputs_list = np.array(steps_list[i]['inputs']).astype(np.float32)
         # according to the step name, call the appropriate function from the dictionary
         fileDF = function_dict[step_name](fileDF, inputs_list)
 
     # Create new plots
-    get_line_plot(fileDF.iloc[:, 0: cols_to_plot - 1], '\n'.join(wrap('Line plot of features 1-10: Preprocessed ' + tail[5:])), '%s/lineplot-prep-%s.png' % (head, tail))
+    get_line_plot(fileDF.iloc[:, 0: cols_to_plot], '\n'.join(wrap('Line plot of %s features: Preprocessed %s' % (cols_to_plot, tail[5:]))), '%s/lineplot-prep-%s.png' % (head, tail))
     get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Preprocessed ' + tail)), '%s/histogram-prep-%s.png' % (head, tail))
     try:
-        get_density(fileDF.iloc[:, 0: cols_to_plot - 1], '\n'.join(wrap('Density plot of features 1-10: Preprocessed ' + tail[5:])), '%s/densityplot-prep-%s.png' % (head, tail))
+        get_density(fileDF.iloc[:, 0: cols_to_plot], '\n'.join(wrap('Density plot of %s features: Original %s' % (cols_to_plot, tail[5:]))), '%s/densityplot-prep-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
     #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Preprocessed ' + tail[5:])), tail, '%s/heatmap-prep-%s.png' % (head, tail))
 
     # save file
-    fileDF.to_csv(path_or_buf = filename, index = False, header = headers)
+    fileDF.to_csv(path_or_buf = filename, index = False, header = headers, encoding = 'utf-8')
 
 sys.stdout.flush()
