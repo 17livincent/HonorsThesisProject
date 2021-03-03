@@ -198,6 +198,8 @@ function addFileChunk(cIndex, fileChunk) {
         //console.log('Full file received');
         // increment client's numOfReceivedFiles
         clients[cIndex].numOfReceivedFiles++;
+        // concatenate buffer
+        clients[cIndex].files[fIndex].data = Buffer.concat(clients[cIndex].files[fIndex].data);
         console.log(clients[cIndex]);
     }
 }
