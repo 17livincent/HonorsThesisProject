@@ -174,7 +174,7 @@ class App extends React.Component {
         let goBackButton1 = <Button id='goback1' variant='outline-secondary' onClick={() => (this.setState({currentPanel: '0'}))}>Go back</Button>;
         let goBackButton2 = <Button id='goback2' variant='outline-secondary' onClick={() => (this.setState({currentPanel: '1'}))}>Go back</Button>;
 
-        let progressBar = <ProgressBar animated now={100} />;
+        let progressBar = <React.Fragment><br /><ProgressBar animated now={100} /></React.Fragment>;
 
         let status;
         if(this.state.succeeded === true && this.state.failed === false) status = 'dark';
