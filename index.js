@@ -169,13 +169,8 @@ function getClientIndex(socketID) {
 function addFileChunk(cIndex, fileChunk) {
     fileChunk.data = Buffer.from(new Float64Array(fileChunk.data));
     let fIndex;
-    // if there are no files for this client yet
-    if(clients[cIndex].files.length === 0) {
-        // push this filechunk to files
-        clients[cIndex].files.push(fileChunk);
-        fIndex = 0;
-    }
-    else {
+    // if there are already files of this user
+    if(clients[cIndex].files.length > 0) {
         // find the existing file with the same filename
         for(let j in clients[cIndex].files) {
             if(clients[cIndex].files[j].name === fileChunk.name) {
@@ -193,12 +188,17 @@ function addFileChunk(cIndex, fileChunk) {
             clients[cIndex].files[fIndex].data = Buffer.concat([data, fileChunk.data]); 
         }
     }
+    else {  // if the client has not uploaded any chunks yet
+        // push this filechunk to files
+        clients[cIndex].files.push(fileChunk);
+        fIndex = 0;
+    }
     // check if the file has all of its chunks
     if(clients[cIndex].files[fIndex].data.length === clients[cIndex].files[fIndex].size) {
         //console.log('Full file received');
         // increment client's numOfReceivedFiles
         clients[cIndex].numOfReceivedFiles++;
-        //console.log(clients[cIndex]);
+        console.log(clients[cIndex]);
     }
 }
 
@@ -212,9 +212,9 @@ function writeFiles(cIndex, clientDirectory) {
     // write files to this directory
     for(let i = 0; i < clients[cIndex].files.length; i++) {
         // create WriteStream to file
-        let writeStream = fs.createWriteStream(clientDirectory + '/' + prefix + clients[cIndex].files[i].name, encoding = 'utf8');
+        let writeStream = fs.createWriteStream(clientDirectory + '/' + prefix + clients[cIndex].files[i].name, 'utf8');
         // write buffer to file
-        writeStream.write(clients[cIndex].files[i].data, encoding = 'utf8');
+        writeStream.write(clients[cIndex].files[i].data, 'utf8');
         writeStream.end();
     }
 }
