@@ -23,6 +23,7 @@ def read_file(file):
                             header = 0, 
                             skip_blank_lines = True, 
                             error_bad_lines = False,
+                            float_precision='round_trip',
                             encoding = 'utf-8')
     return file_df
 
@@ -211,6 +212,6 @@ for filename in files_list:
     #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Preprocessed ' + tail[5:])), tail, '%s/heatmap-prep-%s.png' % (head, tail))
 
     # save file
-    fileDF.to_csv(path_or_buf = filename, index = False, header = headers, encoding = 'utf-8')
+    fileDF.to_csv(path_or_buf = filename, index = False, header = headers, float_format="%.6f", encoding = 'utf-8')
 
 sys.stdout.flush()

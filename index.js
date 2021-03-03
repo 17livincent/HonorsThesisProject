@@ -9,6 +9,7 @@ const path = require('path');
 const fs = require('fs');   // to read and write client files
 const spawn = require('child_process').spawn;   // to run python code
 const archiver = require('archiver');   // for file compression
+const { Writable } = require('stream');
 
 const port = 3000;
 
@@ -166,6 +167,7 @@ function getClientIndex(socketID) {
  * Adds the file chunk to the client's corresponding file
  */
 function addFileChunk(cIndex, fileChunk) {
+    fileChunk.data = Buffer.from(new Float64Array(fileChunk.data));
     let fIndex;
     // if there are no files for this client yet
     if(clients[cIndex].files.length === 0) {
@@ -209,9 +211,11 @@ function writeFiles(cIndex, clientDirectory) {
     fs.mkdirSync(clientDirectory);
     // write files to this directory
     for(let i = 0; i < clients[cIndex].files.length; i++) {
-        fs.writeFile(clientDirectory + '/' + prefix + clients[cIndex].files[i].name, clients[cIndex].files[i].data, encoding = 'utf8', (error) => {
-            if(error) throw error;
-        });
+        // create WriteStream to file
+        let writeStream = fs.createWriteStream(clientDirectory + '/' + prefix + clients[cIndex].files[i].name, encoding = 'utf8');
+        // write buffer to file
+        writeStream.write(clients[cIndex].files[i].data, encoding = 'utf8');
+        writeStream.end();
     }
 }
 
