@@ -120,6 +120,16 @@ class Transformations {
                     rules: [],
                     ruleDescs: []
                 },
+                {
+                    name: 'Nothing',
+                    val: 'nothing',
+                    description: 'Does absolutely nothing.  Kinda for debugging purposes, but also for fun.',
+                    citation: '',
+                    numOfInputs: 0,
+                    inputNames: [],
+                    rules: [],
+                    ruleDescs: []
+                },
                 // add more transformations starting here
             ]
         );

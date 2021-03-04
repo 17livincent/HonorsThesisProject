@@ -110,6 +110,12 @@ def sub_means(df, inputs):
         df[i] = df[i] / means[i]
     return df
 
+def do_nothing(df, inputs):
+    """
+        Does absolutely nothing.
+    """
+    return df
+
 # plotting functions
 def get_line_plot(data, title, saveas):
     """
@@ -158,7 +164,8 @@ function_dict = {
     'box-cox': box_cox_power_trans,
     'y-j': yeo_johns_power_trans,
     'div_stand_devs': div_stand_devs,
-    'sub_means': sub_means
+    'sub_means': sub_means,
+    'nothing': do_nothing,
     # add more here
 }
 
@@ -178,6 +185,7 @@ for filename in files_list:
     # filename(s) are temp/<socket ID>/<file>.csv
     fileDF = read_file(filename)
     headers = list(fileDF.columns)
+    print(fileDF.shape)
     #print(headers[0:5])
     #print(fileDF)
     head, tail = split(filename)
