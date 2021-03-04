@@ -9,7 +9,6 @@ const path = require('path');
 const fs = require('fs');   // to read and write client files
 const spawn = require('child_process').spawn;   // to run python code
 const archiver = require('archiver');   // for file compression
-const { Writable } = require('stream');
 
 const port = 3000;
 
