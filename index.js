@@ -167,7 +167,7 @@ function getClientIndex(socketID) {
  * Adds the file chunk to the client's corresponding file
  */
 function addFileChunk(cIndex, fileChunk) {
-    fileChunk.data = Buffer.from(new Float64Array(fileChunk.data));
+    fileChunk.data = Buffer.from(new Uint8Array(fileChunk.data));
     let fIndex;
     // if there are already files of this user
     if(clients[cIndex].files.length > 0) {
@@ -198,8 +198,6 @@ function addFileChunk(cIndex, fileChunk) {
         //console.log('Full file received');
         // increment client's numOfReceivedFiles
         clients[cIndex].numOfReceivedFiles++;
-        // concatenate buffer
-        clients[cIndex].files[fIndex].data = Buffer.concat(clients[cIndex].files[fIndex].data);
         console.log(clients[cIndex]);
     }
 }
@@ -214,9 +212,9 @@ function writeFiles(cIndex, clientDirectory) {
     // write files to this directory
     for(let i = 0; i < clients[cIndex].files.length; i++) {
         // create WriteStream to file
-        let writeStream = fs.createWriteStream(clientDirectory + '/' + prefix + clients[cIndex].files[i].name, 'utf8');
+        let writeStream = fs.createWriteStream(clientDirectory + '/' + prefix + clients[cIndex].files[i].name);
         // write buffer to file
-        writeStream.write(clients[cIndex].files[i].data, 'utf8');
+        writeStream.write(clients[cIndex].files[i].data);
         writeStream.end();
     }
 }
