@@ -77,8 +77,7 @@ io.on('connection', (socket) => {   // when a new client has connected
         // ack steps
         callback(`Acknowledged steps`);
         // add steps to clientForm
-        let cIndex = getClientIndex(socket.id);
-        clients[cIndex].steps = stepsSubmitted;
+        clients[getClientIndex(socket.id)].steps = stepsSubmitted;
         //console.log(clients);
     });
 
@@ -86,8 +85,7 @@ io.on('connection', (socket) => {   // when a new client has connected
     socket.on('num of files', (numSubmitted, callback) => {
         callback('Acknowledged number of files');
         // update numOfFiles
-        let cIndex = getClientIndex(socket.id);
-        clients[cIndex].numOfFiles = numSubmitted;
+        clients[getClientIndex(socket.id)].numOfFiles = numSubmitted;
     })
 
     // received file chunk from client
@@ -123,11 +121,8 @@ io.on('connection', (socket) => {   // when a new client has connected
     // client disconnected
     socket.on('disconnect', () => {
         console.log(`${socket.id}: Disconnected.`);
-        // remove corresponding clientForm
-        let cIndex = getClientIndex(socket.id);
         // delete client
-        deleteClient(cIndex, socket.id);
-
+        deleteClient(getClientIndex(socket.id), socket.id);
         console.log(clients);
     });
 });
@@ -177,14 +172,13 @@ function addFileChunk(cIndex, fileChunk) {
                 break;
             }
         }
-        if(fIndex === undefined) { // if this is the first filechunk for this file
+        if(fIndex !== undefined) {  // if this is not the first filechunk for this file
+            clients[cIndex].files[fIndex].data = Buffer.concat([clients[cIndex].files[fIndex].data, fileChunk.data]); 
+        }
+        else {  // if this is the first filechunk for this file
             // push this filechunk to files
             clients[cIndex].files.push(fileChunk);
             fIndex = clients[cIndex].files.length - 1;
-        }
-        else {
-            let data = clients[cIndex].files[fIndex].data;
-            clients[cIndex].files[fIndex].data = Buffer.concat([data, fileChunk.data]); 
         }
     }
     else {  // if the client has not uploaded any chunks yet
