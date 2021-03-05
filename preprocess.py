@@ -19,12 +19,15 @@ def read_file(file):
     """
         Reads the file from the given path and returns a DataFrame or Series.
     """
-    file_df = pd.read_csv(filepath_or_buffer = file, 
+    chunks = pd.read_csv(filepath_or_buffer = file, 
                             header = 0, 
                             skip_blank_lines = True, 
                             error_bad_lines = False,
                             float_precision='round_trip',
+                            dtype = 'float64',
+                            chunksize = 100000,
                             encoding = 'utf-8')
+    file_df = pd.concat(chunks)
     return file_df
 
 # transformation functions
@@ -212,9 +215,9 @@ for filename in files_list:
 
     # Create new plots
     get_line_plot(fileDF.iloc[:, 0: cols_to_plot], '\n'.join(wrap('Line plot of %s features: Preprocessed %s' % (cols_to_plot, tail[5:]))), '%s/lineplot-prep-%s.png' % (head, tail))
-    get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Preprocessed ' + tail)), '%s/histogram-prep-%s.png' % (head, tail))
+    get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Preprocessed ' + tail[5:])), '%s/histogram-prep-%s.png' % (head, tail))
     try:
-        get_density(fileDF.iloc[:, 0: cols_to_plot], '\n'.join(wrap('Density plot of %s features: Original %s' % (cols_to_plot, tail[5:]))), '%s/densityplot-prep-%s.png' % (head, tail))
+        get_density(fileDF.iloc[:, 0: cols_to_plot], '\n'.join(wrap('Density plot of %s features: Preprocessed %s' % (cols_to_plot, tail[5:]))), '%s/densityplot-prep-%s.png' % (head, tail))
     except np.linalg.LinAlgError as error:
         pass
     #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Preprocessed ' + tail[5:])), tail, '%s/heatmap-prep-%s.png' % (head, tail))

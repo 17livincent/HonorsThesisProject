@@ -27,7 +27,7 @@ class App extends React.Component {
         super(props);
         this.serverName = 'web-app.li-vincent.com';
         // socket to send and receive data from server
-        this.socket = socketIOClient(this.serverName); // while testing locally, the address should be 'localhost:3000'
+        this.socket = socketIOClient(this.serverName);
         // FileList of inputted files
         this.files = [];
         // list of the names of the inputted files
@@ -143,7 +143,8 @@ class App extends React.Component {
             for(let j = 0; j < lastChunk; j++) {
                 let reader = new FileReader();
                 reader.onload = () => { // on load, emit to server
-                    this.socket.compress(true).emit('file chunk', this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, reader.result), (callback) => (console.log(callback)));
+                    this.socket.compress(false).emit('file chunk', this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, reader.result), (callback) => (console.log(callback)));
+                    console.log(reader.result.byteLength);
                 };
                 let start = j * CHUNKSIZE;  // get starting byte
                 let slice = this.files[i].slice(start, start + Math.min(CHUNKSIZE, this.files[i].size - start));    // get slice
