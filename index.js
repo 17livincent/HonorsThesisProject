@@ -67,8 +67,8 @@ app.get('/stats', (request, response) => {
             Errors: ${failures}
         </p>
         <p>
-            Files processed: ${numOfFilesPreprocessed}<br />
-            Bytes processed: ${numOfBytesPreprocessed}
+            Files processed: ${numOfFilesPreprocessed.toLocaleString()}<br />
+            Bytes processed: ${numOfBytesPreprocessed.toLocaleString()}
         </p>
     `);
 });
