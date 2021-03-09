@@ -194,7 +194,7 @@ for filename in files_list:
     head, tail = split(filename)
     # number of colums to plot
     cols_to_plot = fileDF.shape[1]
-    if(cols_to_plot > 10): cols_to_plot = 10
+    if(cols_to_plot > 5): cols_to_plot = 5
 
     # Create original plots
     # png files are temp/<socket ID>/<type>-<when>-<filename>.png
