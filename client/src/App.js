@@ -25,7 +25,7 @@ const CHUNKSIZE = 100000;
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.serverName = 'web-app.li-vincent.com';
+        this.serverName = 'localhost:3000';
         // socket to send and receive data from server
         this.socket = socketIOClient(this.serverName);
         // FileList of inputted files
@@ -115,12 +115,15 @@ class App extends React.Component {
     /**
      * Returns an object representing a file chunk
      */
-    getFileChunk(fileName, fileType, fileSize, arrayBuffer, i) {
+    getFileChunk(fileName, fileType, fileSize, chunkNum, chunkSum, arrayBuffer) {
         return {
             name: fileName,
             type: fileType,
             size: fileSize,
-            data: arrayBuffer,
+            chunkNum: chunkNum,         // chunk index [0:last chunk] used for the server to concatenate the Buffers in the right order
+            totalChunks: chunkSum,      // the total number of chunks for this file
+            data: arrayBuffer,          // Array Buffer othe chunk's data
+            chunksReceived : 0          // for the server
         }
     }
 
@@ -140,13 +143,14 @@ class App extends React.Component {
         // send file chunks
         for(let i in this.files) {
             let lastChunk = Math.ceil(this.files[i].size / CHUNKSIZE);  // the num of the last chunk in the file
-            for(let j = 0; j < lastChunk; j++) {
+            for(let chunkIndex = 0; chunkIndex < lastChunk; chunkIndex++) {
                 let reader = new FileReader();
                 reader.onload = () => { // on load, emit to server
-                    this.socket.compress(false).emit('file chunk', this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, reader.result), (callback) => (console.log(callback)));
-                    console.log(reader.result.byteLength);
+                    this.socket.compress(true).emit('file chunk', 
+                                                    this.getFileChunk(this.files[i].name, this.files[i].type, this.files[i].size, chunkIndex, lastChunk, reader.result), 
+                                                    (callback) => (console.log(callback)));
                 };
-                let start = j * CHUNKSIZE;  // get starting byte
+                let start = chunkIndex * CHUNKSIZE;  // get starting byte
                 let slice = this.files[i].slice(start, start + Math.min(CHUNKSIZE, this.files[i].size - start));    // get slice
                 reader.readAsArrayBuffer(slice);    // read as array buffer
             }

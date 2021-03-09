@@ -101,6 +101,8 @@ io.on('connection', (socket) => {   // when a new client has connected
             && clients[cIndex].steps !== null) {
             // send request to submit
             socket.emit('ready to submit');
+            console.log('Client has sent all files:');
+            console.log(clients[cIndex]);
         }
     });
 
@@ -135,13 +137,26 @@ httpServer.listen(port, () => {
 
 let clients = [];   // list of clientForms
 
-let clientForm = {  // details associated with a connected client
-    id: null,   // socket ID
-    steps: [],    // sent steps
-    files: [],   // sent files
-    numOfFiles: 0,  // number of files that will be sent by the client
+let clientForm = {          // details associated with a connected client
+    id: null,               // socket ID
+    steps: [],              // steps sent from client
+    files: [],              // array of fileDetails sent from client
+    numOfFiles: 0,          // number of files that will be sent by the client
     numOfReceivedFiles: 0   // number of files fully received
-}
+};
+
+/*
+// the object that the client sends when sending files and file chunks
+let fileDetails = {     // details associated with file chunks
+    name: null,
+    type: null,
+    size: 0,
+    chunkNum: 0,        // the number of the chunk in the chunk order
+    totalChunks: 0,     // the total number of chunks for this file
+    data: [],           // array of chunk objects; will be converted to a single Buffer of all chunks
+    chunksReceived : 0  // keep track of how many chunks have been received
+};
+*/
 
 const prefix = 'prep_';
 const resultsZip = '/preprocessed.zip';
@@ -172,26 +187,45 @@ function addFileChunk(cIndex, fileChunk) {
                 break;
             }
         }
-        if(fIndex !== undefined) {  // if this is not the first filechunk for this file
-            clients[cIndex].files[fIndex].data = Buffer.concat([clients[cIndex].files[fIndex].data, fileChunk.data]); 
-        }
-        else {  // if this is the first filechunk for this file
+        if(fIndex === undefined) { // if this is the first filechunk for this file
+            // convert data attribute to an array of Buffers
+            let dataArray = new Array(fileChunk.totalChunks).fill(undefined);
+            // place the chunk in its index
+            dataArray.splice(fileChunk.chunkNum, 1, fileChunk.data);
+            fileChunk.data = dataArray;
+            // init chunksReceived
+            fileChunk.chunksReceived = 1;
             // push this filechunk to files
             clients[cIndex].files.push(fileChunk);
             fIndex = clients[cIndex].files.length - 1;
         }
+        else {  // this is not the first chunk for this file
+            // increment chunksReceived
+            clients[cIndex].files[fIndex].chunksReceived++;
+            // place the fileChunk's data in its spot in the array
+            clients[cIndex].files[fIndex].data.splice(fileChunk.chunkNum, 1, fileChunk.data);
+        }
     }
     else {  // if the client has not uploaded any chunks yet
+        // convert data attribute to an array of Buffers
+        let dataArray = new Array(fileChunk.totalChunks).fill(undefined);
+        // place the chunk in its index
+        dataArray.splice(fileChunk.chunkNum, 1, fileChunk.data);
+        fileChunk.data = dataArray;
+        // init chunksReceived
+        fileChunk.chunksReceived = 1;
         // push this filechunk to files
         clients[cIndex].files.push(fileChunk);
         fIndex = 0;
     }
     // check if the file has all of its chunks
-    if(clients[cIndex].files[fIndex].data.length === clients[cIndex].files[fIndex].size) {
+    if(clients[cIndex].files[fIndex].chunksReceived === clients[cIndex].files[fIndex].totalChunks) {
         //console.log('Full file received');
         // increment client's numOfReceivedFiles
         clients[cIndex].numOfReceivedFiles++;
-        console.log(clients[cIndex]);
+        // concatenate the chunks
+        clients[cIndex].files[fIndex].data = Buffer.concat(clients[cIndex].files[fIndex].data, clients[cIndex].files[fIndex].size);
+        console.log(clients[cIndex].files[fIndex]);
     }
 }
 
