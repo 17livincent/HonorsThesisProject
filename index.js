@@ -56,7 +56,20 @@ app.get('/graphs/:id/:filename/:when/:type', (request, response) => {
 app.get('/stats', (request, response) => {
     response.send(`
         <h1>Stats</h1>
-        <p>Number of users currently online: ${clients.length}</p>
+        <p>
+            Server started: ${String(date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + ' @' + date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0')  + ' MT'}
+        </p>
+        <p>
+            Number of users currently online: ${clients.length}
+        </p>
+        <p>
+            Successes: ${successes}<br />
+            Errors: ${failures}
+        </p>
+        <p>
+            Files processed: ${numOfFilesPreprocessed}<br />
+            Bytes processed: ${numOfBytesPreprocessed}
+        </p>
     `);
 });
 
@@ -86,7 +99,7 @@ io.on('connection', (socket) => {   // when a new client has connected
         callback('Acknowledged number of files');
         // update numOfFiles
         clients[getClientIndex(socket.id)].numOfFiles = numSubmitted;
-    })
+    });
 
     // received file chunk from client
     socket.on('file chunk', (fileChunk, callback) => {
@@ -108,6 +121,7 @@ io.on('connection', (socket) => {   // when a new client has connected
 
     // received submit from client
     socket.on('submit', (callback) => {
+        callback('Acknowledged submit');
         let clientDirectory = 'temp/' + socket.id;
         // find this client's info
         let cIndex = getClientIndex(socket.id);
@@ -142,7 +156,8 @@ let clientForm = {          // details associated with a connected client
     steps: [],              // steps sent from client
     files: [],              // array of fileDetails sent from client
     numOfFiles: 0,          // number of files that will be sent by the client
-    numOfReceivedFiles: 0   // number of files fully received
+    numOfReceivedFiles: 0,  // number of files fully received
+    totalBytes: 0           // used for stats
 };
 
 /*
@@ -157,6 +172,13 @@ let fileDetails = {     // details associated with file chunks
     chunksReceived : 0  // keep track of how many chunks have been received
 };
 */
+
+// status
+const date = new Date();
+let successes = 0;
+let failures = 0;
+let numOfFilesPreprocessed = 0;
+let numOfBytesPreprocessed = 0;
 
 const prefix = 'prep_';
 const resultsZip = '/preprocessed.zip';
@@ -225,6 +247,8 @@ function addFileChunk(cIndex, fileChunk) {
         clients[cIndex].numOfReceivedFiles++;
         // concatenate the chunks
         clients[cIndex].files[fIndex].data = Buffer.concat(clients[cIndex].files[fIndex].data, clients[cIndex].files[fIndex].size);
+        // update totalBytes
+        clients[cIndex].totalBytes += clients[cIndex].files[fIndex].data.length;
         console.log(clients[cIndex].files[fIndex]);
     }
 }
@@ -270,9 +294,15 @@ function preprocess(cIndex, clientDirectory, success, failure) {
     prep.on('close', (code) => {    // process completed successfully
         console.log(`Process complete: ${code}`);
         if(code === 0) {    // preprocessing successful
+            // update stats
+            successes++;
+            numOfFilesPreprocessed += clients[cIndex].files.length;
+            numOfBytesPreprocessed += clients[cIndex].totalBytes;
             success();
         }
         if(code === 1) {    // an error occurred
+            // update stats
+            failures++;
             failure();
         }
     });
