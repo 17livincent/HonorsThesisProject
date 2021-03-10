@@ -341,6 +341,10 @@ function compress(clientDirectory, callback) {
  * Removes the files and clientForm of the client with the given @param cIndex
  */
 function deleteClient(cIndex, socketID) {
+    // delete array buffers
+    for(let i = 0; i < clients[cIndex].files.length; i++) {
+        clients[cIndex].files[i].data = null;
+    }
     // delete files in clientForm
     clients[cIndex].files.splice(0, clients[cIndex].files.length);
     // remove clientForm
