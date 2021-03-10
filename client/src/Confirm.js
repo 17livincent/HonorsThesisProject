@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import {Alert, Button} from 'react-bootstrap';
+import {Alert, Button, Form} from 'react-bootstrap';
 
 import Transformations from './Transformations.js';
 import Util from './Util.js';
@@ -16,6 +16,8 @@ import './styles/Confirm.css';
 class Confirm extends React.Component {
     constructor(props) {
         super(props);
+
+        this.submitOptions = this.props.submitOptions;
 
         this.onConfirm = this.onConfirm.bind(this);
     }
@@ -66,7 +68,22 @@ class Confirm extends React.Component {
      */
     onConfirm(event) {
         event.preventDefault();
-        this.props.onSubmit();
+        this.props.onSubmit(this.submitOptions);
+    }
+
+    /**
+     * Update submitOptions above
+     */
+    updateSubmitOptions(value, option) {
+        if(option === 'd') {
+            if(value === true) this.submitOptions.download = 1;
+            else this.submitOptions.download = 0;
+        }
+        if(option === 'v') {
+            if(value === true) this.submitOptions.visualizations = 1;
+            else this.submitOptions.visualizations = 0;
+        }
+        this.props.updateSubmitOptions(this.submitOptions);
     }
 
     render() {
@@ -77,7 +94,18 @@ class Confirm extends React.Component {
             <React.Fragment>
                 {inputDataSummary}
                 {stepsSummary}
-                <Button id='confirmButton' variant='primary' size='lg' onClick={this.onConfirm} disabled={this.props.buttonDisabled}>Run and download</Button>
+                <Form id='submitOptions'>
+                    <Form.Check inline 
+                        label='Download datasets' type='checkbox' disabled={this.props.optionsDisabled}
+                        onChange={(e) => this.updateSubmitOptions(e.target.checked, 'd')} />
+                    <Form.Check inline 
+                        label='Display visualizations' disabled={this.props.optionsDisabled}
+                        type='checkbox' onChange={(e) => this.updateSubmitOptions(e.target.checked, 'v')} />
+                </Form>
+                <Button id='confirmButton' variant='primary' size='lg' onClick={this.onConfirm} 
+                    disabled={this.props.buttonDisabled}>
+                    Run
+                </Button>
             </React.Fragment>
         );
     }

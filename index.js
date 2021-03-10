@@ -120,15 +120,15 @@ io.on('connection', (socket) => {   // when a new client has connected
     });
 
     // received submit from client
-    socket.on('submit', (callback) => {
+    socket.on('submit', (optionVis, callback) => {
         callback('Acknowledged submit');
         let clientDirectory = 'temp/' + socket.id;
         // find this client's info
         let cIndex = getClientIndex(socket.id);
         // write files
         writeFiles(cIndex, clientDirectory);
-        // preprocess files and then compress
-        preprocess(cIndex, clientDirectory, 
+        // preprocess files, create visualizations if chosen, and then compress
+        preprocess(cIndex, clientDirectory, optionVis,
             () => compress(clientDirectory, () => socket.emit('download')), // success callback
             () => socket.emit('error')  // failure callback
         );
@@ -272,8 +272,9 @@ function writeFiles(cIndex, clientDirectory) {
 
 /**
  * Performs the preprocessing steps on each file using the preprocess.py
+ * @param submitOptions has attributes submitOptions.download and submitOptions.visualizations
  */
-function preprocess(cIndex, clientDirectory, success, failure) {
+function preprocess(cIndex, clientDirectory, optionVis, success, failure) {
     // create an array of filenames
     let filenames = [];
     for(let i = 0; i < clients[cIndex].numOfReceivedFiles; i++) {
@@ -284,7 +285,7 @@ function preprocess(cIndex, clientDirectory, success, failure) {
     // turn steps into string
     let stepsJSON = JSON.stringify(clients[cIndex].steps);
     // preprocess each file
-    let prep = spawn('python3', ['preprocess.py', filenamesJSON, stepsJSON]);
+    let prep = spawn('python3', ['preprocess.py', filenamesJSON, stepsJSON, optionVis]);
     prep.stdout.on('data', (data) => {
         console.log('OK:\n' + data.toString());
     });

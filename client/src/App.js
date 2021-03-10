@@ -25,7 +25,7 @@ const CHUNKSIZE = 100000;
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.serverName = 'web-app.li-vincent.com';
+        this.serverName = 'localhost:3000'//'web-app.li-vincent.com';
         // socket to send and receive data from server
         this.socket = socketIOClient(this.serverName);
         // FileList of inputted files
@@ -39,12 +39,18 @@ class App extends React.Component {
             currentPanel: '0',  // which accordion section is open
             inProgress: false,  // to animate the progress bar
             succeeded: false,   // whether preprocessing succeeded and the user has received he download
-            failed: false   // if the server sends and error message
+            failed: false,      // if the server sends and error message
+            // submit options
+            submitOptions: {  // 0 means no, 1 means yes
+                download: 0,        // if 0, client will not request download
+                visualizations: 0   // if 0, server will not create visualizations
+            }
         }
 
         this.submitData = this.submitData.bind(this);
         this.submitSteps = this.submitSteps.bind(this);
         this.commitOps = this.commitOps.bind(this);
+        this.updateSubmitOptions = this.updateSubmitOptions.bind(this);
     }
 
     componentDidMount() {
@@ -55,15 +61,17 @@ class App extends React.Component {
             this.sendSubmit();  // send submit request
         })
         this.socket.on('download', () => {  // preprocessing completed and download is ready
-            console.log(`Download ready`);
-            // create invisible hyperlink element to click and download file
-            let file = 'download/' + this.socket.id;
-            let a = document.createElement('a');
-            a.href = file;
-            a.download = 'preprocessed.zip';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            if(this.state.submitOptions.download === 1) {   // request download if the option is chosen
+                console.log(`Download ready`);
+                // create invisible hyperlink element to click and download file
+                let file = 'download/' + this.socket.id;
+                let a = document.createElement('a');
+                a.href = file;
+                a.download = 'preprocessed.zip';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
             // change the progress bar and disable the submit button
             this.setState({inProgress: false, succeeded: true});
         });
@@ -110,6 +118,14 @@ class App extends React.Component {
         this.setState({inProgress: true});
         // send steps and files to server
         this.sendToServer();
+    }
+
+    /**
+     * Passed to Confirm to update submitOptions
+     */
+    updateSubmitOptions(submitOps) {
+        this.setState({submitOptions: submitOps});
+        //console.log(this.state.submitOptions);
     }
 
     /**
@@ -162,7 +178,7 @@ class App extends React.Component {
      * Sends the submit message to the server
      */
     sendSubmit() {
-        this.socket.emit('submit', (callback) => (console.log(callback)));
+        this.socket.emit('submit', this.state.submitOptions.visualizations, (callback) => (console.log(callback)));
     }
 
     /**
@@ -243,7 +259,12 @@ class App extends React.Component {
                         </Card.Header>
                         <Accordion.Collapse eventKey='2'>
                             <Card.Body>
-                                <Confirm files={this.files} steps={this.steps} onSubmit={this.commitOps} buttonDisabled={this.state.succeeded || this.state.failed} />
+                                <Confirm files={this.files} steps={this.steps} 
+                                    submitOptions={this.state.submitOptions} 
+                                    optionsDisabled={this.state.succeeded || this.state.failed}
+                                    updateSubmitOptions={this.updateSubmitOptions} 
+                                    onSubmit={this.commitOps} 
+                                    buttonDisabled={(this.state.submitOptions.download === 0 && this.state.submitOptions.visualizations === 0) || (this.state.succeeded || this.state.failed)} />
                                 {this.state.inProgress && progressBar}
                                 {(this.state.succeeded || this.state.failed) && statusComp}
                             </Card.Body>
