@@ -25,7 +25,7 @@ const CHUNKSIZE = 100000;
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.serverName = 'localhost:3000'//'web-app.li-vincent.com';
+        this.serverName = 'web-app.li-vincent.com';
         // socket to send and receive data from server
         this.socket = socketIOClient(this.serverName);
         // FileList of inputted files
@@ -203,7 +203,7 @@ class App extends React.Component {
 
         let successfulStatus = <React.Fragment>
             <h4>Preprocessing completed</h4>
-            <Visualizations serverName={this.serverName} fileNames={this.fileNames} socketID={this.socket.id} />
+            {this.state.submitOptions.visualizations === 1 && <Visualizations serverName={this.serverName} fileNames={this.fileNames} socketID={this.socket.id} />}
         </React.Fragment>;
         let failureStatus = <React.Fragment>
             <h4>Error occurred</h4>

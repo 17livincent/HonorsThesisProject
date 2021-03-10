@@ -94,14 +94,18 @@ class Confirm extends React.Component {
             <React.Fragment>
                 {inputDataSummary}
                 {stepsSummary}
-                <Form id='submitOptions'>
-                    <Form.Check inline 
-                        label='Download datasets' type='checkbox' disabled={this.props.optionsDisabled}
-                        onChange={(e) => this.updateSubmitOptions(e.target.checked, 'd')} />
-                    <Form.Check inline 
-                        label='Display visualizations' disabled={this.props.optionsDisabled}
-                        type='checkbox' onChange={(e) => this.updateSubmitOptions(e.target.checked, 'v')} />
-                </Form>
+                <div id='submitOptions'>
+                    <Form>
+                        <Form.Check
+                            label='Download datasets' type='checkbox' disabled={this.props.optionsDisabled}
+                            onChange={(e) => this.updateSubmitOptions(e.target.checked, 'd')} />
+                        <Form.Check
+                            label='Display visualizations' disabled={this.props.optionsDisabled}
+                            type='checkbox' onChange={(e) => this.updateSubmitOptions(e.target.checked, 'v')} />
+                        <br />
+                    </Form>
+                </div>
+                
                 <Button id='confirmButton' variant='primary' size='lg' onClick={this.onConfirm} 
                     disabled={this.props.buttonDisabled}>
                     Run
