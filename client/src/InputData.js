@@ -70,7 +70,7 @@ class InputData extends React.Component {
                     </div>
                     
                     <Alert variant='light'>
-                        Files must contain headers only on the first row and should not have an index column.<br />
+                        Files must contain headers only on the first row, and an index column won't be expected.<br />
                         To undo file input, simply reselect files or refresh the page.
                     </Alert>
                     <Form.Row>

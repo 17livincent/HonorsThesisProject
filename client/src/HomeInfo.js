@@ -15,8 +15,9 @@ class HomeInfo extends React.Component {
                 <div id='info'>
                     <h1>Welcome!</h1>
                     <p>
-                        This site allows you to easily preprocess numerical, time-series data with a code-free interface.  
-                        Simply select CSV files, choose the transformations from the dropdowns in the order you want them to be performed, and download the transformed dataset(s) in a zipped folder.
+                        This site allows you to easily preprocess and analyze numerical, time-series data with a code-free interface.  
+                        Simply select CSV files, and choose the transformations from the dropdowns in the order you want them to be performed.  
+                        Afterward, you can download the transformed dataset(s) in a zipped folder, and view graphs and plots of the datasets before and after preprocessing.
                     </p>
                     <p>
                         For more info, check out the <a href='https://github.com/17livincent/SigNormApp' target='_blank' rel='noreferrer'>Github repository</a>.
