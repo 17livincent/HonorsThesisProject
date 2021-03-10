@@ -353,4 +353,11 @@ function deleteClient(cIndex, socketID) {
     fs.rm('temp/' + socketID, {recursive: true, force: true}, (error) => {
         if(error) throw error;
     });
+    // do garbage collection
+    try {
+        if(global.gc) global.gc();
+    }
+    catch(e) {
+        process.exit();
+    }
 }
