@@ -122,17 +122,17 @@ io.on('connection', (socket) => {   // when a new client has connected
     });
 
     // received submit from client
-    socket.on('submit', (optionVis, callback) => {
+    socket.on('submit', (options, callback) => {
         callback('Acknowledged submit');
         let clientDirectory = 'temp/' + socket.id;
         // find this client's info
         let cIndex = getClientIndex(socket.id);
         // write files
         writeFiles(cIndex, clientDirectory);
-        logMemDetails();
+        //logMemDetails();
         // preprocess files, create visualizations if chosen, and then compress
-        preprocess(cIndex, clientDirectory, optionVis,
-            () => compress(clientDirectory, () => socket.emit('download')), // success callback
+        preprocess(cIndex, clientDirectory, options.visualizations,
+            () => compress(clientDirectory, options.download, () => socket.emit('download')), // success callback
             () => socket.emit('error')  // failure callback
         );
     });
@@ -202,46 +202,49 @@ function getClientIndex(socketID) {
  * Adds the file chunk to the client's corresponding file
  */
 function addFileChunk(cIndex, fileChunk) {
-    fileChunk.data = Buffer.from(new Uint8Array(fileChunk.data));
+    // create a copy to modify
+    let chunk = Object.assign({}, fileChunk);
+    // remake the buffer
+    chunk.data = Buffer.from(new Uint8Array(fileChunk.data));
     let fIndex;
     // if there are already files of this user
     if(clients[cIndex].files.length > 0) {
         // find the existing file with the same filename
         for(let j in clients[cIndex].files) {
-            if(clients[cIndex].files[j].name === fileChunk.name) {
+            if(clients[cIndex].files[j].name === chunk.name) {
                 fIndex = j;
                 break;
             }
         }
         if(fIndex === undefined) { // if this is the first filechunk for this file
             // convert data attribute to an array of Buffers
-            let dataArray = new Array(fileChunk.totalChunks).fill(undefined);
+            let dataArray = new Array(chunk.totalChunks).fill(undefined);
             // place the chunk in its index
-            dataArray.splice(fileChunk.chunkNum, 1, fileChunk.data);
-            fileChunk.data = dataArray;
+            dataArray.splice(chunk.chunkNum, 1, chunk.data);
+            chunk.data = dataArray;
             // init chunksReceived
-            fileChunk.chunksReceived = 1;
+            chunk.chunksReceived = 1;
             // push this filechunk to files
-            clients[cIndex].files.push(fileChunk);
+            clients[cIndex].files.push(chunk);
             fIndex = clients[cIndex].files.length - 1;
         }
         else {  // this is not the first chunk for this file
             // increment chunksReceived
             clients[cIndex].files[fIndex].chunksReceived++;
             // place the fileChunk's data in its spot in the array
-            clients[cIndex].files[fIndex].data.splice(fileChunk.chunkNum, 1, fileChunk.data);
+            clients[cIndex].files[fIndex].data.splice(chunk.chunkNum, 1, chunk.data);
         }
     }
     else {  // if the client has not uploaded any chunks yet
         // convert data attribute to an array of Buffers
-        let dataArray = new Array(fileChunk.totalChunks).fill(undefined);
+        let dataArray = new Array(chunk.totalChunks).fill(undefined);
         // place the chunk in its index
-        dataArray.splice(fileChunk.chunkNum, 1, fileChunk.data);
-        fileChunk.data = dataArray;
+        dataArray.splice(chunk.chunkNum, 1, chunk.data);
+        chunk.data = dataArray;
         // init chunksReceived
-        fileChunk.chunksReceived = 1;
+        chunk.chunksReceived = 1;
         // push this filechunk to files
-        clients[cIndex].files.push(fileChunk);
+        clients[cIndex].files.push(chunk);
         fIndex = 0;
     }
     // check if the file has all of its chunks
@@ -308,7 +311,7 @@ function preprocess(cIndex, clientDirectory, optionVis, success, failure) {
             numOfFilesPreprocessed += clients[cIndex].files.length;
             numOfBytesPreprocessed += clients[cIndex].totalBytes;
             success();
-            logMemDetails();
+            //logMemDetails();
         }
         if(code === 1) {    // an error occurred
             // update stats
@@ -321,29 +324,35 @@ function preprocess(cIndex, clientDirectory, optionVis, success, failure) {
 /**
  * Compresses the preprocessed files (prefix 'prep_') in the @param clientDirectory
  */
-function compress(clientDirectory, callback) {
-    const out = fs.createWriteStream(clientDirectory + resultsZip);
-    const zipper = archiver('zip', {
-        zlib: {level: 5}
-    });
-
-    out.on('close', () => {
-        //console.log(zipper.pointer() + ' total bytes');
-        console.log('Compressed');
+function compress(clientDirectory, downloadOption, callback) {
+    if(downloadOption === 1) {    // if downloadOption is 1, compress, otherwise don't do anything
+        const out = fs.createWriteStream(clientDirectory + resultsZip);
+        const zipper = archiver('zip', {
+            zlib: {level: 5}
+        });
+        out.on('close', () => {
+            //console.log(zipper.pointer() + ' total bytes');
+            console.log('Compressed');
+            callback();
+            //logMemDetails();
+        });
+        zipper.on('warning', (error) => {
+            if(err.code === 'ENOENT') {
+                console.log(error);
+            }
+            else {
+                throw error;
+           }
+        });
+        zipper.pipe(out);
+        // include all files with 'prep_' prefix
+        zipper.glob(prefix + '*', {cwd: clientDirectory})
+        zipper.finalize();
+    }
+    else {
+        console.log('Told not to compress');
         callback();
-    });
-    zipper.on('warning', (error) => {
-        if(err.code === 'ENOENT') {
-            console.log(error);
-        }
-        else {
-            throw error;
-        }
-    });
-    zipper.pipe(out);
-    // include all files with 'prep_' prefix
-    zipper.glob(prefix + '*', {cwd: clientDirectory})
-    zipper.finalize();
+    }
 }
 
 /**
@@ -381,7 +390,7 @@ function deleteClient(socketID) {
     catch(e) {
         //process.exit();
     }
-    logMemDetails();
+    //logMemDetails();
 }
 
 function logMemDetails() {

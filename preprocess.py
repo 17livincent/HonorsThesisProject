@@ -12,6 +12,7 @@ import sys
 import json
 from os.path import split
 from textwrap import wrap
+import gc
 #####################################
 
 # functions
@@ -127,6 +128,7 @@ def get_line_plot(data, title, saveas):
     data.plot()
     pyplot.title(title)
     pyplot.savefig(saveas)
+    pyplot.clf()
     pyplot.close()
 
 def get_histogram(data, title, saveas):
@@ -136,6 +138,7 @@ def get_histogram(data, title, saveas):
     data.hist()
     pyplot.title(title)
     pyplot.savefig(saveas)
+    pyplot.clf()
     pyplot.close()
 
 def get_density(data, title, saveas):
@@ -145,6 +148,7 @@ def get_density(data, title, saveas):
     data.plot(kind = 'kde')
     pyplot.title(title)
     pyplot.savefig(saveas)
+    pyplot.clf()
     pyplot.close()
 
 def get_heatmap(data, title, saveas):
@@ -154,6 +158,7 @@ def get_heatmap(data, title, saveas):
     pyplot.matshow(data[:20])
     pyplot.title(title)
     pyplot.savefig(saveas)
+    pyplot.clf()
     pyplot.close()
 
 #####################################
@@ -183,6 +188,9 @@ steps_list = json.loads(steps_input)
 
 print(steps_list)
 print(files_list)
+
+print(gc.get_threshold())
+print(gc.get_count())
 
 # iterate through files
 for filename in files_list:
@@ -226,6 +234,10 @@ for filename in files_list:
         #get_heatmap(fileDF, '\n'.join(wrap('Heatmap rows 0-20: Preprocessed ' + tail[5:])), tail, '%s/heatmap-prep-%s.png' % (head, tail))
 
     # save file
-    fileDF.to_csv(path_or_buf = filename, index = False, header = headers, float_format="%.6f", encoding = 'utf-8')
+    fileDF.to_csv(path_or_buf = filename, index = False, header = headers, encoding = 'utf-8')
 
+# call garbage collection
+gc.collect()
+
+print(gc.get_count())
 sys.stdout.flush()
