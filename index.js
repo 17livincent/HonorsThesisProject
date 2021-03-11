@@ -4,6 +4,7 @@
  * Server file for the web application.
  * Deals with communicating with the clients, sockets, and file transfer, and interaction with the python code for preprocessing steps.
  */
+'user strict';
 const express = require('express'); // express
 const path = require('path');
 const fs = require('fs');   // to read and write client files
@@ -81,6 +82,7 @@ io.on('connection', (socket) => {   // when a new client has connected
     client.id = socket.id;
     clients.push(client);
     console.log(clients);
+    logMemDetails();
     // ack connection
     socket.emit('connection');
 
@@ -127,6 +129,7 @@ io.on('connection', (socket) => {   // when a new client has connected
         let cIndex = getClientIndex(socket.id);
         // write files
         writeFiles(cIndex, clientDirectory);
+        logMemDetails();
         // preprocess files, create visualizations if chosen, and then compress
         preprocess(cIndex, clientDirectory, optionVis,
             () => compress(clientDirectory, () => socket.emit('download')), // success callback
@@ -138,8 +141,9 @@ io.on('connection', (socket) => {   // when a new client has connected
     socket.on('disconnect', () => {
         console.log(`${socket.id}: Disconnected.`);
         // delete client
-        deleteClient(getClientIndex(socket.id), socket.id);
+        deleteClient(socket.id);
         console.log(clients);
+        socket.disconnect();
     });
 });
 
@@ -267,6 +271,10 @@ function writeFiles(cIndex, clientDirectory) {
         // write buffer to file
         writeStream.write(clients[cIndex].files[i].data);
         writeStream.end();
+        writeStream.on('finish', () => {    // when the file write is done
+            // null attributes in files[i].data
+            clients[cIndex].files[i].data = null;
+        });
     }
 }
 
@@ -300,6 +308,7 @@ function preprocess(cIndex, clientDirectory, optionVis, success, failure) {
             numOfFilesPreprocessed += clients[cIndex].files.length;
             numOfBytesPreprocessed += clients[cIndex].totalBytes;
             success();
+            logMemDetails();
         }
         if(code === 1) {    // an error occurred
             // update stats
@@ -340,24 +349,44 @@ function compress(clientDirectory, callback) {
 /**
  * Removes the files and clientForm of the client with the given @param cIndex
  */
-function deleteClient(cIndex, socketID) {
-    // delete array buffers
+function deleteClient(socketID) {
+    let cIndex = getClientIndex(socketID);
+    // delete file info
     for(let i = 0; i < clients[cIndex].files.length; i++) {
+        clients[cIndex].files[i].name = null;
+        clients[cIndex].files[i].type = null;
+        clients[cIndex].files[i].size = null;
+        clients[cIndex].files[i].chunkNum = null;
+        clients[cIndex].files[i].totalChunks = null;
         clients[cIndex].files[i].data = null;
     }
     // delete files in clientForm
     clients[cIndex].files.splice(0, clients[cIndex].files.length);
     // remove clientForm
+    clients[cIndex] = null;
     clients.splice(cIndex, 1);
     // remove client's temporary directory and its files
     fs.rm('temp/' + socketID, {recursive: true, force: true}, (error) => {
         if(error) throw error;
     });
+    // clear clients if no one is connected
+    if(clients.length === 0) {
+        clients = null;
+        clients = [];
+    }
     // do garbage collection
     try {
         if(global.gc) global.gc();
     }
     catch(e) {
-        process.exit();
+        //process.exit();
     }
+    logMemDetails();
+}
+
+function logMemDetails() {
+    console.log(`Heap total:    ${Math.round(process.memoryUsage().heapTotal / 1024 / 1024 * 100) / 100} MB`);
+    console.log(`External:      ${Math.round(process.memoryUsage().external / 1024 / 1024 * 100) / 100} MB`);
+    console.log(`ArrayBuffers:  ${Math.round(process.memoryUsage().arrayBuffers / 1024 / 1024 * 100) / 100} MB`);
+    console.log(`RSS:           ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MB`);
 }
