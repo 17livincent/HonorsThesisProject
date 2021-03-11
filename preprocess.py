@@ -189,7 +189,7 @@ for filename in files_list:
     # filename(s) are temp/<socket ID>/<file>.csv
     fileDF = read_file(filename)
     headers = list(fileDF.columns)
-    print(fileDF.shape)
+    #print(fileDF.shape)
     #print(headers[0:5])
     #print(fileDF)
     head, tail = split(filename)
