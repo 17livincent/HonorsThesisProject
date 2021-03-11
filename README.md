@@ -200,6 +200,10 @@ Once all the dependencies are in-place, from the ```SigNormApp/``` directory, st
 ```
 node index.js
 ```
+To run the application with PM2, use this command:
+```
+pm2 start index.js --node-args="--expose-gc"
+```
 Finally, to access the app, from your web browser, enter the address ```localhost:3000```.
 
 #
