@@ -25,7 +25,7 @@ const CHUNKSIZE = 100000;
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.serverName = '192.168.56.1:3000';//'web-app.li-vincent.com';
+        this.serverName = 'web-app.li-vincent.com';
         // socket to send and receive data from server
         this.socket = socketIOClient(this.serverName);
         // FileList of inputted files
@@ -42,7 +42,7 @@ class App extends React.Component {
             failed: false,      // if the server sends and error message
             // submit options
             submitOptions: {  // 0 means no, 1 means yes
-                download: 0,        // if 0, client will not request download
+                download: 0,        // if 0, client will not request download, server will not compress files
                 visualizations: 0   // if 0, server will not create visualizations
             }
         }
@@ -178,7 +178,7 @@ class App extends React.Component {
      * Sends the submit message to the server
      */
     sendSubmit() {
-        this.socket.emit('submit', this.state.submitOptions.visualizations, (callback) => (console.log(callback)));
+        this.socket.emit('submit', this.state.submitOptions, (callback) => (console.log(callback)));
     }
 
     /**
