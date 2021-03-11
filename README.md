@@ -198,7 +198,7 @@ pip3 install matplotlib
 ## 3. Running the application
 Once all the dependencies are in-place, from the ```SigNormApp/``` directory, start the Express server with: 
 ```
-node index.js
+node index.js --expose-gc
 ```
 To run the application with PM2, use this command:
 ```
