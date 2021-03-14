@@ -131,7 +131,7 @@ io.on('connection', (socket) => {   // when a new client has connected
         writeFiles(cIndex, clientDirectory);
         //logMemDetails();
         // preprocess files, create visualizations if chosen, and then compress
-        preprocess(cIndex, clientDirectory, options.visualizations,
+        preprocess(cIndex, clientDirectory, options,
             () => compress(clientDirectory, options.download, () => socket.emit('download')), // success callback
             () => socket.emit('error')  // failure callback
         );
@@ -282,21 +282,38 @@ function writeFiles(cIndex, clientDirectory) {
 }
 
 /**
+ * Prints the @param details json object into summary.txt in @param clientDirectory
+ */
+function writeSummaryJSON(details, clientDirectory) {
+    fs.writeFile(clientDirectory + '/' + prefix + 'summary.txt', JSON.stringify(details, null, 4), (err) => {
+        if(err) console.log(err);
+    });
+}
+
+/**
  * Performs the preprocessing steps on each file using the preprocess.py
  * @param submitOptions has attributes submitOptions.download and submitOptions.visualizations
  */
-function preprocess(cIndex, clientDirectory, optionVis, success, failure) {
+function preprocess(cIndex, clientDirectory, options, success, failure) {
     // create an array of filenames
     let filenames = [];
+    let fileTails = [];
     for(let i = 0; i < clients[cIndex].numOfReceivedFiles; i++) {
         filenames.push(clientDirectory + '/' + prefix + clients[cIndex].files[i].name);
+        fileTails.push(clients[cIndex].files[i].name)
     }
+
+    // print file list and steps to a summary file
+    if(options.download === 1) {
+        writeSummaryJSON({files: fileTails, steps: clients[cIndex].steps}, clientDirectory);
+    }
+
     // turn filenames into string
     let filenamesJSON = JSON.stringify(filenames);
     // turn steps into string
     let stepsJSON = JSON.stringify(clients[cIndex].steps);
     // preprocess each file
-    let prep = spawn('python3', ['preprocess.py', filenamesJSON, stepsJSON, optionVis]);
+    let prep = spawn('python3', ['preprocess.py', filenamesJSON, stepsJSON, options.visualizations]);
     prep.stdout.on('data', (data) => {
         console.log('OK:\n' + data.toString());
     });
