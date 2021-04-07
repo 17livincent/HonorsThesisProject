@@ -48,9 +48,6 @@ This project is sponsored by the Arizona State University School of Arts, Media,
 [```preprocess.py```](preprocess.py):
 - Python code that takes in an array of filenames and preprocessing steps info submitted by the client, and performs the transformations on those files
 
-[```test_preprocess.ipynb```](test_preprocess.ipynb):
-- A Jupyter Notebook to test the transformation functions on example data
-
 #
 <a name='design'></a>
 # Brief Design Description
