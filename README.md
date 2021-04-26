@@ -163,7 +163,6 @@ If you do not have ```Node.js``` and ```npm``` installed on your machine, you mu
 Next, navigate into ```SigNormApp/```, initialize the server, and install ```node_modules``` using these commands in the terminal:
 ```
 cd SigNormApp/
-npm init
 npm install
 ```
 From there, navigate into ```client/```.  Change ```client/src/App.js``` by updating the socket destination to match the web application's server, whether it be ```localhost:3000``` or ```<a public IP>:3000```.  You may also change the port number, which is 3000 to begin with, but must also update the port number specified in ```index.js```.
