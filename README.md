@@ -158,7 +158,7 @@ git clone https://github.com/17livincent/SigNormApp
 
 <a name='locally1'></a>
 ## 1. Setting up the Node and React apps
-If you do not have ```Node.js``` and ```npm``` installed on your machine, you must do so through [this link](https://nodejs.org/en/download/current).  You must have the latest current verson of Node to run the app.
+If you do not have ```Node.js``` and ```npm``` installed on your machine, you must do so through [this link](https://nodejs.org/en/download/current).  You must have the latest verson of Node to run the app.
 
 Next, navigate into ```SigNormApp/```, initialize the server, and install ```node_modules``` using these commands in the terminal:
 ```
