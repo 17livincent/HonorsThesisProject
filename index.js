@@ -35,7 +35,7 @@ app.get('/download/:id', (request, response) => {
     let id = request.params.id;     
     console.log('Download request from ' + id);
     // send zip folder as download
-    response.download('temp/' + id + resultsZip);  
+    response.download(TEMPDIRECTORY + id + RESULTSZIP);  
 });
 
 // client requests a graph image
@@ -124,7 +124,7 @@ io.on('connection', (socket) => {   // when a new client has connected
     // received submit from client
     socket.on('submit', (options, callback) => {
         callback('Acknowledged submit');
-        let clientDirectory = 'temp/' + socket.id;
+        let clientDirectory = TEMPDIRECTORY + socket.id;
         // find this client's info
         let cIndex = getClientIndex(socket.id);
         // write files
@@ -184,8 +184,19 @@ let failures = 0;
 let numOfFilesPreprocessed = 0;
 let numOfBytesPreprocessed = 0;
 
-const prefix = 'prep_';
-const resultsZip = '/preprocessed.zip';
+const PREFIX = 'prep_';
+const RESULTSZIP = '/preprocessed.zip';
+let t;
+switch(require('os').type()) {
+    case 'Darwin':
+    case 'Linux':
+        t = '/tmp/'
+        break;
+    case 'Windows':
+        t = '/temp/'
+        break;
+}
+const TEMPDIRECTORY = t;
 
 /**
  * Returns the index in clients of the client with the matching @param socketID
@@ -270,7 +281,7 @@ function writeFiles(cIndex, clientDirectory) {
     // write files to this directory
     for(let i = 0; i < clients[cIndex].files.length; i++) {
         // create WriteStream to file
-        let writeStream = fs.createWriteStream(clientDirectory + '/' + prefix + clients[cIndex].files[i].name);
+        let writeStream = fs.createWriteStream(clientDirectory + '/' + PREFIX + clients[cIndex].files[i].name);
         // write buffer to file
         writeStream.write(clients[cIndex].files[i].data);
         writeStream.end();
@@ -285,7 +296,7 @@ function writeFiles(cIndex, clientDirectory) {
  * Prints the @param details json object into summary.txt in @param clientDirectory
  */
 function writeSummaryJSON(details, clientDirectory) {
-    fs.writeFile(clientDirectory + '/' + prefix + 'summary.txt', JSON.stringify(details, null, 4), (err) => {
+    fs.writeFile(clientDirectory + '/' + PREFIX + 'summary.txt', JSON.stringify(details, null, 4), (err) => {
         if(err) console.log(err);
     });
 }
@@ -299,7 +310,7 @@ function preprocess(cIndex, clientDirectory, options, success, failure) {
     let filenames = [];
     let fileTails = [];
     for(let i = 0; i < clients[cIndex].numOfReceivedFiles; i++) {
-        filenames.push(clientDirectory + '/' + prefix + clients[cIndex].files[i].name);
+        filenames.push(clientDirectory + '/' + PREFIX + clients[cIndex].files[i].name);
         fileTails.push(clients[cIndex].files[i].name)
     }
 
@@ -343,7 +354,7 @@ function preprocess(cIndex, clientDirectory, options, success, failure) {
  */
 function compress(clientDirectory, downloadOption, callback) {
     if(downloadOption === 1) {    // if downloadOption is 1, compress, otherwise don't do anything
-        const out = fs.createWriteStream(clientDirectory + resultsZip);
+        const out = fs.createWriteStream(clientDirectory + RESULTSZIP);
         const zipper = archiver('zip', {
             zlib: {level: 5}
         });
@@ -363,7 +374,7 @@ function compress(clientDirectory, downloadOption, callback) {
         });
         zipper.pipe(out);
         // include all files with 'prep_' prefix
-        zipper.glob(prefix + '*', {cwd: clientDirectory})
+        zipper.glob(PREFIX + '*', {cwd: clientDirectory})
         zipper.finalize();
     }
     else {
@@ -392,7 +403,7 @@ function deleteClient(socketID) {
     clients[cIndex] = null;
     clients.splice(cIndex, 1);
     // remove client's temporary directory and its files
-    fs.rm('temp/' + socketID, {recursive: true, force: true}, (error) => {
+    fs.rm(TEMPDIRECTORY + socketID, {recursive: true, force: true}, (error) => {
         if(error) throw error;
     });
     // clear clients if no one is connected
