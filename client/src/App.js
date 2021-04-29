@@ -207,7 +207,6 @@ class App extends React.Component {
         </React.Fragment>;
         let failureStatus = <React.Fragment>
             <h4>Error occurred</h4>
-            Please check the order of steps and try again.
         </React.Fragment>;
 
         let statusComp = <Alert id='status' variant={status}>
