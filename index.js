@@ -50,7 +50,7 @@ app.get('/graphs/:id/:filename/:when/:type', (request, response) => {
     let type = request.params.type;
     //console.log(`${id} ${filename} ${when} ${type}`);
     // format for graph file name on server is temp/<socket ID>/<type>-<when>-<filename>.png
-    response.sendFile(__dirname + '/temp/' + id + '/' + type + '-' + when + '-prep_' + filename + '.png');
+    response.sendFile(TEMPDIRECTORY + id + '/' + type + '-' + when + '-prep_' + filename + '.png');
 });
 
 // fun stats/analytics page
@@ -326,7 +326,7 @@ function preprocess(cIndex, clientDirectory, options, success, failure) {
     // preprocess each file
     let prep = spawn('python3', ['preprocess.py', filenamesJSON, stepsJSON, options.visualizations]);
     prep.stdout.on('data', (data) => {
-        console.log('OK:\n' + data.toString());
+        console.log(data.toString());
     });
     prep.stderr.on('data', (data) => {
         console.log('Error:\n' + data.toString());
