@@ -100,7 +100,7 @@ When a connection with a client is established, a new ```clientForm``` is create
 
 ### Completing preprocessing steps
 
-When the client emits a 'submit' message to the server, the server will create a directory in ```temp/``` named after the client's socket ID (```clientForm.id```) and write all of the files into that directory.  From there, the server will execute this command:
+When the client emits a 'submit' message to the server, the server will create a directory in the system temporary directory named after the client's socket ID (```clientForm.id```) and write all of the files into that directory.  From there, the server will execute this command:
 ```
 python3 preprocess.py <stringified array of the filenames> <stringified clientForm.steps>
 ```

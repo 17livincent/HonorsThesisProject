@@ -35,7 +35,7 @@ app.get('/download/:id', (request, response) => {
     let id = request.params.id;     
     console.log('Download request from ' + id);
     // send zip folder as download
-    response.download(TEMPDIRECTORY + id + RESULTSZIP);  
+    response.download(TEMPDIRECTORY + 'SigNormApp-' + id + RESULTSZIP);  
 });
 
 // client requests a graph image
@@ -49,8 +49,8 @@ app.get('/graphs/:id/:filename/:when/:type', (request, response) => {
     // get the type of graph requested
     let type = request.params.type;
     //console.log(`${id} ${filename} ${when} ${type}`);
-    // format for graph file name on server is temp/<socket ID>/<type>-<when>-<filename>.png
-    response.sendFile(TEMPDIRECTORY + id + '/' + type + '-' + when + '-prep_' + filename + '.png');
+    // format for graph file name on server is temp/SigNormApp-<socket ID>/<type>-<when>-<filename>.png
+    response.sendFile(TEMPDIRECTORY + 'SigNormApp-' + id + '/' + type + '-' + when + '-prep_' + filename + '.png');
 });
 
 // fun stats/analytics page
@@ -124,7 +124,7 @@ io.on('connection', (socket) => {   // when a new client has connected
     // received submit from client
     socket.on('submit', (options, callback) => {
         callback('Acknowledged submit');
-        let clientDirectory = TEMPDIRECTORY + socket.id;
+        let clientDirectory = TEMPDIRECTORY + 'SigNormApp-' + socket.id;
         // find this client's info
         let cIndex = getClientIndex(socket.id);
         // write files
@@ -276,7 +276,7 @@ function addFileChunk(cIndex, fileChunk) {
  * New files have a prefix 'prep_' to each name
  */
 function writeFiles(cIndex, clientDirectory) {
-    // make a directory for this client's files with its name equalling the socket.id
+    // make a directory for this client's files
     fs.mkdirSync(clientDirectory);
     // write files to this directory
     for(let i = 0; i < clients[cIndex].files.length; i++) {
@@ -403,7 +403,7 @@ function deleteClient(socketID) {
     clients[cIndex] = null;
     clients.splice(cIndex, 1);
     // remove client's temporary directory and its files
-    fs.rm(TEMPDIRECTORY + socketID, {recursive: true, force: true}, (error) => {
+    fs.rm(TEMPDIRECTORY + 'SigNormApp-' + socketID, {recursive: true, force: true}, (error) => {
         if(error) throw error;
     });
     // clear clients if no one is connected
