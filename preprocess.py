@@ -179,6 +179,9 @@ function_dict = {
 }
 
 def preprocess(filename, steps_list, option_vis):
+    '''
+        Creates the plots for and preprocesses the file
+    '''
     # filename(s) are temp/<socket ID>/<file>.csv
     fileDF = read_file(filename)
     headers = list(fileDF.columns)
