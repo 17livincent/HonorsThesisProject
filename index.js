@@ -4,7 +4,7 @@
  * Server file for the web application.
  * Deals with communicating with the clients, sockets, and file transfer, and interaction with the python code for preprocessing steps.
  */
-'user strict';
+'use strict';
 const express = require('express'); // express
 const path = require('path');
 const fs = require('fs');   // to read and write client files
