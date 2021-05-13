@@ -178,23 +178,7 @@ function_dict = {
     # add more here
 }
 
-# get inputs
-file_inputs = sys.argv[1]
-steps_input = sys.argv[2]
-option_vis = sys.argv[3]
-
-# get lists of filenames and steps
-files_list = json.loads(file_inputs)
-steps_list = json.loads(steps_input)
-
-print(steps_list)
-print(files_list)
-
-print(gc.get_threshold())
-print(gc.get_count())
-
-# iterate through files
-for filename in files_list:
+def preprocess(filename, steps_list, option_vis):
     # filename(s) are temp/<socket ID>/<file>.csv
     fileDF = read_file(filename)
     headers = list(fileDF.columns)
@@ -202,11 +186,12 @@ for filename in files_list:
     #print(headers[0:5])
     #print(fileDF)
     head, tail = split(filename)
+
     # number of colums to plot
     cols_to_plot = fileDF.shape[1]
     if(cols_to_plot > 5): cols_to_plot = 5
 
-    if option_vis == '1':
+    if option_vis == 1:
         # Create original plots
         # png files are temp/<socket ID>/<type>-<when>-<filename>.png
         get_line_plot(fileDF.iloc[:, 0: cols_to_plot], '\n'.join(wrap('Line plot of %s features: Original %s' % (cols_to_plot, tail[5:]))), '%s/lineplot-orig-%s.png' % (head, tail))
@@ -224,7 +209,7 @@ for filename in files_list:
         # according to the step name, call the appropriate function from the dictionary
         fileDF = function_dict[step_name](fileDF, inputs_list)
 
-    if option_vis == '1':
+    if option_vis == 1:
         # Create new plots
         get_line_plot(fileDF.iloc[:, 0: cols_to_plot], '\n'.join(wrap('Line plot of %s features: Preprocessed %s' % (cols_to_plot, tail[5:]))), '%s/lineplot-prep-%s.png' % (head, tail))
         get_histogram(fileDF.iloc[:, 0], '\n'.join(wrap('Histogram of feature 1: Preprocessed ' + tail[5:])), '%s/histogram-prep-%s.png' % (head, tail))
@@ -237,8 +222,29 @@ for filename in files_list:
     # save file
     fileDF.to_csv(path_or_buf = filename, index = False, header = headers, encoding = 'utf-8')
 
-# call garbage collection
-gc.collect()
+def main():
+    # get inputs
+    file_inputs = sys.argv[1]
+    steps_input = sys.argv[2]
+    option_vis = int(sys.argv[3])
 
-print(gc.get_count())
-sys.stdout.flush()
+    print('Preprocess:')
+    print('\t' + file_inputs)
+    print('\t' + steps_input)
+    print('\tOption vis: ', option_vis)
+
+    # get lists of filenames and steps
+    files_list = json.loads(file_inputs)
+    steps_list = json.loads(steps_input)
+
+    # iterate through files
+    for filename in files_list:
+        preprocess(filename, steps_list, option_vis)
+
+if __name__ == '__main__':
+    main()
+    #print(gc.get_threshold())
+    #print(gc.get_count())
+    gc.collect()
+    #print(gc.get_count())
+    sys.stdout.flush()
