@@ -4,6 +4,10 @@
     Python code used to perform transformation steps and create plots.
     Takes command line arguments argv[1] for the stringified filenames list, argv[2] for the stringified steps object, 
     and arg[3] for the visualization option.
+
+    Compile with:
+        import py_compile
+        py_compile.compile('preprocess.py')
 """
 import numpy as np
 import pandas as pd
