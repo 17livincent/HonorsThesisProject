@@ -23,6 +23,8 @@
 
 node_modules
 
+__pycache__
+
 .ipynb_checkpoints
 
 .vscode
