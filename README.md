@@ -201,9 +201,9 @@ pm2 start index.js --node-args="--expose-gc"
 Finally, to access the app, from your web browser, enter the address ```localhost:3000```.
 
 
-<a name='locally4></a>
+<a name='locally4'></a>
 ## 4. Using Docker
-The ```Dockerfile``` easily implements the above steps for use in a Docker container, and executing ```sudo run_docker.sh``` will (re)build the image and run the container.  To view the console output continuously, run ```sudo docker logs --follow <container name/ID>```.
+The ```Dockerfile``` easily implements the above steps for use in a Docker container, and executing ```sudo run_docker.sh``` will (re)build the image and run the container.  To view the console output continuously, run ```sudo docker logs --follow <container name or ID>```.
 
 #
 <a name='add'></a>
