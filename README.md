@@ -278,4 +278,4 @@ Finally, back in ```preprocess.py```, add a key-value pair to the ```function_di
 ```
 The functions will be called from the ```function_dict``` based on that key.
 
-Once that is done rebuild the React app using ```npm run build``` in ```clients/```, check for any errors in ```preprocess.py```, and create the .pyc file for preprocess.py.  Run the application, and if things work correctly, then you have successfully added a transformation step.  Otherwise, go over your code, and compare it with the existing transformations.
+Once that is done, rebuild the React app using ```npm run build``` in ```clients/``` and check for any errors in ```preprocess.py```.  Run the application, and if things work correctly, then you have successfully added a transformation step.  Otherwise, go over your code, and compare it with the existing transformations.

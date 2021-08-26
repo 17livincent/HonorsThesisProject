@@ -324,9 +324,7 @@ function preprocess(cIndex, clientDirectory, options, success, failure) {
     // turn steps into string
     let stepsJSON = JSON.stringify(clients[cIndex].steps);
     // preprocess each file
-    let prep = spawn('python3', ['preprocess.pyc', filenamesJSON, stepsJSON, options.visualizations]);
-    // get start time
-    //let startTime = new Date();
+    let prep = spawn('python3', ['preprocess.py', filenamesJSON, stepsJSON, options.visualizations]);
     prep.stdout.on('data', (data) => {
         console.log(data.toString());
     });
@@ -348,10 +346,6 @@ function preprocess(cIndex, clientDirectory, options, success, failure) {
             failures++;
             failure();
         }
-        // get elapsed time
-        //let endTime = new Date();
-        //let elapsed = (endTime - startTime) / 1000;
-        //console.log(`Elapsed time: ${elapsed}s`);
     });
 }
 
