@@ -24,6 +24,7 @@ This project is sponsored by the Arizona State University School of Arts, Media,
     - [Setting up the Node and React apps](#locally1)
     - [Including the Python packages](#locally2)
     - [Running the application](#locally3)
+    - [Using Docker](#locally4)
 - [How to Add More Transformations](#add)
     - [Add a JSON object to ```client/src/Transformations.js```](#add1)
     - [Write your transformation function in ```preprocess.py```](#add2)
@@ -148,7 +149,7 @@ Every time a file's chunk is received by the server, it increments its copy of t
 #
 <a name='locally'></a>
 # How To Run Locally
-If you'd like to host and run SigNorm on your own machine, start by cloning the repository into your preferred directory.
+If you'd like to host and/or run SigNorm on your own machine, start by cloning the repository into your preferred directory.
 ```
 git clone https://github.com/17livincent/SigNormApp
 ```
@@ -198,6 +199,11 @@ To run the application with PM2, use this command:
 pm2 start index.js --node-args="--expose-gc"
 ```
 Finally, to access the app, from your web browser, enter the address ```localhost:3000```.
+
+
+<a name='locally4></a>
+## 4. Using Docker
+The ```Dockerfile``` easily implements the above steps for use in a Docker container, and executing ```sudo run_docker.sh``` will (re)build the image and run the container.  To view the console output continuously, run ```sudo docker logs --follow <container name/ID>```.
 
 #
 <a name='add'></a>
