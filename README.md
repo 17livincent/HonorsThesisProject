@@ -7,7 +7,7 @@
          |___/                            
 ```
 #
-SigNorm is a web application which allows the user to preprocess time series data files (.csv) with an easy-to-use, code-free, and file-converter-like interface.  To use the app, visit [web-app.li-vincent.com](http://web-app.li-vincent.com).  The user can simply upload multiple files, pick the preprocessing steps from dropdowns, and download a zipped file of the processed data.  Visualizations and graphs of the data before and after the transformations will be displayed as well.
+SigNorm is a web application which allows the user to preprocess time series data files (.csv) with an easy-to-use, code-free, and file-converter-like interface.  To use the app, visit [signorm.duck-buns.com](https://signorm.duck-buns.com).  The user can simply upload multiple files, pick the preprocessing steps from dropdowns, and download a zipped file of the processed data.  Visualizations and graphs of the data before and after the transformations will be displayed as well.
 
 Front-end is built with React, back-end with Express, and is hosted on AWS EC2.  It utilizes socket.io for real-time communication and to send file chunks, and HTTP methods to send downloads and visualization pictures.
 
@@ -83,7 +83,7 @@ The application server is built with the Express framework on Node.
 - When a client confirms, execute its selected preprocessing steps on its files using a Python child process, and save these files after transformation
 - Send the preprocessed files in a zipped folder back to the client as a download
 - Create graphs and visualizations before and after preprocessing
-- Make those visualizations avaiable to the client via Express routing, so that they can be accessed via something like ```<img src='web-app.li-vincent.com/graphs/:id/:filename/:when/:type' alt='line plot' />```
+- Make those visualizations avaiable to the client via Express routing, so that they can be accessed via something like ```<img src='localhost:3000/graphs/:id/:filename/:when/:type' alt='line plot' />```
 
 ### Recording clients
 
@@ -111,9 +111,9 @@ If the command completes successfully, the server will compress the data files i
 
 ### Sending visualizations and preprocessed files to the client
 
-Once the preprocessing steps are completed and visualizations are created, the server makes these files available via Express routing.  It will emit a 'download' message, notifying the client that the file can be downloaded via ```web-app.li-vincent.com/download/:socketID```.  The client creates and clicks an invisible HTML hyperlink to access this link.
+Once the preprocessing steps are completed and visualizations are created, the server makes these files available via Express routing.  It will emit a 'download' message, notifying the client that the file can be downloaded via ```localhost:3000/download/:socketID```.  The client creates and clicks an invisible HTML hyperlink to access this link.
 
-The graphs are accessed by the client by creating HTML ```<img>``` components, with the ```src``` field referencing the link to a specific graph.  The route requested is something like ```web-app.li-vincent.com/graphs/<socket ID>/<filename>/<orig or prep>/<graph type>```.  The Express server will take the input fields provided by the request link, and send the correct .png to the client.
+The graphs are accessed by the client by creating HTML ```<img>``` components, with the ```src``` field referencing the link to a specific graph.  The route requested is something like ```localhost:3000/graphs/<socket ID>/<filename>/<orig or prep>/<graph type>```.  The Express server will take the input fields provided by the request link, and send the correct .png to the client.
 
 <a name='design3'></a>
 ## File transfer, and sending and receiving file chunks
@@ -163,7 +163,7 @@ Next, navigate into ```SigNormApp/```, initialize the server, and install ```nod
 cd SigNormApp/
 npm install
 ```
-From there, navigate into ```client/```.  Change ```client/src/App.js``` by updating the socket destination to match the web application's server, whether it be ```localhost:3000``` or ```<a public IP>:3000```.  You may also change the port number, which is 3000 to begin with, but must also update the port number specified in ```index.js```.
+From there, navigate into ```client/```.  Change ```client/src/App.js``` by updating the socket destination to match the web application's server.  By default, it is localhost:3000.  You may also change the port number, but must also update the port number specified in ```index.js```.
 Afterward, install ```node_modules``` for the React app and build it for production.
 ```
 cd client/
@@ -203,7 +203,7 @@ Finally, to access the app, from your web browser, enter the address ```localhos
 
 <a name='locally4'></a>
 ## 4. Using Docker
-The ```Dockerfile``` easily implements the above steps for use in a Docker container, and executing ```sudo run_docker.sh``` will (re)build the image and run the container.  To view the console output continuously, run ```sudo docker logs --follow <container name or ID>```.
+The ```Dockerfile``` easily implements the above steps for use in a Docker container, and executing ```sudo ./run_docker.sh``` will (re)build the image and run the container.  To view the console output continuously, run ```sudo docker logs --follow <container name or ID>```.
 
 #
 <a name='add'></a>

@@ -25,7 +25,7 @@ const CHUNKSIZE = 100000;
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.serverName = 'web-app.li-vincent.com';
+        this.serverName = 'localhost:3000';
         // socket to send and receive data from server
         this.socket = socketIOClient(this.serverName);
         // FileList of inputted files
