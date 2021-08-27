@@ -25,7 +25,7 @@ const CHUNKSIZE = 100000;
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.serverName = 'localhost:3000';
+        this.serverName = 'signorm.duck-buns.com';  // EC2 machine uses an NginX proxy, so the port # is excluded here
         // socket to send and receive data from server
         this.socket = socketIOClient(this.serverName);
         // FileList of inputted files
