@@ -17,8 +17,10 @@ COPY index.js ./
 COPY preprocess.py ./
 
 # Python dependencies
-RUN apt update && apt install -y python3 python3-pip
-RUN pip3 install numpy pandas scikit-learn matplotlib
+RUN apt update -y && apt upgrade -y
+RUN apt install -y libc-dev build-essential
+RUN apt install -y python3 python3-pip
+RUN apt install -y python3-scipy python3-numpy python3-pandas python3-sklearn python3-matplotlib
 
 EXPOSE 3000
 
