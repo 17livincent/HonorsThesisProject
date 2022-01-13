@@ -33,7 +33,7 @@ app.get('/', (request, response) => {
 app.get('/download/:id', (request, response) => {
     // get socket ID from route parameters
     let id = request.params.id;     
-    console.log('Download request from ' + id);
+    console.log(`${(new Date()).toString()} -- Download request from ${id}`);
     // send zip folder as download
     response.download(TEMPDIRECTORY + 'SigNormApp-' + id + RESULTSZIP);  
 });
@@ -48,7 +48,7 @@ app.get('/graphs/:id/:filename/:when/:type', (request, response) => {
     let when = request.params.when;
     // get the type of graph requested
     let type = request.params.type;
-    //console.log(`${id} ${filename} ${when} ${type}`);
+    //console.log(`${(new Date()).toString()} -- ${id} ${filename} ${when} ${type}`);
     // format for graph file name on server is temp/SigNormApp-<socket ID>/<type>-<when>-<filename>.png
     response.sendFile(TEMPDIRECTORY + 'SigNormApp-' + id + '/' + type + '-' + when + '-prep_' + filename + '.png');
 });
@@ -76,11 +76,12 @@ app.get('/stats', (request, response) => {
 
 // socket communication
 io.on('connection', (socket) => {   // when a new client has connected
-    console.log(`${socket.id}: Connected.`);
+    console.log(`${(new Date()).toString()} -- ${socket.id}: Connected.`);
     // record client
     let client = Object.assign({}, clientForm);
     client.id = socket.id;
     clients.push(client);
+    console.log(`${(new Date()).toString()} -- Clients: `);
     console.log(clients);
     logMemDetails();
     // ack connection
@@ -88,12 +89,11 @@ io.on('connection', (socket) => {   // when a new client has connected
 
     // received steps from client
     socket.on('steps', (stepsSubmitted, callback) => {
-        //console.log(`${socket.id}: Submitted steps: ${stepsSubmitted}`);
+        //console.log(`${(new Date()).toString()} -- ${socket.id}: Submitted steps: ${stepsSubmitted}`);
         // ack steps
         callback(`Acknowledged steps`);
         // add steps to clientForm
         clients[getClientIndex(socket.id)].steps = stepsSubmitted;
-        //console.log(clients);
     });
 
     // received number of files
@@ -116,7 +116,7 @@ io.on('connection', (socket) => {   // when a new client has connected
             && clients[cIndex].steps !== null) {
             // send request to submit
             socket.emit('ready to submit');
-            console.log('Client has sent all files:');
+            console.log(`${(new Date()).toString()} -- ${socket.id}: Client has sent all files:`);
             console.log(clients[cIndex]);
         }
     });
@@ -139,7 +139,7 @@ io.on('connection', (socket) => {   // when a new client has connected
 
     // client disconnected
     socket.on('disconnect', () => {
-        console.log(`${socket.id}: Disconnected.`);
+        console.log(`${(new Date()).toString()} -- ${socket.id}: Disconnected.`);
         // delete client
         deleteClient(socket.id);
         console.log(clients);
@@ -148,7 +148,7 @@ io.on('connection', (socket) => {   // when a new client has connected
 });
 
 httpServer.listen(port, () => {
-    console.log(`Listening on port ${port}:`);
+    console.log(`${(new Date()).toString()} -- Listening on port ${port}:`);
 });
 
 // backend code
@@ -267,7 +267,7 @@ function addFileChunk(cIndex, fileChunk) {
         clients[cIndex].files[fIndex].data = Buffer.concat(clients[cIndex].files[fIndex].data, clients[cIndex].files[fIndex].size);
         // update totalBytes
         clients[cIndex].totalBytes += clients[cIndex].files[fIndex].data.length;
-        console.log(clients[cIndex].files[fIndex]);
+        console.log(`${(new Date()).toString()} -- ${clients[cIndex].files[fIndex]}`);
     }
 }
 
@@ -297,7 +297,7 @@ function writeFiles(cIndex, clientDirectory) {
  */
 function writeSummaryJSON(details, clientDirectory) {
     fs.writeFile(clientDirectory + '/' + PREFIX + 'summary.txt', JSON.stringify(details, null, 4), (err) => {
-        if(err) console.log(err);
+        if(err) console.log(`${(new Date()).toString()} -- ${err}`);
     });
 }
 
@@ -326,13 +326,13 @@ function preprocess(cIndex, clientDirectory, options, success, failure) {
     // preprocess each file
     let prep = spawn('python3', ['preprocess.py', filenamesJSON, stepsJSON, options.visualizations]);
     prep.stdout.on('data', (data) => {
-        console.log(data.toString());
+        console.log(`${(new Date()).toString()} -- ${data.toString()}`);
     });
     prep.stderr.on('data', (data) => {
-        console.log('Error:\n' + data.toString());
+        console.log(`${(new Date()).toString()} -- Error:\n${data.toString()}`);
     });
     prep.on('close', (code) => {    // process completed successfully
-        console.log(`Process complete: ${code}`);
+        console.log(`${(new Date()).toString()} -- Process complete: ${code}`);
         if(code === 0) {    // preprocessing successful
             // update stats
             successes++;
@@ -360,13 +360,13 @@ function compress(clientDirectory, downloadOption, callback) {
         });
         out.on('close', () => {
             //console.log(zipper.pointer() + ' total bytes');
-            console.log('Compressed');
+            //console.log('Compressed');
             callback();
             //logMemDetails();
         });
         zipper.on('warning', (error) => {
             if(err.code === 'ENOENT') {
-                console.log(error);
+                console.log(`${(new Date()).toString()} -- ${error}`);
             }
             else {
                 throw error;
@@ -378,7 +378,7 @@ function compress(clientDirectory, downloadOption, callback) {
         zipper.finalize();
     }
     else {
-        console.log('Told not to compress');
+        //console.log('Told not to compress');
         callback();
     }
 }
@@ -422,6 +422,7 @@ function deleteClient(socketID) {
 }
 
 function logMemDetails() {
+    console.log(`${(new Date()).toString()} -- `);
     console.log(`Heap total:    ${Math.round(process.memoryUsage().heapTotal / 1024 / 1024 * 100) / 100} MB`);
     console.log(`External:      ${Math.round(process.memoryUsage().external / 1024 / 1024 * 100) / 100} MB`);
     console.log(`ArrayBuffers:  ${Math.round(process.memoryUsage().arrayBuffers / 1024 / 1024 * 100) / 100} MB`);
