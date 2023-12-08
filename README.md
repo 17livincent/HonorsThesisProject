@@ -7,7 +7,7 @@
          |___/                            
 ```
 #
-SigNorm is a web application which allows the user to preprocess time series data files (.csv) with an easy-to-use, code-free, and file-converter-like interface.  To use the app, visit [signorm.duck-buns.com](https://signorm.duck-buns.com).  The user can simply upload multiple files, pick the preprocessing steps from dropdowns, and download a zipped file of the processed data.  Visualizations and graphs of the data before and after the transformations will be displayed as well.
+SigNorm is a web application which allows the user to preprocess time series data files (.csv) with an easy-to-use, code-free, and file-converter-like interface.  To use the app, visit [signorm.duck-buns.com](https://signorm.duck-buns.com).  The user can simply upload multiple files (e.g. ```example_data/```), pick the preprocessing steps from dropdowns, and download a zipped file of the processed data.  Visualizations and graphs of the data before and after the transformations will be displayed as well.
 
 Front-end is built with React, back-end with Express, and is hosted on AWS EC2.  It utilizes socket.io for real-time communication and to send file chunks, and HTTP methods to send downloads and visualization pictures.
 
