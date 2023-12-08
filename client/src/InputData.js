@@ -4,7 +4,7 @@
  * This component manages the input of multiple CSV files.
  */
 import React from 'react';
-import {Form, Button, Col, Alert} from 'react-bootstrap';
+import {Form, Button, Row, Col, Alert} from 'react-bootstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/InputData.css';
@@ -58,7 +58,7 @@ class InputData extends React.Component {
 
     render() {
         return (
-            <React.Fragment id='main'>
+            <React.Fragment key='main'>
                 <h3>Select CSV files</h3>
                 <Form onSubmit={this.onSubmit}>
                     <div id='files'>
@@ -73,12 +73,12 @@ class InputData extends React.Component {
                         Files must contain headers only on the first row, and an index column won't be expected.<br />
                         To undo file input, simply reselect files or refresh the page.
                     </Alert>
-                    <Form.Row>
+                        <Row>
                         <Col></Col>
                         <Col>
                             {this.renderSubmitButton()}
                         </Col>
-                    </Form.Row>
+                        </Row>
                 </Form>
             </React.Fragment>
         );

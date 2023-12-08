@@ -217,9 +217,9 @@ class App extends React.Component {
             <React.Fragment>
                 <Header />
                 <HomeInfo />
-                <Accordion id='app' activeKey={this.state.currentPanel}>
+                <Accordion id='app' defaultActiveKey='0' activeKey={this.state.currentPanel}>
                     <Card border='primary'>
-                        <Card.Header eventKey='0'>
+                        <Card.Header>
                             <h2>1. Input Data</h2>
                         </Card.Header>
                         <Accordion.Collapse eventKey='0'>
@@ -229,7 +229,7 @@ class App extends React.Component {
                         </Accordion.Collapse>
                     </Card>
                     <Card border='primary'>
-                        <Card.Header eventKey='1'>
+                        <Card.Header>
                             <Row>
                                 <Col>
                                     <h2>2. Select Preprocessing Steps</h2>
@@ -246,7 +246,7 @@ class App extends React.Component {
                         </Accordion.Collapse>
                     </Card>
                     <Card border='primary'>
-                        <Card.Header eventKey='2'>
+                        <Card.Header>
                             <Row>
                                 <Col>
                                     <h2>3. Run Steps</h2>

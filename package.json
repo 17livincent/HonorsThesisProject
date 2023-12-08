@@ -4,7 +4,7 @@
   "description": "This is a web application which allows the user to preprocess time series data files (.csv) with an easy-to-use, file-converter-like interface.  To visit the app, follow this [link](https://honorsthesiswebapp.web.app/).",
   "main": "index.js",
   "engines": {
-    "node": "16.13.1"
+    "node": "18.12.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,7 +25,6 @@
     "express": "^4.17.1",
     "helmet": "^4.3.1",
     "https": "^1.0.0",
-    "socket.io": "^3.0.4"
-  },
-  "devDependencies": {}
+    "socket.io": "^4.6.1"
+  }
 }

@@ -4,7 +4,7 @@
  * This class manages an array of PrepStepFormGroups by handling form submit, stepNums add, and stepNums deletion
  */
 import React from 'react';
-import {Form, Col, Button, Alert} from 'react-bootstrap';
+import {Form, Row, Col, Button, Alert} from 'react-bootstrap';
 
 import StepFormGroup from './StepFormGroup.js';
 import Transformations from './Transformations.js';
@@ -106,6 +106,7 @@ class StepsForm extends React.Component {
     renderFormGroup(i) {
         return (
             <StepFormGroup 
+                key={i}
                 stepNumber={i} 
                 stepName={this.state.formDetails[i - 1].name}
                 inputs={this.state.formDetails[i - 1].inputs}
@@ -176,17 +177,17 @@ class StepsForm extends React.Component {
 
     render() {
         return (
-            <React.Fragment id='main'>
+            <React.Fragment key='main'>
                 <Form onSubmit={this.onSubmit}>
                     {this.state.stepNums.map((i) => (this.renderFormGroup(i)))}
-                    <Form.Row>
+                        <Row>
                         <Col>
                             {this.renderAddStepButton()}
                         </Col>
                         <Col>
                             {this.renderSubmitButton()}
                         </Col>
-                    </Form.Row>
+                        </Row>
                     {this.state.displayErrors && this.renderErrors()}
                 </Form>
             </React.Fragment>

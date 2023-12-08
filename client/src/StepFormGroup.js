@@ -4,7 +4,7 @@
  * A FormGroup which serves as an input of a preprocessing/augmentation step form
  */
 import React from 'react';
-import {Form, Card, Col, Button} from 'react-bootstrap';
+import {Form, Card, Row, Col, Button} from 'react-bootstrap';
 
 import Transformations from './Transformations.js';
 import Util from './Util.js';
@@ -67,11 +67,11 @@ class StepFormGroup extends React.Component {
     }
 
     // returns the step select input
-    renderStepSelect() {
+    renderStepSelect(index) {
         // get list of step options
         let stepOptions = this.props.steps.length > 0 && this.props.steps.map((item, i) => {
             return (
-                <option value={item.val}>{item.name}</option>
+                <option key={i} value={item.val}>{item.name}</option>
             );
         });
 
@@ -182,9 +182,9 @@ class StepFormGroup extends React.Component {
                     <Card border='primary' bg='light' text='dark'>
                         <Card.Body>
                             <Card.Title>Step {this.props.stepNumber}</Card.Title>
-                            <Form.Row>
+                                <Row>
                                 <Col xs={7}>
-                                    {this.renderStepSelect()}
+                                    {this.renderStepSelect(index)}
                                 </Col>
                                 <Col xs='auto'>
                                     {this.renderInputFields(index)}
@@ -192,13 +192,15 @@ class StepFormGroup extends React.Component {
                                 <Col id='dbCol' xs='auto'>
                                     {this.renderDeleteButton()}
                                 </Col>
-                            </Form.Row>
-                            <Form.Row>
+                                </Row>
+
+                                <Row>
                                 {this.renderDescription(index)}
-                            </Form.Row>
-                            <Form.Row>
+                                </Row>
+
+                                <Row>
                                 {this.renderCitation(index)}
-                            </Form.Row>
+                                </Row>
                         </Card.Body>
                     </Card>
                 </Form.Group>
