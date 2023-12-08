@@ -71,7 +71,8 @@ class InputData extends React.Component {
                     
                     <Alert variant='light'>
                         Files must contain headers only on the first row, and an index column won't be expected.<br />
-                        To undo file input, simply reselect files or refresh the page.
+                        To undo file input, simply reselect files or refresh the page.<br />
+                        Example data can be found <a href='https://github.com/17livincent/SigNormApp/tree/master/example_data' target='_blank' rel='noreferrer'>here</a>.
                     </Alert>
                         <Row>
                         <Col></Col>
